@@ -1,10 +1,12 @@
 import React from "react";
+import ContextProvider from "./contexts";
+import RootRoutes from "./routes";
 
 function App(): JSX.Element {
   return (
-    <div>
-      <h1>Hellow Word</h1>
-    </div>
+    <ContextProvider>
+     <RootRoutes />
+    </ContextProvider>
   );
 }
 
