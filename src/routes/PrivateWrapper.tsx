@@ -5,7 +5,7 @@ import { ContextApi } from '../contexts'
 
 const PrivateWrapper: React.FC = () => {
 
-  const {isAuthenticated}:any = useContext(ContextApi)
+  const {isAuthenticated} = useContext(ContextApi)
   
   if (!isAuthenticated) {
     return <Navigate to="/login" />

@@ -3,7 +3,13 @@ import {
     createContext,
 } from 'react';
 
-export const ContextApi = createContext<any>({})
+interface IContextApi {
+    isAuthenticated: boolean
+}
+
+export const ContextApi = createContext<IContextApi>({
+    isAuthenticated: false
+})
 
 interface Props {
     children:ReactNode
