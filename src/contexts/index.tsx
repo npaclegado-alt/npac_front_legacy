@@ -16,7 +16,7 @@ interface Props {
 }
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
-    const isAuthenticated = false
+    const isAuthenticated = true
     return (
         <ContextApi.Provider value={{isAuthenticated}}>
             {children}
