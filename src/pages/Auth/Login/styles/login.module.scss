@@ -130,5 +130,13 @@
 
         }
     }
+} 
+
+
+//TODO: max-width não funcionar abaixo um exemplo: 
+@media (max-width: 600px){
+   .pageLogin {
+    display: none;
+   }
 }
 
