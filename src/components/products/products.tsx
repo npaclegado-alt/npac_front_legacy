@@ -12,7 +12,7 @@ import styles from './styleProduct.module.scss';
 import Filters from '../../libs/Filters';
 
 interface ProductsProps {
-    key: number;
+    key: string;
     name: string;
     value: number;
     auffs: number;
