@@ -1,9 +1,12 @@
 import React from "react";
-import { Products } from "../../components/products/products";
+import { PageProducts } from "../Products/pageProducts";
 
 const Dashboard: React.FC = ()=> {
+
   return (
-   <Products />
+    <div>
+      <PageProducts />
+    </div>
   );
 }
 
