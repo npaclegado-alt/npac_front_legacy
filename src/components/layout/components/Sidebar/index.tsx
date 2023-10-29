@@ -4,13 +4,78 @@ import {
   Home,
   Info,
   Layers,
+  LucideIcon,
   ShoppingCart,
   Wallet,
 } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
+import { useCallback, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface Path {
+  name: string;
+  path: string;
+  icon: LucideIcon;
+  active?: boolean;
+}
 
 export default function Sidebar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const navItems: Path[] = useMemo(() => {
+    const paths = [
+      {
+        name: "Visão Geral",
+        path: "/",
+        icon: Home,
+      },
+      {
+        name: "Minha Loja",
+        path: "/products",
+        icon: ShoppingCart,
+      },
+      {
+        name: "Estrutura",
+        path: "/structure",
+        icon: Layers,
+      },
+      {
+        name: "Carreira",
+        path: "/career",
+        icon: Briefcase,
+      },
+      {
+        name: "Financeiro",
+        path: "/financial",
+        icon: Wallet,
+      },
+      {
+        name: "Documentos",
+        path: "/documents",
+        icon: File,
+      },
+      {
+        name: "Ajuda",
+        path: "/help",
+        icon: Info,
+      },
+    ];
+    return paths.map((path) => {
+      return { ...path, active: location.pathname === path.path };
+    });
+  }, [location]);
+
+  const handleNavigate = useCallback(
+    (path: string) => {
+      if (path === location.pathname) {
+        return;
+      }
+      navigate(path);
+    },
+    [location, navigate]
+  );
   return (
     <aside className={styles.sidebar}>
       <div className={styles.container}>
@@ -31,34 +96,18 @@ export default function Sidebar() {
         </div>
         <Divider />
         <div className={styles.navList}>
-          <div className={styles.activeItem}>
-            <Home size={18} />
-            Visão Geral
-          </div>
-          <div className={styles.navItem}>
-            <ShoppingCart size={18} />
-            Minha Loja
-          </div>
-          <div className={styles.navItem}>
-            <Layers size={18} />
-            Estrutura
-          </div>
-          <div className={styles.navItem}>
-            <Briefcase size={18} />
-            Carreira
-          </div>
-          <div className={styles.navItem}>
-            <Wallet size={18} />
-            Financeiro
-          </div>
-          <div className={styles.navItem}>
-            <File size={18} />
-            Documentos
-          </div>
-          <div className={styles.navItem}>
-            <Info size={18} />
-            Ajuda
-          </div>
+          {navItems.map(({ icon: Icon, name, path, active }) => {
+            return (
+              <div
+                key={path}
+                onClick={() => handleNavigate(path)}
+                className={active ? styles.activeItem : styles.navItem}
+              >
+                <Icon size={18} />
+                {name}
+              </div>
+            );
+          })}
         </div>
       </div>
     </aside>
