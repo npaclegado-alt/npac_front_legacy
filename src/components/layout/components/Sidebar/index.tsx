@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ContextApi } from "../../../../contexts";
 
 interface Path {
   name: string;
@@ -21,8 +22,11 @@ interface Path {
 }
 
 export default function Sidebar() {
+  const { user } = useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
+
+  console.log(user);
 
   const navItems: Path[] = useMemo(() => {
     const paths = [
@@ -90,7 +94,7 @@ export default function Sidebar() {
           </div>
         </div>
         <div className={styles.userData}>
-          <div className={styles.userName}>Davi Carlos Rodrigues</div>
+          <div className={styles.userName}>{user?.name}</div>
           <div className={styles.userId}>#102030AZ</div>
           <div className={styles.userStatus}>Ativo</div>
         </div>
