@@ -9,7 +9,9 @@ const Layout = () => {
     <React.Fragment>
       <Navbar />
       <div className={styles.container}>
-        <Sidebar />
+        <div className={styles.scroll}>
+          <Sidebar />
+        </div>
         <main className={styles.content}>
           <Outlet />
         </main>
