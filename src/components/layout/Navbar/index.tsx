@@ -1,15 +1,22 @@
+import { LogOut, Settings, UserPlus } from "lucide-react";
 import styles from "./styleNavbar.module.scss";
 
 export default function Navbar() {
   return (
     <div className={styles.navbar}>
-      <div>PlanoNPAC</div>
+      <div className={styles.logo}>
+        <h4>
+          Plano<span>NPAC</span>
+        </h4>
+      </div>
       <div className={styles.actions}>
-        <div>Destrava</div>
-        <div>Escola NPAC</div>
-        <div>user+</div>
-        <div>config</div>
-        <div>logout</div>
+        <div className={styles.orangeButton}>Destrava</div>
+        <div className={styles.grayButton}>Escola NPAC</div>
+        <UserPlus className={styles.icon} />
+        <div className={styles.divider} />
+        <Settings className={styles.icon} />
+        <div className={styles.divider} />
+        <LogOut className={styles.icon} />
       </div>
     </div>
   );
