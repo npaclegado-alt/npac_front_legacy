@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import { Products } from "../../components/products/products";
 
 import styles from "./styleProductPage.module.scss";
@@ -79,25 +78,8 @@ export function PageProducts(): JSX.Element {
     },
   ];
 
-  const [gap, setGap] = useState("1rem");
-
-  const handleResize = useCallback(() => {
-    const newGap = window.innerWidth * 0.0134;
-    setGap(`1rem ${newGap}px`);
-  }, []);
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize, false);
-  }, [handleResize]);
-
   return (
-    <div
-      className={styles.containerProducts}
-      style={{
-        gap,
-      }}
-    >
+    <div className={styles.containerProducts}>
       {mockProducts.map((product) => (
         <Products
           key={product.id}
