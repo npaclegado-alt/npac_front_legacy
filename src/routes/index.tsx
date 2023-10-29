@@ -13,6 +13,11 @@ const RootRoutes: React.FC = () => {
       <Route element={<PrivateWrapper />}>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
+          <Route path="structure" element={<></>} />
+          <Route path="career" element={<></>} />
+          <Route path="financial" element={<></>} />
+          <Route path="documents" element={<></>} />
+          <Route path="help" element={<></>} />
           <Route path="products" element={<PageProducts />} />
         </Route>
       </Route>
