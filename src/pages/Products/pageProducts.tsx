@@ -80,7 +80,7 @@ export function PageProducts(): JSX.Element {
 
   return (
     <div className={styles.containerProducts}>
-      {mockProducts.map((product) => (
+      {mockProducts.concat(mockProducts).map((product) => (
         <Products
           key={product.id}
           name={product.name}

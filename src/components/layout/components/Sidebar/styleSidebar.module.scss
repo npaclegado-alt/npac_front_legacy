@@ -1,5 +1,5 @@
 .sidebar {
-  position: sticky;
+  position: fixed;
   background-color: var(--white);
   padding: 1rem;
   margin-top: 1rem;
@@ -7,4 +7,5 @@
   margin-left: 2.5rem;
   min-width: 15.8rem;
   border-radius: 0.25rem;
+  min-height: 10000%;
 }

@@ -1,13 +1,24 @@
+.background {
+  position: fixed;
+  background-color: var(--gray-200);
+  min-width: 100vw;
+  min-height: 7.2rem;
+  z-index: 999;
+}
+
 .navbar {
+  position: fixed;
   background-color: var(--white);
+  top: 1.5rem;
+  left: 2.5rem;
+  right: 2.5rem;
   display: flex;
+  z-index: 999;
   flex-direction: row;
   justify-content: space-between;
   padding: 1.5rem;
-  margin-top: 1.5rem;
-  margin-right: 2.5rem;
-  margin-left: 2.5rem;
   border-radius: 0.25rem;
+  min-height: 4.7rem;
 }
 
 .actions {
