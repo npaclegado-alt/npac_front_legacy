@@ -27,12 +27,14 @@ interface User {
 interface IContextApi {
   isAuthenticated: boolean;
   loginRequest: (email: string, password: string) => void;
+  logoutRequest: () => void;
   user?: User;
 }
 
 export const ContextApi = createContext<IContextApi>({
   isAuthenticated: false,
   loginRequest: () => {},
+  logoutRequest: () => {},
   user: undefined,
 });
 
@@ -42,14 +44,20 @@ interface Props {
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
   const storedUser = localStorage.getItem("user");
-  const [user, setUser] = useState<User>(
-    storedUser ? JSON.parse(storedUser) : null
+  const [user, setUser] = useState<User | undefined>(
+    storedUser ? JSON.parse(storedUser) : undefined
   );
   const navigate = useNavigate();
 
   const isAuthenticated = useMemo(() => {
     return !!user;
   }, [user]);
+
+  const logoutRequest = useCallback(() => {
+    setUser(undefined);
+    localStorage.setItem("user", "");
+    api.defaults.headers.Authorization = "";
+  }, []);
 
   const loginRequest = useCallback(
     (email: string, password: string) => {
@@ -83,7 +91,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
   return (
-    <ContextApi.Provider value={{ isAuthenticated, loginRequest, user }}>
+    <ContextApi.Provider
+      value={{ isAuthenticated, loginRequest, user, logoutRequest }}
+    >
       {children}
     </ContextApi.Provider>
   );

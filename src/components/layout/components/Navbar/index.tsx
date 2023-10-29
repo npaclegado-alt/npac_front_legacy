@@ -1,7 +1,11 @@
 import { LogOut, Settings, UserPlus } from "lucide-react";
 import styles from "./styleNavbar.module.scss";
+import { ContextApi } from "../../../../contexts";
+import { useContext } from "react";
 
 export default function Navbar() {
+  const { logoutRequest } = useContext(ContextApi);
+
   return (
     <div className={styles.background}>
       <div className={styles.navbar}>
@@ -17,7 +21,7 @@ export default function Navbar() {
           <div className={styles.divider} />
           <Settings className={styles.icon} />
           <div className={styles.divider} />
-          <LogOut className={styles.icon} />
+          <LogOut onClick={logoutRequest} className={styles.icon} />
         </div>
       </div>
     </div>
