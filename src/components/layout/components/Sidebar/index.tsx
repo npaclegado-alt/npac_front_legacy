@@ -26,8 +26,6 @@ export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(user);
-
   const navItems: Path[] = useMemo(() => {
     const paths = [
       {
