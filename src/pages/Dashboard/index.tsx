@@ -1,13 +1,7 @@
 import React from "react";
-import { PageProducts } from "../Products/pageProducts";
 
-const Dashboard: React.FC = ()=> {
-
-  return (
-    <div>
-      <PageProducts />
-    </div>
-  );
-}
+const Dashboard: React.FC = () => {
+  return <div></div>;
+};
 
 export default Dashboard;

@@ -1,0 +1,75 @@
+.background {
+  position: fixed;
+  background-color: var(--gray-200);
+  width: 100vw;
+  height: 7.2rem;
+  z-index: 999;
+}
+
+.navbar {
+  position: fixed;
+  background-color: var(--white);
+  top: 1.5rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  display: flex;
+  z-index: 999;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-radius: 0.25rem;
+  height: 4.7rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.logo {
+  align-self: center;
+  font-size: 1.25rem;
+  h4 {
+    font-weight: 400;
+    span {
+      font-weight: bold;
+    }
+  }
+}
+
+.orangeButton {
+  font-weight: 600;
+  color: var(--orange-700);
+  font-size: 0.85rem;
+  border-style: solid;
+  padding: 0.25rem;
+  border-width: 0.1rem;
+  cursor: pointer;
+}
+
+.grayButton {
+  font-weight: 500;
+  color: var(--gray-200);
+  font-size: 0.85rem;
+  border-style: solid;
+  padding: 0.25rem;
+  border-width: 0.1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.icon {
+  color: var(--gray-300);
+  cursor: pointer;
+  &:hover {
+    color: var(--orange-700);
+  }
+}
+
+.divider {
+  height: 100%;
+  width: 2px;
+  background-color: var(--gray-100);
+}
