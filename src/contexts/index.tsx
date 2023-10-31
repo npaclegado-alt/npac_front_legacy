@@ -1,15 +1,18 @@
 import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { login } from "../services/requests/auth";
-import { toast } from "react-toastify";
-import api from "../services/api";
+    ReactNode,
+    createContext,
+    useCallback,
+    useState,
+    useMemo
+} from 'react';
 import { useNavigate } from "react-router-dom";
-
+import { login } from '../services/requests/auth';
+import { toast } from 'react-toastify';
+import { 
+    getProductById, 
+    getProducts 
+} from '../services/requests/products';
+        
 interface User {
   _id: string;
   name: string;
@@ -25,39 +28,81 @@ interface User {
 }
 
 interface IContextApi {
-  isAuthenticated: boolean;
-  loginRequest: (email: string, password: string) => void;
-  logoutRequest: () => void;
-  user?: User;
+    isAuthenticated: boolean
+    loginRequest: (email: string, password: string) => void;
+    logoutRequest: () => void;
+    user?: User;
+    getAllProducts: () => void,
+    products: [
+        {
+            _id: string,
+            name: string,
+            price: number,
+            auffs: number,
+            imageUrls: string[]
+        }
+    ],
+    productsById: (id:string) => void,
+    productFiltered:{
+            _id: string,
+            name: string,
+            description: string,
+            price: number,
+            auffs: number,
+            imageUrls: string[]
+        }
 }
 
 export const ContextApi = createContext<IContextApi>({
-  isAuthenticated: false,
-  loginRequest: () => {},
-  logoutRequest: () => {},
-  user: undefined,
-});
+    isAuthenticated: false,
+    logoutRequest: () => {},
+    user: undefined,
+    getAllProducts: () => {},
+    products: [
+        {
+            _id: '',
+            name: '',
+            price: 0,
+            auffs: 0,
+            imageUrls: ['']
+        }
+    ],
+    productsById: () => {},
+    productFiltered: {
+            _id: '',
+            name: '',
+            description: '',
+            price: 0,
+            auffs: 0,
+            imageUrls: ['']
+        }
+})
 
 interface Props {
   children: ReactNode;
 }
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
-  const storedUser = localStorage.getItem("user");
-  const [user, setUser] = useState<User | undefined>(
+    const storedUser = localStorage.getItem("user");
+    const [user, setUser] = useState<User | undefined>(
     storedUser ? JSON.parse(storedUser) : undefined
-  );
-  const navigate = useNavigate();
+    );
+    const navigate = useNavigate();
+    const [products, setProducts] = useState<any>([]);
+    const [productFiltered, setProductFiltered] = useState<any>([]);
+    const isAuthenticated = useMemo(() => {
+      return !!user;
+    }, [user]);
 
-  const isAuthenticated = useMemo(() => {
-    return !!user;
-  }, [user]);
+    const config = {
+        headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4` }
+    } 
 
-  const logoutRequest = useCallback(() => {
-    setUser(undefined);
-    localStorage.setItem("user", "");
-    api.defaults.headers.Authorization = "";
-  }, []);
+    const logoutRequest = useCallback(() => {
+      setUser(undefined);
+      localStorage.setItem("user", "");
+      api.defaults.headers.Authorization = "";
+    }, []);
 
   const loginRequest = useCallback(
     (email: string, password: string) => {
@@ -90,13 +135,73 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     [navigate]
   );
 
-  return (
-    <ContextApi.Provider
-      value={{ isAuthenticated, loginRequest, user, logoutRequest }}
-    >
-      {children}
-    </ContextApi.Provider>
-  );
-};
+   const getAllProducts = useCallback(() => {
+        const request = getProducts(config)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    //TODO
+                    setProducts(data?.data)
+                    return 'Produtos carregados com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    console.log('ErrorProducts', data)
+                    return 'Falha ao carregar produtos!'
+                }
+            }
+        })
+    },[])
+
+    const productsById = useCallback((id:string) => {
+        const request = getProductById(id, config)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    //TODO
+                    setProductFiltered(data?.data)
+                    return 'Produtos carregados com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    console.log('ErrorProducts', data)
+                    return 'Falha ao carregar produtos!'
+                }
+            }
+        })
+    },[])
+            
+
+    return (
+        <ContextApi.Provider 
+            value={{
+                isAuthenticated, 
+                loginRequest,
+                user, 
+                logoutRequest,
+                getAllProducts,
+                products,
+                productFiltered,
+                productsById
+            }}
+        >
+            {children}
+        </ContextApi.Provider>
+    )
+}
 
 export default ContextProvider;

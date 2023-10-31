@@ -9,11 +9,12 @@ import styles from "./styleProduct.module.scss";
 import Filters from "../../libs/Filters";
 
 interface ProductsProps {
-  name: string;
-  value: number;
-  auffs: number;
-  image: string;
-  link: string;
+    key: string;
+    name: string;
+    value: number;
+    auffs: number;
+    image: string;
+    link: string;
 }
 export function Products({
   name,
@@ -22,42 +23,42 @@ export function Products({
   image,
   link,
 }: ProductsProps): JSX.Element {
-  const [copied, setCopied] = useState<boolean>(false);
-  return (
-    <div className={styles.contentProduct}>
-      <div className={styles.boxHeaderProduct}>
-        <h4>{name}</h4>
-        <div className={styles.boxValue}>
-          <p>{Filters.convertMoneyTextMask(value)}</p>
-          <p>{auffs} Auffs</p>
-        </div>
-      </div>
-      <div className={styles.boxImage}>
-        <img src={image} alt="Tenis Nike" />
-      </div>
-      <Divider />
-      <div className={styles.boxLink}>
-        {copied ? (
-          <CopyCheck
-            style={{
-              color: "#00ff00",
-            }}
-          />
-        ) : (
-          <Files />
-        )}
-        <CopyToClipboard
-          text={link}
-          onCopy={(copy) => {
-            setCopied(true);
-            setTimeout(() => {
-              setCopied(false);
-            }, 2000);
-          }}
+    const [copied, setCopied] = useState<boolean>(false);
+
+    return (
+        <div 
+            className={styles.contentProduct}
+            key={key}
         >
-          <p>Link da oferta</p>
-        </CopyToClipboard>
-      </div>
+            <div className={styles.boxHeaderProduct}>
+                <h4>{name}</h4>
+                <div className={styles.boxValue}>
+                    <p>{Filters.convertMoneyTextMask(value)}</p>
+                    <p>{auffs} Auffs</p>
+                </div>
+            </div>
+            <div className={styles.boxImage}>
+                <img src={image} alt="Tenis Nike" />
+            </div>
+            <Divider />
+            <div className={styles.boxLink}>
+                {copied ? 
+                <CopyCheck style={{
+                    color: '#00ff00',
+                }}/> : 
+                <Files />}
+                <CopyToClipboard
+                    text={`http://localhost:3000/productDetails/${link}`}
+                    onCopy={(copy) => {
+                        setCopied(true);
+                        setTimeout(() => {
+                            setCopied(false);
+                        }, 2000);
+                    }}
+                >
+                    <p>Link da oferta</p>
+                </CopyToClipboard>
+            </div>
     </div>
   );
 }
