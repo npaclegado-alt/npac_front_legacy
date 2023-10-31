@@ -1,0 +1,20 @@
+.container {
+  padding-top: 6.2rem;
+}
+
+.content {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+  padding-right: 2.5rem;
+  margin-left: 18.3rem;
+  flex: 1;
+}
+
+.scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,15 +1,12 @@
-import { useState } from 'react';
-import { 
-    Files,
-    CopyCheck 
-} from 'lucide-react';
+import { useState } from "react";
+import { Files, CopyCheck } from "lucide-react";
 
-import { Divider } from '../divider';
+import { Divider } from "../divider";
 
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import styles from './styleProduct.module.scss';
-import Filters from '../../libs/Filters';
+import styles from "./styleProduct.module.scss";
+import Filters from "../../libs/Filters";
 
 interface ProductsProps {
     key: string;
@@ -20,12 +17,11 @@ interface ProductsProps {
     link: string;
 }
 export function Products({
-    key,
-    name,
-    value,
-    auffs,
-    image,
-    link
+  name,
+  value,
+  auffs,
+  image,
+  link,
 }: ProductsProps): JSX.Element {
     const [copied, setCopied] = useState<boolean>(false);
 
@@ -63,6 +59,6 @@ export function Products({
                     <p>Link da oferta</p>
                 </CopyToClipboard>
             </div>
-        </div>
-    );
+    </div>
+  );
 }

@@ -2,18 +2,36 @@ import {
     ReactNode,
     createContext,
     useCallback,
-    useState
+    useState,
+    useMemo
 } from 'react';
+import { useNavigate } from "react-router-dom";
 import { login } from '../services/requests/auth';
 import { toast } from 'react-toastify';
 import { 
     getProductById, 
     getProducts 
 } from '../services/requests/products';
+        
+interface User {
+  _id: string;
+  name: string;
+  cpf: string;
+  email: string;
+  role: string;
+  password: string;
+  phone: string;
+  createdAt: string;
+  __v: number;
+  avatar: string;
+  token: string;
+}
 
 interface IContextApi {
     isAuthenticated: boolean
-    loginRequest: (email:string, password:string) => void,
+    loginRequest: (email: string, password: string) => void;
+    logoutRequest: () => void;
+    user?: User;
     getAllProducts: () => void,
     products: [
         {
@@ -37,7 +55,8 @@ interface IContextApi {
 
 export const ContextApi = createContext<IContextApi>({
     isAuthenticated: false,
-    loginRequest: () => {},
+    logoutRequest: () => {},
+    user: undefined,
     getAllProducts: () => {},
     products: [
         {
@@ -60,42 +79,61 @@ export const ContextApi = createContext<IContextApi>({
 })
 
 interface Props {
-    children:ReactNode
+  children: ReactNode;
 }
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
-    const isAuthenticated = true
+    const storedUser = localStorage.getItem("user");
+    const [user, setUser] = useState<User | undefined>(
+    storedUser ? JSON.parse(storedUser) : undefined
+    );
+    const navigate = useNavigate();
     const [products, setProducts] = useState<any>([]);
     const [productFiltered, setProductFiltered] = useState<any>([]);
+    const isAuthenticated = useMemo(() => {
+      return !!user;
+    }, [user]);
 
     const config = {
         headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4` }
     } 
 
-    const loginRequest = useCallback((email:string, password:string) => {
-        const request = login(email, password)
-        toast.promise(request,{
-            pending: {
-                render() {
-                    return 'Carregando...'
-                },
-            },
-            success: {
-                render({ data }: any) {
-                    //TODO
-                    console.log(data)
-                    return 'Logado com sucesso!'
-                },
-            },
-            error: {
-                render({ data }: any) {
-                    //TODO
-                    console.log(data)
-                    return 'Falha ao realizar login!'
-                },
-            },
-        })
-    },[])
+    const logoutRequest = useCallback(() => {
+      setUser(undefined);
+      localStorage.setItem("user", "");
+      api.defaults.headers.Authorization = "";
+    }, []);
+
+  const loginRequest = useCallback(
+    (email: string, password: string) => {
+      const request = login(email, password);
+      toast.promise(request, {
+        pending: {
+          render() {
+            return "Carregando...";
+          },
+        },
+        success: {
+          render({ data }: any) {
+            const token = data.data.token;
+            api.defaults.headers.Authorization = `Bearer ${token}`;
+            const user = { ...data.data.user, token };
+            setUser(user);
+            navigate("/");
+            localStorage.setItem("user", JSON.stringify(user));
+            return "Logado com sucesso!";
+          },
+        },
+        error: {
+          render({ data }: any) {
+            const message = data.response.data.message;
+            return message;
+          },
+        },
+      });
+    },
+    [navigate]
+  );
 
    const getAllProducts = useCallback(() => {
         const request = getProducts(config)
@@ -153,6 +191,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             value={{
                 isAuthenticated, 
                 loginRequest,
+                user, 
+                logoutRequest,
                 getAllProducts,
                 products,
                 productFiltered,
@@ -164,4 +204,4 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     )
 }
 
-export default ContextProvider
+export default ContextProvider;
