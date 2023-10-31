@@ -52,7 +52,7 @@ export function Products({
                 }}/> : 
                 <Files />}
                 <CopyToClipboard
-                    text={link}
+                    text={`http://localhost:3000/productDetails/${link}`}
                     onCopy={(copy) => {
                         setCopied(true);
                         setTimeout(() => {

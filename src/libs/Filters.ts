@@ -76,10 +76,76 @@ const convertMoneyTextMask = (value: any ) => {
     return parseFloat(stringValue.replace(/(\d+)(\d{2})$/, '$1.$2'));
   };
 
+  // Máscara de CPF e CNPJ (alternado dependendo da quantidade de número inseridos)
+function inputMaskCPFCNPJ(value: any) {
+  if (!value) {
+    return value;
+  }
+  let mask = clearStringOnlyNumbers(value);
+
+  if (mask.length > 14) {
+    mask = mask.substring(0, 14);
+  } else if (mask.length <= 11) {
+    mask = mask.substring(0, 11);
+  }
+
+  if (mask.length <= 11) {
+    mask = mask.replace(/(\d{3})(\d)/, "$1.$2");
+    mask = mask.replace(/(\d{3})(\d)/, "$1.$2");
+    mask = mask.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  } else if (mask.length <= 14) {
+    mask = mask.replace(/(\d{2})(\d)/, "$1.$2");
+    mask = mask.replace(/(\d{3})(\d)/, "$1.$2");
+    mask = mask.replace(/(\d{3})(\d)/, "$1/$2");
+    mask = mask.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  }
+  return mask;
+}
+
+function inputMaskCEP(value: any) {
+  if (!value) {
+    return value;
+  }
+  let mask = clearStringOnlyNumbers(value);
+
+  if (mask.length > 8) {
+    mask = mask.substring(0, 8);
+  }
+  if (mask.length === 8) {
+    mask = mask.replace(/(\d{5})(\d{3})$/, "$1-$2");
+  }
+  return mask;
+}
+
+// Máscara de telefone fixo e celular com DDD
+function inputMaskTELWithDDD(value: any) {
+  if (!value) {
+    return value;
+  }
+  let mask = clearStringOnlyNumbers(value);
+
+  if (mask.length > 11) {
+    mask = mask.substring(0, 11);
+  }
+
+  if (mask.length <= 10) {
+    mask = mask.replace(/(\d{2})(\d)/, "($1) $2");
+    mask = mask.replace(/(\d)(\d{4})$/, "$1-$2");
+  } else {
+    mask = mask.replace(/(\d{2})(\d)/, "($1) $2");
+    mask = mask.replace(/(\d{1})(\d{4})/, "$1 $2");
+    mask = mask.replace(/(\d{4})(\d{4})$/, "$1-$2");
+  }
+
+  return mask;
+}
 
   export default {
     convertMoneyTextMask,
     convertMoneyInputMask,
     removeMoneyMask,
-    clearStringOnlyNumbers
+    clearStringOnlyNumbers,
+    inputMaskCPFCNPJ,
+    inputMaskCEP,
+    inputMaskTELWithDDD
   }

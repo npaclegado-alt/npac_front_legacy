@@ -6,7 +6,10 @@ import {
 } from 'react';
 import { login } from '../services/requests/auth';
 import { toast } from 'react-toastify';
-import { getProducts } from '../services/requests/npacApi';
+import { 
+    getProductById, 
+    getProducts 
+} from '../services/requests/products';
 
 interface IContextApi {
     isAuthenticated: boolean
@@ -20,7 +23,16 @@ interface IContextApi {
             auffs: number,
             imageUrls: string[]
         }
-    ]
+    ],
+    productsById: (id:string) => void,
+    productFiltered:{
+            _id: string,
+            name: string,
+            description: string,
+            price: number,
+            auffs: number,
+            imageUrls: string[]
+        }
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -35,7 +47,16 @@ export const ContextApi = createContext<IContextApi>({
             auffs: 0,
             imageUrls: ['']
         }
-    ]
+    ],
+    productsById: () => {},
+    productFiltered: {
+            _id: '',
+            name: '',
+            description: '',
+            price: 0,
+            auffs: 0,
+            imageUrls: ['']
+        }
 })
 
 interface Props {
@@ -45,6 +66,7 @@ interface Props {
 const ContextProvider: React.FC<Props> = ({ children }) => {
     const isAuthenticated = true
     const [products, setProducts] = useState<any>([]);
+    const [productFiltered, setProductFiltered] = useState<any>([]);
 
     const config = {
         headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4` }
@@ -99,6 +121,31 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             }
         })
     },[])
+
+    const productsById = useCallback((id:string) => {
+        const request = getProductById(id, config)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    //TODO
+                    setProductFiltered(data?.data)
+                    return 'Produtos carregados com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    console.log('ErrorProducts', data)
+                    return 'Falha ao carregar produtos!'
+                }
+            }
+        })
+    },[])
             
 
     return (
@@ -107,7 +154,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 isAuthenticated, 
                 loginRequest,
                 getAllProducts,
-                products
+                products,
+                productFiltered,
+                productsById
             }}
         >
             {children}

@@ -4,6 +4,7 @@ import PrivateWrapper from "./PrivateWrapper";
 import Login from "../pages/Auth/Login";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
+import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const RootRoutes: React.FC = () => {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/*" element={<NotFound />} />
+        <Route path="/productDetails/:productId" element={<PageProductsDetails />} />
       </Routes>
   );
 }
