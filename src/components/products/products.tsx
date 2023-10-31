@@ -49,7 +49,7 @@ export function Products({
                 }}/> : 
                 <Files />}
                 <CopyToClipboard
-                    text={`http://localhost:3000/productDetails/${link}`}
+                    text={`https://npac-dev-mykmm.ondigitalocean.app/productDetails/${link}`}
                     onCopy={(copy) => {
                         setCopied(true);
                         setTimeout(() => {
