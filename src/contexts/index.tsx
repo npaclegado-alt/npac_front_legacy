@@ -12,6 +12,7 @@ import {
     getProductById, 
     getProducts 
 } from '../services/requests/products';
+import api from '../services/api';
         
 interface User {
   _id: string;
@@ -55,6 +56,7 @@ interface IContextApi {
 
 export const ContextApi = createContext<IContextApi>({
     isAuthenticated: false,
+    loginRequest: () => {},
     logoutRequest: () => {},
     user: undefined,
     getAllProducts: () => {},

@@ -22,6 +22,7 @@ export function Products({
   auffs,
   image,
   link,
+  key,   
 }: ProductsProps): JSX.Element {
     const [copied, setCopied] = useState<boolean>(false);
 
