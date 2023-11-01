@@ -73,3 +73,18 @@
   width: 2px;
   background-color: var(--gray-100);
 }
+
+.leftContainer {
+  flex-direction: row;
+  display: flex;
+  gap: 1rem;
+}
+.menu {
+  display: none;
+}
+
+@media only screen and (max-width: 1000px) {
+  .menu {
+    display: block;
+  }
+}
