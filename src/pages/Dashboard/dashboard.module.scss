@@ -1,0 +1,27 @@
+.deshBoardPage {
+ display: grid; 
+ height: 85vh; 
+ grid-gap: 1.25rem; 
+ grid-template-rows: 1fr 10rem 1fr;
+
+    .deshBoardPageAuff {
+        background-color: var(--white); 
+        border-radius: 8px; 
+        display: flex; 
+        justify-content: center;  
+        flex-direction: column; 
+        align-items: center;
+
+    } 
+    
+    .deshBoardPageTotals {
+        background-color: var(--white);  
+        border-radius: 8px;
+    }
+    
+    .deshBoardPageImage {
+        background-color: var(--white);  
+        border-radius: 8px;
+    }
+
+}
