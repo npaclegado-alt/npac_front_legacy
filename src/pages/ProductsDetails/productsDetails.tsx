@@ -17,7 +17,13 @@ import Filters from "../../libs/Filters";
 export function PageProductsDetails(): JSX.Element {
     const {
         productsById,
-        productFiltered
+        productFiltered,
+        getAdressByPostalCode,
+        adress,
+        getAllStates,
+        ufs,
+        getCitiesByUf,
+        cities,
     } = useContext(ContextApi);
     const { productId }: any = useParams();
     const [nextIndex, setNextIndex] = useState(0);
@@ -31,14 +37,45 @@ export function PageProductsDetails(): JSX.Element {
     const [bairro, setBairro] = useState('');
     const [complemento, setComplemento] = useState('');
     const [referencia, setReferencia] = useState('');
+    const [stateIsShow, setStateIsShow] = useState<any>([]);
+    const [stateSelected, setStateSelected] = useState<any>(0);
+    const [citiesIsShow, setCitiesIsShow] = useState<any>([]);
+    const [citiesSelected, setCitiesSelected] = useState<any>(0);
 
     const imgProduct = productFiltered?.imageUrls ?? [];
 
+    const setStatesAndCitiesByAdress = () => {
+        const state = ufs?.find((item: any) => item.sigla === adress?.uf);
+        const city = cities?.find((item: any) => item.nome === adress?.localidade);
+        setStateSelected(state?.id);
+        setCitiesSelected(city?.id);
+        setBairro(adress?.bairro);
+        setLogradouro(adress?.logradouro);
+    }
+        
 
+    
     useEffect(() => {
         productsById(productId);
+        getAllStates();
     }, []);
-    
+
+    useEffect(() => {
+        if (adress?.uf) {
+            setStatesAndCitiesByAdress();
+        }
+    }, [cities]);
+
+    useEffect(() => {
+        if (cep.length < 8) {
+            setStateSelected(0);
+            setCitiesSelected(0);
+            setBairro('');
+            setLogradouro('');
+            getAllStates();
+        }
+    }, [cep]);
+
   return (
     <div className={styles.container}>
       <div className={styles.headerDetails}>
@@ -128,16 +165,33 @@ export function PageProductsDetails(): JSX.Element {
                             name="cep"
                             value={Filters.inputMaskCEP(cep)}
                             placeholder="Insira seu CEP"
-                            onChange={(e) => setCep(e.target.value)}
+                            onChange={(e) => {
+                                setCep(e.target.value)
+                                if (e.target.value.length === 8) {
+                                    const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
+                                    getAdressByPostalCode(cepString);
+                                }
+                            }}
                             style={{ width: '32%' }}
                         />
                         <InputSimpleSelect 
-                            data={['1', '2', '3']}
+                            optionZero="Selecione seu estado"
+                            data={ufs}
                             style={{ width: '32%' }}
+                            onChange={(e) => {
+                                setStateSelected(e.target.value);
+                                getCitiesByUf(e.target.value);
+                            }}
+                            value={stateSelected}
                         />
                         <InputSimpleSelect 
-                            data={['1', '2', '3']}
+                            optionZero="Selecione sua cidade"
+                            data={cities}
                             style={{ width: '32%' }}
+                            onChange={(e) => {
+                                setCitiesSelected(e.target.value);
+                            }}
+                            value={citiesSelected}
                         />
                     </div>
                     <div className={styles.formLine2}>
