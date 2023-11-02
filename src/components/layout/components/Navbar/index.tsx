@@ -4,7 +4,7 @@ import { ContextApi } from "../../../../contexts";
 import { useContext } from "react";
 
 export default function Navbar() {
-  const { logoutRequest, sidebarOpen, setSidebarOpen } = useContext(ContextApi);
+  const { logoutRequest, drawerOpen, setDrawerOpen } = useContext(ContextApi);
 
   return (
     <div className={styles.background}>
@@ -12,7 +12,7 @@ export default function Navbar() {
         <div className={styles.leftContainer}>
           <div className={styles.menu}>
             <Menu
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => setDrawerOpen(!drawerOpen)}
               className={styles.icon}
             />
           </div>

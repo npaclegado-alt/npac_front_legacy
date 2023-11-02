@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ContextApi } from "../../../../contexts";
 
@@ -22,16 +22,9 @@ interface Path {
 }
 
 export default function Sidebar() {
-  const { user, sidebarOpen } = useContext(ContextApi);
-  const [localSidebarOpen, setLocalSidebarOpen] = useState(true);
+  const { user } = useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (window.innerWidth <= 1000) {
-      setLocalSidebarOpen(sidebarOpen);
-    }
-  }, [sidebarOpen]);
 
   const navItems: Path[] = useMemo(() => {
     const paths = [
@@ -86,10 +79,7 @@ export default function Sidebar() {
     [location, navigate]
   );
   return (
-    <aside
-      className={styles.sidebar}
-      style={localSidebarOpen ? { display: "block" } : { display: "none" }}
-    >
+    <aside className={styles.sidebar}>
       <div className={styles.container}>
         <div className={styles.title}>Graduação</div>
         <div className={styles.profileContainer}>

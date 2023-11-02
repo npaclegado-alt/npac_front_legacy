@@ -31,8 +31,8 @@ interface IContextApi {
   logoutRequest: () => void;
   user?: User;
   getAllProducts: () => void;
-  sidebarOpen: boolean;
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  drawerOpen: boolean;
+  setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
   products: [
     {
       _id: string;
@@ -59,8 +59,8 @@ export const ContextApi = createContext<IContextApi>({
   logoutRequest: () => {},
   user: undefined,
   getAllProducts: () => {},
-  sidebarOpen: false,
-  setSidebarOpen: () => {},
+  drawerOpen: false,
+  setDrawerOpen: () => {},
   products: [
     {
       _id: "",
@@ -96,13 +96,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const isAuthenticated = useMemo(() => {
     return !!user;
   }, [user]);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-
-  const config = {
-    headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4`,
-    },
-  };
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const logoutRequest = useCallback(() => {
     setUser(undefined);
@@ -142,7 +136,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
   const getAllProducts = useCallback(() => {
-    const request = getProducts(config);
+    const request = getProducts();
     toast.promise(request, {
       pending: {
         render() {
@@ -167,7 +161,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   const productsById = useCallback((id: string) => {
-    const request = getProductById(id, config);
+    const request = getProductById(id);
     toast.promise(request, {
       pending: {
         render() {
@@ -202,8 +196,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         products,
         productFiltered,
         productsById,
-        sidebarOpen,
-        setSidebarOpen,
+        drawerOpen,
+        setDrawerOpen,
       }}
     >
       {children}
