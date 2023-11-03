@@ -257,7 +257,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                     console.error("prevUser is undefined, cannot update token");
                     return prevUser;
                 }
-                return { ...prevUser, newToken };
+                return { ...prevUser, torken: newToken };
             });
         } catch (error) {
             logoutRequest();
