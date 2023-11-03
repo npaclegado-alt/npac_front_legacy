@@ -21,11 +21,11 @@ const RootRoutes: React.FC = () => {
           <Route path="help" element={<></>} />
           <Route path="products" element={<PageProducts />} />
         </Route>
+        <Route
+          path="/productDetails/:productId"
+          element={<PageProductsDetails />}
+        />
       </Route>
-      <Route
-        path="/productDetails/:productId"
-        element={<PageProductsDetails />}
-      />
       <Route path="/login" element={<Login />} />
       <Route path="/*" element={<NotFound />} />
     </Routes>
