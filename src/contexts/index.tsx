@@ -4,9 +4,11 @@ import {
     useCallback,
     useState,
     useMemo,
+    Dispatch,
+    SetStateAction,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, tokenRefresh } from "../services/requests/auth";
+import { login } from "../services/requests/auth";
 import { toast } from "react-toastify";
 import { getProductById, getProducts } from "../services/requests/products";
 import api from "../services/api";
@@ -15,6 +17,7 @@ import {
 } from '../services/requests/postalService';
 
 interface User {
+    expiresIn: string;
     _id: string;
     name: string;
     cpf: string;
@@ -32,13 +35,14 @@ interface IContextApi {
     isAuthenticated: boolean
     loginRequest: (email: string, password: string) => void;
     logoutRequest: () => void;
-    user?: User;
+    user?: User | null;
     drawerOpen: boolean;
     setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     getAllProducts: () => void,
     getAdressByPostalCode: (postalCode: string) => void,
     getAllStates: (idUf?: string) => void,
     getCitiesByUf: (ufId: string) => void,
+
     ufs: [
         {
             id: number,
@@ -226,12 +230,12 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                     render({ data }: any) {
                         const token = data.data.token;
                         api.defaults.headers.Authorization = `Bearer ${token}`;
-                        const user = { ...data.data.user, token };
-                        const expiresIn = data.expiresIn;
+                        const expiresIn = data.data.expiresIn;
+                        const user = { ...data.data.user, token, expiresIn };
+                        console.log(expiresIn)
                         setUser(user);
                         navigate("/");
                         localStorage.setItem("user", JSON.stringify(user));
-                        localStorage.setItem('expiresAt', expiresIn);
                         return "Logado com sucesso!";
                     },
                 },
@@ -245,46 +249,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         },
         [navigate]
     );
-    const refreshAuthToken = async (refreshToken: string) => {
-        try {
-            const response = await tokenRefresh(refreshToken);
-            const { token: newToken, expiresIn } = response.data;
-            localStorage.setItem('token', newToken);
-            localStorage.setItem('expiresAt', expiresIn);
-            api.defaults.headers.Authorization = `Bearer ${newToken}`;
-            setUser((prevUser) => {
-                if (!prevUser) {
-                    console.error("prevUser is undefined, cannot update token");
-                    return prevUser;
-                }
-                return { ...prevUser, torken: newToken };
-            });
-        } catch (error) {
-            logoutRequest();
-            console.error('Error refreshing auth token:', error);
-        }
-    };
-
-
-    const tokenWillExpires = (expiresAt: string) => {
-        const tenMinutesInMilliseconds = 10 * 60 * 1000;
-        return new Date().getTime() + tenMinutesInMilliseconds > new Date(expiresAt).getTime();
-    };
-
-    api.interceptors.request.use(
-        async (config) => {
-            const token = localStorage.getItem('token');
-            const expiresAt = localStorage.getItem('expiresAt');
-
-            if (token && expiresAt && tokenWillExpires(expiresAt)) {
-                await refreshAuthToken(token);
-            }
-
-            return config;
-        },
-        (error) => Promise.reject(error)
-    );
-
 
     const getAllProducts = useCallback(() => {
         const request = getProducts()
