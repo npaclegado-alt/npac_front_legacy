@@ -10,8 +10,11 @@ import {
   Home,
   Info,
   Layers,
+  LogOut,
   LucideIcon,
+  Settings,
   ShoppingCart,
+  UserPlus,
   Wallet,
 } from "lucide-react";
 
@@ -23,7 +26,8 @@ interface Path {
 }
 
 export default function Drawer() {
-  const { drawerOpen, setDrawerOpen, user } = useContext(ContextApi);
+  const { drawerOpen, setDrawerOpen, user, logoutRequest } =
+    useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -104,6 +108,17 @@ export default function Drawer() {
             <div className={styles.userName}>{user?.name}</div>
             <div className={styles.userId}>#102030AZ</div>
             <div className={styles.userStatus}>Ativo</div>
+          </div>
+          <div className={styles.rowButtons}>
+            <div className={styles.orangeButton}>Destrava</div>
+            <div className={styles.grayButton}>Escola NPAC</div>
+          </div>
+          <div className={styles.rowButtons}>
+            <UserPlus className={styles.icon} />
+            <div className={styles.divider} />
+            <Settings className={styles.icon} />
+            <div className={styles.divider} />
+            <LogOut onClick={logoutRequest} className={styles.icon} />
           </div>
           <Divider />
           <div className={styles.navList}>
