@@ -5,9 +5,26 @@
     justify-content: center;
     margin: 0 auto;
     width: 100%;
-    padding: 0 1rem;
-    margin-top: 2rem;
+    padding: 1.5rem 1rem;
+    
+    @media (min-width: 1024px) {
+        height: 100vh;
+        overflow: hidden;
+    }
 }
+
+@media (min-width: 1024px) {
+    .content {
+        overflow: auto;
+    
+        &::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
+        }
+    }
+}
+
 
 .headerDetails {
     width: 100%;
@@ -187,3 +204,148 @@
     }
 }
   
+@media (max-width: 1024px) {
+    .containerDetails {
+        padding: 1.5rem;
+    }
+
+    .boxInputs {
+        &:nth-child(3) {
+            margin-top: 0;
+            .formLine1 {
+                flex-wrap: wrap;
+            }
+            .formLine2 {
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+        }
+    }
+
+    .boxFinalPrice {
+        p {
+            text-wrap: nowrap;
+            font-size: 1rem;
+        }
+        
+        span {
+            text-wrap: nowrap;
+            &:nth-child(2) {
+                font-size: 1rem;
+            }
+
+            font-size: 0.75rem;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .containerDetails {
+        flex-direction: column;
+        padding: 1.5rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .contentDetails {
+        width: 80%;
+    }
+
+    .container {
+        width: 100%;
+        align-self: center;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .contentImages {
+        width: 60%;
+    }
+    
+    .titleProduct {
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        div {
+            span {
+                font-size: 1rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .contentImages {
+        width: 100%;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+
+        .imgProduct {
+            grid-column-start: 1;
+            grid-column-end: 5;
+            width: 100%;
+        }
+
+        .imgProductMini {
+            width: 6.5rem;
+            height: 6.5rem;
+        }
+    }
+
+    .boxFinalPrice {
+        flex-wrap: wrap;
+        p {
+            text-wrap: wrap;
+            font-size: 1rem;
+        }
+        
+        span {
+            text-wrap: wrap;
+            &:nth-child(2) {
+                font-size: 1rem;
+            }
+
+            font-size: 0.75rem;
+        }
+    }
+
+    .titleProduct {
+        h1 {
+            font-size: 2rem;
+        }
+
+        div {
+            span {
+                font-size: 1rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .contentDescription {
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+    }
+
+    .formLine1 {
+        flex-wrap: wrap;
+    }
+
+    .formLine2 {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+}

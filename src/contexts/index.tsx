@@ -205,10 +205,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       return !!user;
     }, [user]);
 
-    const config = {
-        headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4` }
-    } 
-
     const logoutRequest = useCallback(() => {
       setUser(undefined);
       localStorage.setItem("user", "");
@@ -247,7 +243,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
    const getAllProducts = useCallback(() => {
-        const request = getProducts(config)
+        const request = getProducts()
         toast.promise(request,{
             pending: {
                 render() {
@@ -264,7 +260,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar produtos!'
                 }
             }
@@ -272,7 +267,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const productsById = useCallback((id:string) => {
-        const request = getProductById(id, config)
+        const request = getProductById(id)
         toast.promise(request,{
             pending: {
                 render() {
@@ -289,7 +284,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar produtos!'
                 }
             }
@@ -297,7 +291,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const getAdressByPostalCode = useCallback((postalCode:string) => {
-        const request = adressByPostalCode(postalCode, config)
+        const request = adressByPostalCode(postalCode)
         toast.promise(request,{
             pending: {
                 render() {
@@ -316,7 +310,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     setAdress(null);
                     return 'Falha ao carregar endereço!'
                 }
@@ -325,7 +318,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const getAllStates = useCallback((idUf?: string) => {
-        const request = states(idUf, config)
+        const request = states(idUf)
         toast.promise(request,{
             pending: {
                 render() {
@@ -349,7 +342,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar estados!'
                 }
             }
@@ -357,7 +349,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const getCitiesByUf = useCallback((ufId:string) => {
-        const request = citiesByState(ufId, config)
+        const request = citiesByState(ufId)
         toast.promise(request,{
             pending: {
                 render() {
@@ -376,7 +368,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar cidades!'
                 }
             }
