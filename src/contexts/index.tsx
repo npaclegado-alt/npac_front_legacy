@@ -277,7 +277,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             const expiresAt = localStorage.getItem('expiresAt');
 
             if (token && expiresAt && tokenWillExpires(expiresAt)) {
-                await refreshAuthToken(token); // refresh the token if it is expired
+                await refreshAuthToken(token);
             }
 
             return config;
