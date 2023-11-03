@@ -3,19 +3,22 @@ import React from 'react';
 import styles from './styleSelect.module.scss';
 
 interface InputSelectSimple extends React.InputHTMLAttributes<HTMLSelectElement> {
-    data: string[];
+    data: any;
+    optionZero?: string;
 }
 
 export function InputSimpleSelect(props: InputSelectSimple): JSX.Element {
-    const { data, ...rest } = props;
+    const { data, optionZero, ...rest } = props;
     return (
         <>
             <select 
                 className={styles.inputSelect}
                 {...rest}
             >
-                <option value="1">Selecione seu estado</option>
-                <option value="2">2</option>
+                <option value="0">{optionZero}</option>
+                {data?.map((item: any) => (
+                    <option key={item.id} value={item.id}>{item.nome}</option>
+                ))}
             </select>
         </>
     )
