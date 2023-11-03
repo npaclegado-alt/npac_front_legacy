@@ -2,7 +2,6 @@ import React from "react";
 import styles from './dashboard.module.scss'
 import { Progress } from 'antd';
 import { Gift } from "lucide-react";  
-import { MessagesSquare } from 'lucide-react';  
 
 
 
