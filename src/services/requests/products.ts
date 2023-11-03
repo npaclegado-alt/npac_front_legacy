@@ -1,8 +1,8 @@
 import api from "../api"
 
-export async function getProducts(config: Object) {
+export async function getProducts() {
     return new Promise ((resolve, reject) => {
-        api.get('products', config)
+        api.get('products')
         .then((response) => {
             resolve(response)
         }).catch((error) => {
@@ -11,9 +11,9 @@ export async function getProducts(config: Object) {
     })
 }
 
-export async function getProductById(id: string, config: Object) {
+export async function getProductById(id: string) {
     return new Promise ((resolve, reject) => {
-        api.get(`products/${id}`, config)
+        api.get(`products/${id}`)
         .then((response) => {
             resolve(response)
         }).catch((error) => {
