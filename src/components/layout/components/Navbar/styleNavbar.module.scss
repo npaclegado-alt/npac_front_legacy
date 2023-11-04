@@ -73,3 +73,35 @@
   width: 2px;
   background-color: var(--gray-100);
 }
+
+.leftContainer {
+  flex-direction: row;
+  flex-grow: 1;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+.menu {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .menu {
+    display: block;
+  }
+  .actions {
+    display: none;
+  }
+  .logo {
+    position: absolute;
+    align-self: center;
+    font-size: 1.5rem;
+  }
+  .leftContainer {
+    justify-content: center;
+  }
+  .menu {
+    position: absolute;
+    left: 1.5rem;
+  }
+}

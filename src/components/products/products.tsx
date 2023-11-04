@@ -22,8 +22,11 @@ export function Products({
   auffs,
   image,
   link,
-  key,   
+  key
 }: ProductsProps): JSX.Element {
+    const location = window.location.href.split('/');
+    const redirectUrlProductsDetails = location[0] + '//' + location[2] + '/productDetails/' + link;
+
     const [copied, setCopied] = useState<boolean>(false);
 
     return (
@@ -31,16 +34,21 @@ export function Products({
             className={styles.contentProduct}
             key={key}
         >
-            <div className={styles.boxHeaderProduct}>
-                <h4>{name}</h4>
-                <div className={styles.boxValue}>
-                    <p>{Filters.convertMoneyTextMask(value)}</p>
-                    <p>{auffs} Auffs</p>
+            <a
+                href={redirectUrlProductsDetails}
+                target="_blank"
+            >
+                <div className={styles.boxHeaderProduct}>
+                    <h4>{name}</h4>
+                    <div className={styles.boxValue}>
+                        <p>{Filters.convertMoneyTextMask(value)}</p>
+                        <p>{auffs} Auffs</p>
+                    </div>
                 </div>
-            </div>
-            <div className={styles.boxImage}>
-                <img src={image} alt="Tenis Nike" />
-            </div>
+                <div className={styles.boxImage}>
+                    <img src={image} alt="Tenis Nike" />
+                </div>
+            </a>
             <Divider />
             <div className={styles.boxLink}>
                 {copied ? 
@@ -49,7 +57,7 @@ export function Products({
                 }}/> : 
                 <Files />}
                 <CopyToClipboard
-                    text={`https://npac-dev-mykmm.ondigitalocean.app/productDetails/${link}`}
+                    text={redirectUrlProductsDetails}
                     onCopy={(copy) => {
                         setCopied(true);
                         setTimeout(() => {

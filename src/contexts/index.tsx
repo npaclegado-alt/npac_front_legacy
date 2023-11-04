@@ -1,19 +1,19 @@
 import {
-    ReactNode,
-    createContext,
-    useCallback,
-    useState,
-    useMemo
-} from 'react';
+  ReactNode,
+  createContext,
+  useCallback,
+  useState,
+  useMemo,
+} from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from '../services/requests/auth';
-import { toast } from 'react-toastify';
-import { 
-    getProductById, 
-    getProducts 
-} from '../services/requests/products';
-import api from '../services/api';
-        
+import { login } from "../services/requests/auth";
+import { toast } from "react-toastify";
+import { getProductById, getProducts } from "../services/requests/products";
+import api from "../services/api";
+import {
+    adressByPostalCode, citiesByState, states
+} from '../services/requests/postalService';
+
 interface User {
   _id: string;
   name: string;
@@ -33,7 +33,24 @@ interface IContextApi {
     loginRequest: (email: string, password: string) => void;
     logoutRequest: () => void;
     user?: User;
+    drawerOpen: boolean;
+    setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     getAllProducts: () => void,
+    getAdressByPostalCode: (postalCode:string) => void,
+    getAllStates: (idUf?:string) => void,
+    getCitiesByUf: (ufId:string) => void,
+    ufs: [
+        {
+            id: number,
+            sigla: string,
+            nome: string,
+            regiao: {
+                id: number,
+                sigla: string,
+                nome: string
+            }
+        },
+    ],
     products: [
         {
             _id: string,
@@ -51,15 +68,68 @@ interface IContextApi {
             price: number,
             auffs: number,
             imageUrls: string[]
+        },
+    adress: {
+        cep: string,
+        logradouro: string,
+        complemento: string,
+        bairro: string,
+        localidade: string,
+        uf: string,
+        ibge: string,
+        gia: string,
+        ddd: string,
+        siafi: string
+    },
+    cities: [
+        {
+            id: number,
+            nome: string,
+            microrregiao: {
+                id: number,
+                nome: string,
+                mesorregiao: {
+                    id: number,
+                    nome: string,
+                    UF: {
+                        id: number,
+                        sigla: string,
+                        nome: string,
+                        regiao: {
+                            id: number,
+                            sigla: string,
+                            nome: string
+                        }
+                    }
+                }
+            }
         }
+    ]
 }
 
 export const ContextApi = createContext<IContextApi>({
     isAuthenticated: false,
-    loginRequest: () => {},
+    loginRequest: (email: string, password: string) => {},
     logoutRequest: () => {},
     user: undefined,
     getAllProducts: () => {},
+    drawerOpen: false,
+    setDrawerOpen: () => {},
+    getAdressByPostalCode: (postalCode:string) => {},
+    getAllStates: (idUf?:string) => {},
+    getCitiesByUf: (ufId:string) => {},
+    ufs: [
+        {
+            id: 0,
+            sigla: '',
+            nome: '',
+            regiao: {
+                id: 0,
+                sigla: '',
+                nome: ''
+            }
+        },
+    ],
     products: [
         {
             _id: '',
@@ -77,7 +147,43 @@ export const ContextApi = createContext<IContextApi>({
             price: 0,
             auffs: 0,
             imageUrls: ['']
+        },
+    adress: {
+        cep: '',
+        logradouro: '',
+        complemento: '',
+        bairro: '',
+        localidade: '',
+        uf: '',
+        ibge: '',
+        gia: '',
+        ddd: '',
+        siafi: ''
+    },
+    cities: [
+        {
+            id: 0,
+            nome: '',
+            microrregiao: {
+                id: 0,
+                nome: '',
+                mesorregiao: {
+                    id: 0,
+                    nome: '',
+                    UF: {
+                        id: 0,
+                        sigla: '',
+                        nome: '',
+                        regiao: {
+                            id: 0,
+                            sigla: '',
+                            nome: ''
+                        }
+                    }
+                }
+            }
         }
+    ]
 })
 
 interface Props {
@@ -86,19 +192,20 @@ interface Props {
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
     const storedUser = localStorage.getItem("user");
+    const navigate = useNavigate();
     const [user, setUser] = useState<User | undefined>(
     storedUser ? JSON.parse(storedUser) : undefined
     );
-    const navigate = useNavigate();
     const [products, setProducts] = useState<any>([]);
     const [productFiltered, setProductFiltered] = useState<any>([]);
+    const [adress, setAdress] = useState<any>();
+    const [ufs, setUfs] = useState<any>([]);
+    const [cities, setCities] = useState<any>([]);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
     const isAuthenticated = useMemo(() => {
       return !!user;
     }, [user]);
-
-    const config = {
-        headers: { 'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTM5ODI5ODY4ZGYyNTM2NzJiZWJlMzEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2OTg1MTE0MjcsImV4cCI6MTY5ODg2NzgyN30.7Xs2tk1mflEb_a2UhC4Xy50NuzJT0355idION9fbT_4` }
-    } 
 
     const logoutRequest = useCallback(() => {
       setUser(undefined);
@@ -138,7 +245,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
    const getAllProducts = useCallback(() => {
-        const request = getProducts(config)
+        const request = getProducts()
         toast.promise(request,{
             pending: {
                 render() {
@@ -155,7 +262,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar produtos!'
                 }
             }
@@ -163,7 +269,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const productsById = useCallback((id:string) => {
-        const request = getProductById(id, config)
+        const request = getProductById(id)
         toast.promise(request,{
             pending: {
                 render() {
@@ -180,8 +286,91 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             error: {
                 render({ data }: any) {
                     //TODO
-                    console.log('ErrorProducts', data)
                     return 'Falha ao carregar produtos!'
+                }
+            }
+        })
+    },[])
+
+    const getAdressByPostalCode = useCallback((postalCode:string) => {
+        const request = adressByPostalCode(postalCode)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    //TODO
+                    setAdress(data?.data)
+                    let idUf = data?.data?.ibge.slice(0,2)
+                    getAllStates(idUf)
+                    return 'Endereço carregado com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    setAdress(null);
+                    return 'Falha ao carregar endereço!'
+                }
+            }
+        })
+    },[])
+
+    const getAllStates = useCallback((idUf?: string) => {
+        const request = states(idUf)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    if (data?.data?.id) {
+                        setUfs(new Array(data?.data));
+                        getCitiesByUf(data?.data?.id.toString());
+                    } else {
+                        setUfs(data?.data);
+                    }
+                    return ''
+                },
+                style: {
+                    display: 'none'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    return 'Falha ao carregar estados!'
+                }
+            }
+        })
+    },[])
+
+    const getCitiesByUf = useCallback((ufId:string) => {
+        const request = citiesByState(ufId)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    setCities(data?.data);
+                    return ''
+                },
+                style: {
+                    display: 'none'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    return 'Falha ao carregar cidades!'
                 }
             }
         })
@@ -198,7 +387,15 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 getAllProducts,
                 products,
                 productFiltered,
-                productsById
+                productsById,
+                adress,
+                getAdressByPostalCode,
+                getAllStates,
+                ufs,
+                getCitiesByUf,
+                cities,
+                drawerOpen,
+                setDrawerOpen,
             }}
         >
             {children}
