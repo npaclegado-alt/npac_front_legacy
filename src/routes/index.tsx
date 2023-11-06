@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound";
 import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 import Layout from "../components/layout";
 import { PageProducts } from "../pages/Products/pageProducts";
+import { StructurePage } from "../pages/Structures/structurePage";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -14,7 +15,7 @@ const RootRoutes: React.FC = () => {
       <Route element={<PrivateWrapper />}>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="structure" element={<></>} />
+          <Route path="structure" element={<StructurePage />} />
           <Route path="career" element={<></>} />
           <Route path="financial" element={<></>} />
           <Route path="documents" element={<></>} />
