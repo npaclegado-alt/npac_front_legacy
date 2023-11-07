@@ -1,0 +1,250 @@
+.careerPage {
+    display: grid;
+    gap: 20px 20px;
+    grid-template:
+        'careerPageAgentData careerPageAgentData' 500px
+        'careerPageAgentData careerPageAgentData'
+        'careerPageCommonAgent careerPageAufssPersonal' 125px
+        'careerPageCommonAgent careerPageAufssTotal' 125px
+    ;
+
+    .careerPageAgentData {
+        background-color: var(--white);
+        grid-area: careerPageAgentData;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+        text-align: center;
+
+        .careerPageAgentTitle {
+
+            h2 {
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: #2B2B2B;
+                margin-bottom: 8px;
+            }
+
+            span {
+                color: #D2D2D2;
+                font-size: 1.5rem;
+            }
+
+            margin-bottom: 2rem;
+        }
+
+
+
+        .careerPageAgentfront {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+
+            padding-bottom: 2rem;
+
+
+            .careerPageAgentfrontItem {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+
+                h4 {
+                    font-size: 1.7rem;
+                    margin-bottom: 0.8rem;
+                    color: #2B2B2B;
+                }
+
+                ul {
+                    list-style: none;
+                }
+
+                li {
+                    color: #8B8B8B;
+                    font-size: 1rem;
+                    margin-bottom: 0.8rem;
+
+                    span {
+                        color: #D2D2D2;
+                        margin-left: 0.5rem;
+                        font-size: 0.8rem;
+
+                    }
+
+                }
+            }
+
+
+        }
+
+        .careerPageAgentfrontBorder {
+
+            border: solid #F2F2F2 1px;
+            height: 100%;
+        }
+
+
+        .careerPageAgentInformation {
+            width: 100%;
+            display: flex;
+            border-top: solid 2px #F2F2F2;
+            height: 100%;
+            padding-top: 2rem;
+
+            .careerPageAgentInformationItem {
+                width: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                h5 {
+                    font-size: 5rem;
+                    font-weight: 500;
+                    color: #D2D2D2;
+                    margin-right: 1.5rem;
+                }
+
+                .careerPageAgentInformationDescriptionItem {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+
+                    span:nth-child(1) {
+                        color: #2B2B2B;
+                        font-weight: 600;
+                        font-size: 1.5rem;
+                        margin-bottom: 0.5rem;
+
+                    }
+
+                    span:nth-child(2) {
+                        color: #F04E23;
+                        font-size: 1rem;
+                    }
+                }
+            }
+
+        }
+
+
+
+    }
+
+    .careerPageCommonAgent {
+        background-color: var(--white);
+        grid-area: careerPageCommonAgent;
+        border-radius: 8px;
+        align-items: center;
+        text-align: center;
+        display: flex;
+        padding: 2rem;
+        flex-direction: column;
+        width: 100%;
+
+        .careerPageCommonAgentText {
+            width: 100%;
+
+            h4 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            h5 {
+                font-size: 2.8rem;
+                margin-bottom: 0.8rem;
+                font-weight: 500;
+                color: #8B8B8B
+            }
+
+            span {
+                color: #F04E23;
+                font-size: 1.5rem;
+
+            }
+
+            padding-bottom: 1.5rem;
+            border-bottom: solid 2px #F2F2F2;
+        }
+
+        p {
+            padding-top: 1.5rem;
+            color: #8B8B8B;
+        }
+
+        strong {
+            color: #2B2B2B;
+        }
+
+        span {
+            color: #F04E23;
+        }
+
+
+    }
+
+    .careerPageAufssPersonal {
+        background-color: var(--white);
+        grid-area: careerPageAufssPersonal;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        h4 {
+            font-size: 2rem; 
+        }
+
+        span {
+            color: #F04E23;
+            font-weight: 500; 
+            margin-left: 1rem;
+        }
+
+    }
+
+
+    .careerPageAufssTotal {
+        background-color: var(--white);
+        grid-area: careerPageAufssTotal;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; 
+        position: relative;
+
+
+        h4 {
+            font-size: 2rem; 
+        }
+
+        span {
+            color: #F04E23;
+            font-weight: 500; 
+            margin-left: 1rem;
+
+        }
+
+        button {
+            position: absolute;
+            height: 60px;
+            width: 60px;
+            background-color: #f04e23;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            border-radius: 50%;
+            background-image: url("../../assets/imgs/chatboxes.png");
+            background-repeat: no-repeat;
+            background-position: center; 
+            right: 15px; 
+            bottom: 15px;
+            
+          }
+    }
+
+}
+

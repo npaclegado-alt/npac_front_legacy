@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import PrivateWrapper from "./PrivateWrapper";
 import Login from "../pages/Auth/Login";
 import Dashboard from "../pages/Dashboard";
-import NotFound from "../pages/NotFound";
+import NotFound from "../pages/NotFound"; 
+import Career from "../pages/Career"
 import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 import Layout from "../components/layout";
 import { PageProducts } from "../pages/Products/pageProducts";
@@ -15,7 +16,7 @@ const RootRoutes: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="structure" element={<></>} />
-          <Route path="career" element={<></>} />
+          <Route path="career" element={<Career />} />
           <Route path="financial" element={<></>} />
           <Route path="documents" element={<></>} />
           <Route path="help" element={<></>} />
