@@ -1,7 +1,13 @@
 import { FileText } from 'lucide-react';
 
 import styles from './styleHeader.module.scss';
-export function HeaderReports(): JSX.Element {
+
+interface HeaderReportsProps {
+    onChangeModal: () => void;
+}
+export function HeaderReports({
+    onChangeModal
+}: HeaderReportsProps): JSX.Element {
     return (
         <div className={styles.containerHeader}>
             <div className={styles.boxReport}>
@@ -11,7 +17,9 @@ export function HeaderReports(): JSX.Element {
                 <p>
                     Parceiros (as)
                 </p>
-                <div>
+                <div
+                    onClick={() => { onChangeModal() }}
+                >
                     <span>
                         30
                     </span>

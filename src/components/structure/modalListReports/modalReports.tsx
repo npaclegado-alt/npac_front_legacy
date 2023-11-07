@@ -5,46 +5,24 @@ import { LineUserReport } from "./lineUserReport";
 import { CustomButton } from "../../buttons/customButton";
 
 import styles from './styleModal.module.scss';
-export function ModalReports(): JSX.Element {
 
-    const reportsMock = [
-        {
-            id: '#102030AZ',
-            name: 'João',
-            email: 'joao@email.com',
-            phone: 11999999999
-        },
-        {
-            id: '#102030AZ',
-            name: 'Maria',
-            email: 'maria@email.com',
-            phone: 11999999999
-        },
-        {
-            id: '#102030AZ',
-            name: 'José',
-            email: 'jose@email.com',
-            phone: 11999999999
-        },
-        {
-            id: '#102030AZ',
-            name: 'João da Silva',
-            email: 'joaosilva@email.com',
-            phone: 11999999999
-        },
-        {
-            id: '#102030AZ',
-            name: 'Maria da Silva',
-            email: 'mariasilva@email.com',
-            phone: 11999999999
-        },
-    ]
+interface ModalReportsProps {
+    changeModal: () => void;
+    showModal: boolean;
+    reports?: any[];
+}
+
+export function ModalReports({
+    changeModal,
+    showModal,
+    reports
+}: ModalReportsProps): JSX.Element {
     
     return (
         <Modal
-            open={true}
+            open={showModal}
             onOk={() => { }}
-            onCancel={() => { }}
+            onCancel={() => { changeModal() }}
             okButtonProps={{
                 style: {
                     display: 'none'
@@ -91,7 +69,7 @@ export function ModalReports(): JSX.Element {
                         </p>
                     </div>
                 </div>
-                {reportsMock.map((report) => {
+                {reports?.map((report) => {
                     return (
                         <LineUserReport
                             report={report}
