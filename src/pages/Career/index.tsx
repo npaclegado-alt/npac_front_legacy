@@ -1,13 +1,17 @@
 import { useContext, useEffect } from 'react'
 import styles from './career.module.scss'
 import { ContextApi } from '../../contexts'
+import { FrontText } from './components/FrontText'
+import { AuffText } from './components/AuffText'
 
 const Career = () => {
 
     const { user, getAllCareer, career } = useContext(ContextApi)
 
+
+    //TODO: mock id de buscar "65456fc6f35b5feca1f1d629"
     async function getRequestCareer() {
-        await getAllCareer("65456fc6f35b5feca1f1d629")
+        await getAllCareer(user?._id as string)
     }
 
     useEffect(() => {
@@ -28,65 +32,17 @@ const Career = () => {
                         </div>
 
                         <div className={styles.careerPageAgentfront}>
-                            <div className={styles.careerPageAgentfrontItem}>
-                                <h4>Frente 1</h4>
-                                <ul>
-                                    <li>{career.front1.AG} <span>AG</span></li>
-                                    <li>{career.front1.AA} <span>AA</span></li>
-                                </ul>
-                            </div>
-                            <div className={styles.careerPageAgentfrontBorder} />
-                            <div className={styles.careerPageAgentfrontItem}>
-                                <h4>Frente 2</h4>
-                                <ul>
-                                    <li>{career.front2.AG} <span>AG</span></li>
-                                    <li>{career.front2.AA} <span>AA</span></li>
-                                </ul>
-                            </div>
-                            <div className={styles.careerPageAgentfrontBorder} />
-
-                            <div className={styles.careerPageAgentfrontItem}>
-                                <h4>Frente 3</h4>
-                                <ul>
-                                    <li>{career.front3.AA} <span>AG</span></li>
-                                    <li>{career.front3.AG} <span>AA</span></li>
-                                </ul>
-                            </div>
-                            <div className={styles.careerPageAgentfrontBorder} />
-                            <div className={styles.careerPageAgentfrontItem}>
-                                <h4>Frente 4</h4>
-                                <ul>
-                                    <li>{career.front4.AG} <span>AG</span></li>
-                                    <li>{career.front4.AA} <span>AA</span></li>
-                                </ul>
-                            </div>
-                            <div className={styles.careerPageAgentfrontBorder} />
-                            <div className={styles.careerPageAgentfrontItem}>
-                                <h4>Outras Frentes</h4>
-                                <ul>
-                                    <li>{career.otherFronts.AG} <span>AG</span></li>
-                                    <li>{career.otherFronts.AA} <span>AA</span></li>
-                                </ul>
-                            </div>
+                            <FrontText title="Frente 1" AA={career.front1.AA} AG={career.front1.AG} borderRight={true} />
+                            <FrontText title="Frente 2" AA={career.front2.AA} AG={career.front2.AG} borderRight={true} />
+                            <FrontText title="Frente 3" AA={career.front3.AA} AG={career.front3.AG} borderRight={true} />
+                            <FrontText title="Frente 4" AA={career.front4.AA} AG={career.front4.AG} borderRight={true} />
+                            <FrontText title="Outras Frentes" AA={career.otherFronts.AA} AG={career.otherFronts.AG} />
                         </div>
 
                         <div className={styles.careerPageAgentInformation}>
-                            <div className={styles.careerPageAgentInformationItem}>
-                                <h5>AG</h5>
-                                <div className={styles.careerPageAgentInformationDescriptionItem}>
-                                    <span>Auffs Gerados</span>
-                                    <span>{career.generatedAuffs} Pontos Totais</span>
-                                </div>
-                            </div>
+                            <AuffText title='AG' text='Auffs Gerados' auff={career.generatedAuffs} />
                             <div className={styles.careerPageAgentfrontBorder} />
-
-                            <div className={styles.careerPageAgentInformationItem}>
-                                <h5>AA</h5>
-                                <div className={styles.careerPageAgentInformationDescriptionItem}>
-                                    <span>Auffs Aproveitados</span>
-                                    <span>{career.utilizedAuffs} Pontos Totais</span>
-                                </div>
-                            </div>
+                            <AuffText title='AA' text='Auffs Aproveitados' auff={career.utilizedAuffs} />
                         </div>
                     </div>
                     <div className={styles.careerPageCommonAgent}>
