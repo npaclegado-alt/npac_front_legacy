@@ -10,7 +10,6 @@ const Career = () => {
         await getAllCareer("65456fc6f35b5feca1f1d629")
     }
 
-
     useEffect(() => {
         getRequestCareer()
         // eslint-disable-next-line react-hooks/exhaustive-deps

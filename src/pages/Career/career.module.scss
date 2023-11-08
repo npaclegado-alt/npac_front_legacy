@@ -194,12 +194,13 @@
         width: 100%;
 
         h4 {
-            font-size: 2rem; 
+            font-size: 2rem;
+            text-align: center;
         }
 
         span {
             color: #F04E23;
-            font-weight: 500; 
+            font-weight: 500;
             margin-left: 1rem;
         }
 
@@ -213,17 +214,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100%; 
+        width: 100%;
         position: relative;
 
 
         h4 {
             font-size: 2rem; 
+            text-align: center;
+
         }
 
         span {
             color: #F04E23;
-            font-weight: 500; 
+            font-weight: 500;
             margin-left: 1rem;
 
         }
@@ -239,12 +242,130 @@
             border-radius: 50%;
             background-image: url("../../assets/imgs/chatboxes.png");
             background-repeat: no-repeat;
-            background-position: center; 
-            right: 15px; 
+            background-position: center;
+            right: 15px;
             bottom: 15px;
-            
-          }
+
+        }
     }
 
 }
 
+
+
+@media (max-width: 1000px) {
+    .careerPage {
+        display: grid;
+        gap: 20px 20px;
+        grid-template:
+            'careerPageAgentData careerPageAgentData' 500px
+            'careerPageAgentData careerPageAgentData'
+            'careerPageCommonAgent careerPageCommonAgent'
+            'careerPageAufssPersonal careerPageAufssPersonal' 125px
+            'careerPageAufssTotal careerPageAufssTotal' 125px;
+
+        
+          .careerPageAgentData {
+            padding: 1rem; 
+            .careerPageAgentfront {
+                flex-direction: column;
+                padding-bottom: 0;
+
+                .careerPageAgentfrontItem {
+                    padding-top: 1rem;
+                }
+
+                
+            }
+
+            .careerPageAgentInformation {
+                flex-direction: column;  
+                padding-top: 0;
+
+                .careerPageAgentInformationItem {
+                    flex-direction: column; 
+                    width: 100%;   
+                    padding-bottom: 1rem;
+                    h5 {
+                        margin-left: 0;
+                    } 
+
+                    .careerPageAgentInformationDescriptionItem {
+                        align-items: center;
+                    }
+
+                }
+            }
+          }
+
+
+
+       
+        .careerPageAufssTotal {
+            button {
+                background-color: red; 
+                width: 50px;
+                height: 50px;
+                right: 8px; 
+                bottom: 8px;
+            }
+        }
+    }
+} 
+
+
+
+@media (min-width: 1000px) and (max-width: 1300px) {
+    .careerPage {
+        display: grid;
+        gap: 20px 20px;
+        grid-template:
+            'careerPageAgentData careerPageAgentData' 500px
+            'careerPageAgentData careerPageAgentData'
+            'careerPageCommonAgent careerPageCommonAgent'
+            'careerPageAufssPersonal careerPageAufssPersonal' 125px
+            'careerPageAufssTotal careerPageAufssTotal' 125px;
+
+        
+          .careerPageAgentData {
+            .careerPageAgentfront {
+
+                .careerPageAgentfrontItem {
+                    padding-top: 1rem;
+                }
+
+                
+            }
+
+            .careerPageAgentInformation {
+
+                .careerPageAgentInformationItem {
+                    flex-direction: column; 
+                    width: 100%;   
+                    padding-bottom: 1rem;
+                    h5 {
+                        margin-left: 0;
+                    } 
+
+                    .careerPageAgentInformationDescriptionItem {
+                        align-items: center;
+                    }
+
+                }
+            }
+          }
+
+
+
+       
+        .careerPageAufssTotal {
+            button {
+                background-color: red; 
+                width: 50px;
+                height: 50px;
+                right: 8px; 
+                bottom: 8px;
+            }
+        }
+    }
+}
