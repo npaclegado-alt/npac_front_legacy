@@ -14,6 +14,41 @@ import {
     adressByPostalCode, citiesByState, states
 } from '../services/requests/postalService';
 
+import {getCareer} from '../services/requests/career'
+
+
+interface Career {
+    front1: {
+        AG: number,
+        AA: number,
+    }, 
+    front2: {
+        AG: number,
+        AA: number,
+    }, 
+    front3: {
+        AG: number,
+        AA: number,
+    }, 
+    front4: {
+        AG: number,
+        AA: number,
+    }, 
+
+    otherFronts: {
+        AG: number,
+        AA: number,
+    }, 
+
+    _id: string; 
+    generatedAuffs: number;  
+    utilizedAuffs: number; 
+    careerLevel: string;  
+    careerPoints: string; 
+    user: string;
+}
+
+
 interface User {
   _id: string;
   name: string;
@@ -38,7 +73,9 @@ interface IContextApi {
     getAllProducts: () => void,
     getAdressByPostalCode: (postalCode:string) => void,
     getAllStates: (idUf?:string) => void,
-    getCitiesByUf: (ufId:string) => void,
+    getCitiesByUf: (ufId:string) => void, 
+    getAllCareer: (id: string) => void; 
+    career: Career;
     ufs: [
         {
             id: number,
@@ -117,7 +154,9 @@ export const ContextApi = createContext<IContextApi>({
     setDrawerOpen: () => {},
     getAdressByPostalCode: (postalCode:string) => {},
     getAllStates: (idUf?:string) => {},
-    getCitiesByUf: (ufId:string) => {},
+    getCitiesByUf: (ufId:string) => {}, 
+    getAllCareer: (id: string) => {}, 
+    career: {} as Career,
     ufs: [
         {
             id: 0,
@@ -201,7 +240,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     const [adress, setAdress] = useState<any>();
     const [ufs, setUfs] = useState<any>([]);
     const [cities, setCities] = useState<any>([]);
-    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false); 
+    const [career, setCareer] = useState<Career>({} as Career)
 
     const isAuthenticated = useMemo(() => {
       return !!user;
@@ -374,7 +414,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
+    },[]) 
+     
+
+    const getAllCareer = useCallback((id: string) => {
+        const request = getCareer(id)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    //TODO
+                    setCareer(data?.data)
+                    return 'Produtos carregados com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    return 'Falha ao carregar produtos!'
+                }
+            }
+        })
     },[])
+
             
 
     return (
@@ -395,7 +461,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 getCitiesByUf,
                 cities,
                 drawerOpen,
-                setDrawerOpen,
+                setDrawerOpen, 
+                getAllCareer, 
+                career
             }}
         >
             {children}
