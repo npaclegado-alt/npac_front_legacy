@@ -1,0 +1,21 @@
+.financialPage{
+  display: grid; 
+  gap: 20px 20px;  
+  grid-template: '';
+
+  .financialBankData {
+    background-color: yellow;
+  }
+
+  .financialAccountAvailable {
+    background-color: red;
+  } 
+  .financialInvestments{
+    background-color: blue;
+  } 
+
+  .financialProfits{
+    background-color: pink;
+  }
+
+}
