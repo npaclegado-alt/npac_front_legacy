@@ -19,12 +19,12 @@ const Career = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    //TODO: Os dados Auffs Pessoais e Total de Auffs não estão sendo retornado
     const careerData = Object.keys(career).length > 0
     return (
         <>
-
             {
-                careerData && <section className={styles.careerPage}>
+              careerData && <section className={styles.careerPage}>
                     <div className={styles.careerPageAgentData}>
                         <div className={styles.careerPageAgentTitle}>
                             <h2>{user?.name}</h2>
@@ -62,8 +62,6 @@ const Career = () => {
                     </div>
                 </section>
             }
-
-
         </>
     )
 }
