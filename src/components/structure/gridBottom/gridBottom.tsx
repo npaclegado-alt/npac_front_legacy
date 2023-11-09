@@ -1,10 +1,21 @@
-import React from 'react';
+import { 
+    useContext, 
+    useEffect 
+} from 'react';
 import { FileText } from 'lucide-react';
 
 import styles from './styleGridBottom.module.scss';
 import { Flow } from '../componentFlow/componentFlow';
+import { ContextApi } from '../../../contexts';
+import { useExtractChildren } from '../../../hooks/useExtractChildren';
+
 export function GridButtom(): JSX.Element {
-  
+    const {
+        getSpheresByUser,
+        spheresResp,
+        user
+    } = useContext(ContextApi);
+      
     const othersReports = [
         {
             id: 1,
@@ -37,6 +48,14 @@ export function GridButtom(): JSX.Element {
             quantity: 30
         }
     ]
+
+    
+    useEffect(() => {
+        const userId: string | any = user?._id;
+        getSpheresByUser(userId);
+    }, []);
+    
+    const children = useExtractChildren(spheresResp);
 
   return (
     <div className={styles.container}>
@@ -71,7 +90,9 @@ export function GridButtom(): JSX.Element {
                 Abra o nosso mapa com a estrutura completa de suas esferas, podendo acessar os detalhes de todos que estão fazendo parte.
             </p>
             <div className={styles.boxFlow}>
-                <Flow />
+                <Flow 
+                    children={children ?? []}
+                />
             </div>
         </div>
     </div>

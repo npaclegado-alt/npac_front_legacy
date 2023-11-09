@@ -13,6 +13,7 @@ import api from "../services/api";
 import {
     adressByPostalCode, citiesByState, states
 } from '../services/requests/postalService';
+import { getSpheres } from "../services/requests/spheres";
 
 interface User {
   _id: string;
@@ -39,6 +40,7 @@ interface IContextApi {
     getAdressByPostalCode: (postalCode:string) => void,
     getAllStates: (idUf?:string) => void,
     getCitiesByUf: (ufId:string) => void,
+    getSpheresByUser: (userId: string) => void,
     ufs: [
         {
             id: number,
@@ -104,7 +106,15 @@ interface IContextApi {
                 }
             }
         }
-    ]
+    ],
+    spheresResp:{
+            userId: string,
+            role: string,
+            name: string,
+            email: string,
+            children: any[],
+            avatar: string
+        }
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -118,6 +128,7 @@ export const ContextApi = createContext<IContextApi>({
     getAdressByPostalCode: (postalCode:string) => {},
     getAllStates: (idUf?:string) => {},
     getCitiesByUf: (ufId:string) => {},
+    getSpheresByUser: (userId: string) => {},
     ufs: [
         {
             id: 0,
@@ -183,7 +194,15 @@ export const ContextApi = createContext<IContextApi>({
                 }
             }
         }
-    ]
+    ],
+    spheresResp: {
+            userId: '',
+            role: '',
+            name: '',
+            email: '',
+            children: [],
+            avatar: ''
+        }
 })
 
 interface Props {
@@ -202,6 +221,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     const [ufs, setUfs] = useState<any>([]);
     const [cities, setCities] = useState<any>([]);
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+    const [spheresResp, setSpheresResp] = useState<any>([]);
 
     const isAuthenticated = useMemo(() => {
       return !!user;
@@ -375,6 +395,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             }
         })
     },[])
+
+    const getSpheresByUser = useCallback((userId: string | undefined) => {
+        console.log('getSpheresByUser userId', userId);
+        const request = getSpheres(userId)
+        toast.promise(request,{
+            pending: {
+                render() {
+                    console.log('dataContextPending', 'userId', userId);    
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    console.log('dataContext', data, 'userId', userId);
+                    setSpheresResp(data?.data);
+                    return 'Buscando Dados...'
+                },
+            },
+            error: {
+                render({ data }: any) {
+                    console.log('dataContextError', data, 'userId', userId);
+                    //TODO
+                    return 'Falha ao carregar Esferas!'
+                }
+            }
+        })
+    },[])
             
 
     return (
@@ -396,6 +443,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 cities,
                 drawerOpen,
                 setDrawerOpen,
+                spheresResp,
+                getSpheresByUser
             }}
         >
             {children}
