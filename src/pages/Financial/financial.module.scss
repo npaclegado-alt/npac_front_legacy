@@ -1,21 +1,250 @@
-.financialPage{
-  display: grid; 
-  gap: 20px 20px;  
-  grid-template: '';
+.financialPage {
+  display: grid;
+  grid-gap: 15px 15px;
+  grid-template: 'financialBankData financialBankData financialBankData financialAccountAvailable' 500px 'financialInvestments financialInvestments financialProfits financialProfits' 300px;
+  width: 100%;
 
-  .financialBankData {
-    background-color: yellow;
+  .financialBankData { 
+    grid-area: financialBankData;
+    background-color: var(--white);    
+    grid-column: 1 / 4;
+    border-radius: 8px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center; 
+    padding: 2rem; 
+    width: 100%; 
+
+    h1 {
+      font-size: 2.5rem; 
+    }  
+    .financialBankDataButton {
+      border: none; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center;  
+      padding: 1rem;  
+      font-size: 1rem; 
+      font-weight: bold; 
+      color: #F04E23; 
+      background-color: transparent;
+
+      span {
+        padding-left: 1rem;
+      }
+    } 
+ 
+   
+    .financialBankDataBorder {
+      border: solid 1px #f2f2f2; 
+      height: 100%;
+    }
+  
+
+    .financialBankDataUser {
+      display: flex;  
+      width: 100%;
+      justify-content: space-between;   
+      padding: 2rem;  
+      height: 100%;
+
+      border-bottom: solid 2px #f2f2f2 ;
+
+      
+     
+      .financialBankDataUserItem {
+        width: 100%; 
+        display: flex; 
+        flex-direction: column;  
+        text-align: center;
+
+        h3 {
+          font-size: 1.7rem; 
+          margin-bottom: 0.8rem;
+        } 
+
+        span {
+          color: #8B8B8B; 
+          font-size: 1rem;
+        }
+      }
+    } 
+
+    .financialBankDataAccountUser {
+      display: flex;  
+      width: 100%;
+      justify-content: space-between;   
+      padding: 2rem;  
+      height: 100%;
+
+    
+      .financialBankDataUserItem {
+        width: 100%; 
+        display: flex; 
+        flex-direction: column;  
+        text-align: center;
+
+        h3 {
+          font-size: 1.7rem; 
+          margin-bottom: 0.8rem;
+        } 
+
+        span {
+          color: #8B8B8B; 
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  .financialAccountAvailable {
+    grid-area: financialAccountAvailable;
+    background-color: var(--white);    
+    border-radius: 8px; 
+    display: flex; 
+    align-items: center; 
+    flex-direction: column; 
+    text-align: center; 
+    padding: 2rem;    
+
+    .financialAccountAvailableTransfer {
+      padding-top: 2rem; 
+      padding-bottom: 5rem;
+    }
+
+    .financialAccountAvailableItem {
+      border-bottom: solid 2px #F2F2F2; 
+      width: 100%; 
+      text-align: center; 
+      display: flex;
+      justify-content: center; 
+      flex-direction: column; 
+      align-items: center; 
+      padding-bottom: 2rem;
+    }
+
+    h2{
+      font-size: 2rem; 
+      max-width: 240px; 
+      width: 100%; 
+      margin-bottom: 1rem; 
+    } 
+
+    span {
+      font-size: 2rem; 
+      color: #F04E23;
+    } 
+
+    h3 {
+      font-size: 1.5rem; 
+      margin-bottom: 1rem;
+    } 
+
+    p { 
+      color: #8B8B8B; 
+      font-size: 1rem; 
+      max-width: 270px; 
+      width: 100%; 
+    } 
+
+
+    button {
+      width: 100%; 
+      height: 50px; 
+      background: #F04E23; 
+      outline: none; 
+      text-align: center; 
+      justify-content: center;
+      align-items: center; 
+      display: flex; 
+      outline: none; 
+      border-radius: 12px; 
+      border: none; 
+      font-size: 1rem; 
+      color: #fff; 
+      font-weight: 600;
+    }
   }
 
-  .financialAccountAvailable {
-    background-color: red;
-  } 
-  .financialInvestments{
-    background-color: blue;
-  } 
+  .financialInvestments {
+    grid-area: financialInvestments;
+    background-color: var(--white);    
+    border-radius: 8px;  
+    display: flex;
+    flex-direction: column;
+    padding: 2rem; 
+    align-items: center; 
+    
+    h3 {
+      font-size: 2rem;
+      padding-bottom: 1rem;
+    } 
 
-  .financialProfits{
-    background-color: pink;
+    .financialSeeInvestment {
+      height: 100%; 
+      background-color: #F2F2F2; 
+      width: 100%; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+
+      span {
+        color: #D2D2D2; 
+        font-size: 1.5rem;  
+        padding-left: 1rem;
+      }
+    }
+
+
+  }
+
+  .financialProfits {
+    grid-area: financialProfits;
+    background-color: var(--white);    
+    border-radius: 8px; 
+    display: flex;
+    flex-direction: column;
+    padding: 2rem; 
+    align-items: center;  
+    position: relative;
+
+    
+    h3 {
+      font-size: 2rem;
+      padding-bottom: 1rem;
+    } 
+
+    .financialSeeProfits {
+      height: 100%; 
+      background-color: #F2F2F2; 
+      width: 100%; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;  
+      position: relative;
+
+      span {
+        color: #D2D2D2; 
+        font-size: 1.5rem;  
+        padding-left: 1rem;
+      }
+    } 
+
+    button { 
+      position: absolute; 
+      right: 15px; 
+      bottom: 20px;
+      height: 55px;
+      width: 55px;
+      background-color: #f04e23;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 50%;
+      background-image: url("../../assets/imgs/chatboxes.png");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
   }
 
 }
