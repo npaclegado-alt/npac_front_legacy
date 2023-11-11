@@ -1,0 +1,65 @@
+.container {
+  background-color: var(--white);
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.icon {
+  color: var(--gray-300);
+  cursor: pointer;
+  &:hover {
+    color: var(--orange-700);
+  }
+}
+
+.button {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form {
+  margin-top: 1rem;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.label {
+  margin-left: 0.1rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.checkbox {
+  margin-left: 0.5rem;
+}
