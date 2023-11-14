@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { 
+    useState,
+    useEffect,
+    useContext
+} from "react";
 
 import { HeaderReports } from "../../components/structure/headerReports/headerReports";
 import { ModalReports } from "../../components/structure/modalListReports/modalReports";
 import { GridButtom } from "../../components/structure/gridBottom/gridBottom";
+import { ContextApi } from "../../contexts";
+import { useExtractChildren } from "../../hooks/useExtractChildren";
 
 export function StructurePage(): JSX.Element {
+    const {
+        getSpheresByUser,
+        spheresResp,
+        user
+    } = useContext(ContextApi);
     const [showModal, setShowModal] = useState(false);
 
     const onChangeModal = () => {
@@ -44,6 +55,13 @@ export function StructurePage(): JSX.Element {
         },
     ]
 
+    
+    useEffect(() => {
+        const userId: string | any = user?._id;
+        getSpheresByUser(userId);
+    }, []);
+    
+    const children = useExtractChildren(spheresResp);
     return (
         <div style={{
             width: '100%',

@@ -3,15 +3,12 @@ import { Position, MarkerType } from 'reactflow';
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
 function getNodeIntersection(intersectionNode: any, targetNode: any) {
-  console.log('1', intersectionNode, targetNode);
   // https://math.stackexchange.com/questions/1724792/an-algorithm-for-finding-the-intersection-point-between-a-center-of-vision-and-a
   const {
     width: intersectionNodeWidth,
     height: intersectionNodeHeight,
     positionAbsolute: intersectionNodePosition,
   } = intersectionNode;
-
-  console.log('2', intersectionNodeWidth, intersectionNodeHeight, intersectionNodePosition);
   const targetPosition = targetNode.positionAbsolute;
 
   const w = intersectionNodeWidth / 2;

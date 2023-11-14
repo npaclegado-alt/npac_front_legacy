@@ -8,6 +8,7 @@ import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 import Layout from "../components/layout";
 import { PageProducts } from "../pages/Products/pageProducts";
 import { StructurePage } from "../pages/Structures/structurePage";
+import { SpheresFullWideth } from "../pages/SpheresFull/spheresFull";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const RootRoutes: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="structure" element={<StructurePage />} />
+          <Route path="spheres" element={<SpheresFullWideth />} />
           <Route path="career" element={<></>} />
           <Route path="financial" element={<></>} />
           <Route path="documents" element={<></>} />

@@ -6,12 +6,11 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
   if (!fromNode) {
     return null;
   }
-
   const targetNode = {
     id: 'connection-target',
     width: 1,
     height: 1,
-    positionAbsolute: { x: toX, y: toY }
+    positionAbsolute: { x: toX, y: toY },
   };
 
   const { sx, sy } = getEdgeParams(fromNode, targetNode);
@@ -28,7 +27,7 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
       <g>
         <path
             fill="none"
-            stroke="#222"
+            stroke="#F04E23"           
             strokeWidth={1.5}
             className="animated"
             d={edgePath}

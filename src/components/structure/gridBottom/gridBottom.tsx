@@ -1,15 +1,23 @@
 import { 
     useContext, 
-    useEffect 
+    useEffect, 
+    useState
 } from 'react';
-import { FileText } from 'lucide-react';
+import { 
+    FileText,
+    XSquare
+ } from 'lucide-react';
 
 import styles from './styleGridBottom.module.scss';
 import { Flow } from '../componentFlow/componentFlow';
 import { ContextApi } from '../../../contexts';
 import { useExtractChildren } from '../../../hooks/useExtractChildren';
+import { CustomButton } from '../../buttons/customButton';
+import { useNavigate } from 'react-router-dom';
 
 export function GridButtom(): JSX.Element {
+    const navigation = useNavigate();
+    const [fullFlow, setFullFlow] = useState(false);
     const {
         getSpheresByUser,
         spheresResp,
@@ -48,12 +56,15 @@ export function GridButtom(): JSX.Element {
             quantity: 30
         }
     ]
-
     
     useEffect(() => {
         const userId: string | any = user?._id;
         getSpheresByUser(userId);
     }, []);
+
+    const changeFullFlow = () => {
+        setFullFlow(!fullFlow);
+    }
     
     const children = useExtractChildren(spheresResp);
 
@@ -89,11 +100,52 @@ export function GridButtom(): JSX.Element {
             <p className={styles.description}>
                 Abra o nosso mapa com a estrutura completa de suas esferas, podendo acessar os detalhes de todos que estão fazendo parte.
             </p>
-            <div className={styles.boxFlow}>
+            <div 
+                style={{
+                    width: fullFlow ? window.innerWidth * 0.75 : '100%',
+                    height: fullFlow ? '82%' : '100%',
+                    position: fullFlow ? 'fixed' : 'initial',
+                    bottom: fullFlow ? '1.5rem' : 'initial',
+                    right: fullFlow ? '2.5rem' : 'initial',
+                    left: fullFlow ? 'initial' : 'initial',
+                    padding: fullFlow ? '1rem' : 'initial',
+                    backgroundColor: '#fff',
+                    borderRadius: '0.45rem',
+                }}
+            >
+                <div
+                    style={{
+                        position: 'absolute',
+                        right: '1.5rem',
+                        top: '1.5rem',
+                        zIndex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.75)',
+                        justifyContent: 'flex-end',
+                        backgroundColor: '#fff',
+                        borderRadius: '0.35rem',
+                        padding: '0.13rem',
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => changeFullFlow()}
+                >
+                    <XSquare />
+                </div>
                 <Flow 
                     children={children ?? []}
+                    fullFlow={fullFlow}
                 />
             </div>
+            <CustomButton
+                style={{
+                    width: '100%',
+                    marginTop: '1rem',
+                }}
+                onClick={() => changeFullFlow()}
+            >
+                Ver Estrutura Completa
+            </CustomButton>
         </div>
     </div>
   );

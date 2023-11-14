@@ -397,25 +397,24 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },[])
 
     const getSpheresByUser = useCallback((userId: string | undefined) => {
-        console.log('getSpheresByUser userId', userId);
         const request = getSpheres(userId)
         toast.promise(request,{
             pending: {
-                render() {
-                    console.log('dataContextPending', 'userId', userId);    
+                render() {  
                     return 'Carregando...'
                 }
             },
             success: {
                 render({ data }: any) {
-                    console.log('dataContext', data, 'userId', userId);
                     setSpheresResp(data?.data);
-                    return 'Buscando Dados...'
+                    return ''
                 },
+                style: {
+                    display: 'none'
+                }
             },
             error: {
                 render({ data }: any) {
-                    console.log('dataContextError', data, 'userId', userId);
                     //TODO
                     return 'Falha ao carregar Esferas!'
                 }

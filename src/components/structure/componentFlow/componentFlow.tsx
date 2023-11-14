@@ -21,24 +21,57 @@ import FloatingEdge from './floatingEdge';
 import FloatingConnectionLine from './floatingConnectionLine';
 
 import 'reactflow/dist/style.css';
+import styles from './styleFlow.module.scss';
 
 interface FlowProps {
     children: any;
+    fullFlow: boolean;
 }
 
 const edgeTypes = {
     floating: FloatingEdge,
-  };
+};
 
 export function Flow({
-    children
+    children,
+    fullFlow
 }: FlowProps): JSX.Element {
     let initialNodes: Node<{ label: string }, string | undefined>[] = [];
     let initialEdges: any = [];
     const componentRef: any = useRef<HTMLDivElement>();
-    const [nodesInitials, setNodesInitials] = React.useState<any>([]);
     
-    console.log('nodesInitials', children);
+    const changeNode = { default: ({ data }: any) => {
+        return (
+            <div style={data?.style}>
+                {data?.avatar ? (
+                    <img
+                        src={data?.avatar}
+                        alt={data?.label}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '2rem',
+                        }}
+                    />
+                ) : (
+                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                        {data?.label}
+                    </span>
+                )}
+            </div>
+        )
+        },
+    }
+
+    function obterAvatarOuIniciais(nome: string) {
+            const iniciais = nome?.split(' ')
+                .map(word => word[0])
+                .slice(0, 2) // Pegar as duas primeiras iniciais
+                .join('')
+                .toUpperCase();
+            return iniciais;
+    }
+    
     useEffect(() => {
         const componentWidth: any = componentRef?.current?.offsetWidth;
         const componentHeight: any = componentRef?.current?.offsetHeight;
@@ -54,14 +87,30 @@ export function Flow({
                 return index === 0 ? {
                     id: `${item?.userId}`,
                     position: { x: left, y: top },
-                    data: { label: item?.name?.slice(0, 2) },
+                    data: { 
+                        label: <div className={styles.customLabel}>
+                                    {item.avatar ?
+                                        <img src={item.avatar} alt="" /> : 
+                                        <p>
+                                            {obterAvatarOuIniciais(item.name)}
+                                        </p>
+                                    }
+                                </div>, 
+                        avatar: item.avatar ?? '',
+                    },
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
-                        borderRadius: '2rem', 
+                        padding: 0,
+                        borderRadius: '2rem',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        fontWeight: 'semi-bold',
+                        fontSize: '1.2rem',
+                        color: '#F04E23',
+                        backgroundColor: 'transparent',
+                        boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
                     } as React.CSSProperties,
                 } : {
                     id: `${item?.userId}`,
@@ -69,20 +118,36 @@ export function Flow({
                         x: x, 
                         y: y 
                     },
-                    data: { label: item?.name?.slice(0, 2) },
+                    data: { 
+                        label: <div className={styles.customLabel}>
+                                    {item.avatar ?
+                                        <img src={item.avatar} alt="" /> : 
+                                        <p>
+                                            {obterAvatarOuIniciais(item.name)}
+                                        </p>
+                                    }
+                                </div>, 
+                        avatar: item.avatar ?? ''
+                    },
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
                         borderRadius: '2rem',
+                        borderColor: '#FFFFFF', 
+                        borderWidth: '2px',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        fontWeight: 'semi-bold',
+                        fontSize: '1.2rem',
+                        color: '#F04E23',
+                        backgroundColor: 'transparent',
+                        boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',                       
                     } as React.CSSProperties,
                 }
             });
 
             if (initialNodes) {
-                console.log('nodesInitials', initialNodes);
                 setNodes(initialNodes)
             }
         }
@@ -94,7 +159,7 @@ export function Flow({
                 target: `${item?.userId}`,
                 type: 'floating',
                 markerEnd: { 
-                    type: MarkerType.Arrow 
+                    type: MarkerType.Arrow, 
                 }
             }
         });
@@ -102,7 +167,7 @@ export function Flow({
         if (initialEdges) {
             setEdges(initialEdges)
         }
-    }, [componentRef, children]);
+    }, [componentRef, children, fullFlow]);
 
     //[{ id: 'e1-2', source: '1', target: '2' }];
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -130,9 +195,10 @@ export function Flow({
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             edgeTypes={edgeTypes}
+            
             connectionLineComponent={FloatingConnectionLine}
             >
-                {false && <MiniMap />}
+                {fullFlow && <MiniMap />}
                 <Controls />
                 <Background 
                     variant={variant} 
