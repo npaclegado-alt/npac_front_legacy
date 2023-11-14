@@ -1,0 +1,26 @@
+.AgentProfilePage  {
+  display: grid; 
+  gap: 15px 15px; 
+  grid-template:  'PersonalData PersonalData StreetData StreetData' 193px
+                  'PersonalData PersonalData StreetData StreetData'  193px 
+                  'PersonalData PersonalData ProofData ProofData' 193px
+                  'PersonalData PersonalData ProofData ProofData' 193px
+  ;
+
+ .PersonalData {
+    grid-area: PersonalData; 
+    background-color: var(--white); 
+    border-radius: 8px;
+ }  
+
+ .StreetData {
+    grid-area: StreetData; 
+    background-color: var(--white); 
+    border-radius: 8px; } 
+
+ .ProofData {
+    grid-area: ProofData; 
+    background-color: var(--white); 
+    border-radius: 8px; } 
+
+}
