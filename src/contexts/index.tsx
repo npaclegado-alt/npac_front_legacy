@@ -15,6 +15,8 @@ import api from "../services/api";
 import {
     adressByPostalCode, citiesByState, states
 } from '../services/requests/postalService';
+import { FormDataTransaction, formatDataForApi } from "../pages/ProductsDetails/domain/Formatters";
+import { submitTransaction } from "../services/requests/transactions";
 
 interface User {
     expiresIn: string;
@@ -108,7 +110,8 @@ interface IContextApi {
                 }
             }
         }
-    ]
+    ];
+    startTransaction: (formData: FormDataTransaction) => Promise<void>;
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -187,7 +190,8 @@ export const ContextApi = createContext<IContextApi>({
                 }
             }
         }
-    ]
+    ],
+    startTransaction: async (formData: FormDataTransaction) => { },
 })
 
 interface Props {
@@ -249,6 +253,24 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         },
         [navigate]
     );
+
+    const startTransaction = useCallback(async (formData: FormDataTransaction) => {
+        try {
+            const payload = formatDataForApi(formData, productFiltered, adress);
+
+            if (!payload) {
+                toast.error('Esta faltando uma informacao, por favor check o formulario e tente novamente');
+                return;
+            }
+
+            const { checkouts } = await submitTransaction(payload);
+            window.location.href = checkouts[0].payment_url;
+        } catch (error: any) {
+            toast.error('Erro ao procesar a compra', error)
+
+        }
+    }, [productFiltered, adress]);
+
 
     const getAllProducts = useCallback(() => {
         const request = getProducts()
@@ -402,6 +424,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 cities,
                 drawerOpen,
                 setDrawerOpen,
+                startTransaction
             }}
         >
             {children}
