@@ -27,7 +27,7 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
       <g>
         <path
             fill="none"
-            stroke="#F04E23"           
+            stroke="#222"           
             strokeWidth={1.5}
             className="animated"
             d={edgePath}
@@ -38,7 +38,7 @@ function FloatingConnectionLine({ toX, toY, fromPosition, toPosition, fromNode }
             fill="#fff"
             r={3}
             stroke="#222"
-            strokeWidth={1.5}
+            strokeWidth={0}
         />
       </g>
   );

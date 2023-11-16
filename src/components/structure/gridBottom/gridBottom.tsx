@@ -68,6 +68,8 @@ export function GridButtom(): JSX.Element {
     
     const children = useExtractChildren(spheresResp);
 
+    console.log('childrenFirst', children, 'spheresResp', spheresResp);
+
   return (
     <div className={styles.container}>
         <div className={styles.contentWhite}>

@@ -15,17 +15,31 @@ import ReactFlow, {
     Node,
     BaseEdge,
     MarkerType,
-} from 'reactflow';
+    } from 'reactflow';
 
 import FloatingEdge from './floatingEdge';
 import FloatingConnectionLine from './floatingConnectionLine';
 
 import 'reactflow/dist/style.css';
 import styles from './styleFlow.module.scss';
+import useCalculatePositions from '../../../hooks/calculatePositionNode';
 
 interface FlowProps {
     children: any;
     fullFlow: boolean;
+}
+
+interface NodeData {
+    label: React.ReactNode;
+    avatar: any;
+}
+
+interface NodeProps {
+    id: string;
+    position: any;
+    data: NodeData;
+    style: React.CSSProperties;
+    children?: any;
 }
 
 const edgeTypes = {
@@ -36,32 +50,13 @@ export function Flow({
     children,
     fullFlow
 }: FlowProps): JSX.Element {
-    let initialNodes: Node<{ label: string }, string | undefined>[] = [];
+let initialNodes: NodeProps[] | any = [];
     let initialEdges: any = [];
     const componentRef: any = useRef<HTMLDivElement>();
     
-    const changeNode = { default: ({ data }: any) => {
-        return (
-            <div style={data?.style}>
-                {data?.avatar ? (
-                    <img
-                        src={data?.avatar}
-                        alt={data?.label}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '2rem',
-                        }}
-                    />
-                ) : (
-                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
-                        {data?.label}
-                    </span>
-                )}
-            </div>
-        )
-        },
-    }
+    const nodesHook = useCalculatePositions(children, componentRef);
+
+    console.log('nodesHook', nodesHook)
 
     function obterAvatarOuIniciais(nome: string) {
             const iniciais = nome?.split(' ')
@@ -76,28 +71,33 @@ export function Flow({
         const componentWidth: any = componentRef?.current?.offsetWidth;
         const componentHeight: any = componentRef?.current?.offsetHeight;
         const left = componentWidth / 2.1;
-        const top = componentHeight / 2.4;
+        const top = componentHeight / 2.4; 
         
-        if (!isNaN(left) && !isNaN(top)) {
-            initialNodes = children?.map((item: any, index: number) => {
-                const degrees = index * (360 / 8);
+        {/*if (!isNaN(left) && !isNaN(top)) {
+            initialNodes = nodesHook?.map((item: any, index: number) => {
+                const parentNode = children.find((node: any) => node.userId === item?.ref);
+
+                const centerX = parentNode ? parentNode?.position?.x : left;
+                const centerY = parentNode ? parentNode?.position?.y : top;
+
+                const degrees = index * (360 / children.length);
                 const radians = degrees * (Math.PI / 180);
-                const x = 80 * Math.cos(radians) + left;
-                const y = 80 * Math.sin(radians) + top;
+                const x = 80 * Math.cos(radians) + centerX;
+                const y = 80 * Math.sin(radians) + centerY;
                 return index === 0 ? {
-                    id: `${item?.userId}`,
-                    position: { x: left, y: top },
-                    data: { 
-                        label: <div className={styles.customLabel}>
-                                    {item.avatar ?
-                                        <img src={item.avatar} alt="" /> : 
+                id: `${item?.userId}`,
+                position: { x: left, y: top },
+                data: { 
+                    label: <div className={styles.customLabel}>
+                                {item.avatar ?
+                                    <img src={item.avatar} alt="" /> : 
                                         <p>
                                             {obterAvatarOuIniciais(item.name)}
                                         </p>
-                                    }
-                                </div>, 
-                        avatar: item.avatar ?? '',
-                    },
+                                                                        }
+                            </div>, 
+                    avatar: item.avatar ?? '',
+                                    },
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
@@ -115,8 +115,8 @@ export function Flow({
                 } : {
                     id: `${item?.userId}`,
                     position: { 
-                        x: x, 
-                        y: y 
+                        x,
+                        y,
                     },
                     data: { 
                         label: <div className={styles.customLabel}>
@@ -132,22 +132,68 @@ export function Flow({
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
-                        borderRadius: '2rem',
-                        borderColor: '#FFFFFF', 
-                        borderWidth: '2px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        fontWeight: 'semi-bold',
-                        fontSize: '1.2rem',
-                        color: '#F04E23',
-                        backgroundColor: 'transparent',
-                        boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',                       
-                    } as React.CSSProperties,
-                }
+                    borderRadius: '2rem',
+                    borderColor: '#FFFFFF',
+                    borderWidth: '2px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontWeight: 'semi-bold',
+                    fontSize: '1.2rem',
+                    color: '#F04E23',
+                    backgroundColor: 'transparent',
+                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
+                } as React.CSSProperties,
+}
             });
-
+        
             if (initialNodes) {
+                console.log('iniTialNodes', initialNodes)
+                setNodes(initialNodes)
+            }
+        }*/}
+
+        if (nodesHook) {
+            console.log('iniTialNodes', nodesHook)
+            initialNodes = nodesHook[0]?.children?.map((item: any, index: number) => {
+                const { x, y } = item.position;
+                return {
+                    id: `${item?.userId}`,
+                    position: { 
+                        x,
+                        y,
+                    },
+                    data: { 
+                        label: <div className={styles.customLabel}>
+                                    {item.avatar ?
+                                        <img src={item.avatar} alt="" /> : 
+                                        <p>
+                                            {obterAvatarOuIniciais(item.name)}
+                                        </p>
+                                    }
+                                </div>, 
+                        avatar: item.avatar ?? ''
+                    },
+                    style: { 
+                        width: '2rem', 
+                        height: '2rem', 
+                    borderRadius: '2rem',
+                    borderColor: '#FFFFFF',
+                    borderWidth: '2px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontWeight: 'semi-bold',
+                    fontSize: '1.2rem',
+                    color: '#F04E23',
+                    backgroundColor: 'transparent',
+                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
+                } as React.CSSProperties,
+}
+            });
+        
+            if (initialNodes) {
+                console.log('iniTialNodes', initialNodes)
                 setNodes(initialNodes)
             }
         }
@@ -168,8 +214,8 @@ export function Flow({
             setEdges(initialEdges)
         }
     }, [componentRef, children, fullFlow]);
-
-    //[{ id: 'e1-2', source: '1', target: '2' }];
+   
+//[{ id: 'e1-2', source: '1', target: '2' }];
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     

@@ -1,15 +1,62 @@
 .customLabel {
-    width: 2rem;
-    height: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    align-content: center;
     border-radius: 2rem;
-    border: 2px solid #FFFFFF;
 
     img {
-        width: 2rem;
-        height: 1.8rem;
-        border-radius: 2rem;
+        width: 1.9rem;
+        height: 1.9rem;
+        border-radius: 1.9rem;
+    }
+}
+
+.boxLabelAvatar {
+    position: fixed;
+    bottom: -17px;
+    background-color: var(--white);
+    padding: 0 0.2rem;
+    border-radius: 0.15rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+        font-size: 0.5rem;
+        font-weight: 700;
+        color: var(--black-700);
+    }
+}
+
+.boxLabelAvatar[typeof='showInfos'] {
+    bottom: -3rem;
+    position: absolute;
+}
+
+.boxInfoSpheras {
+    padding: 0.25rem 0;
+
+    .name {
+        font-size: 0.37rem;
+        font-weight: 700;
+        color: var(--orange-700);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    p {
+        font-weight: 400;
+        color: var(--black-700);
+        font-size: 0.35rem;
+
+        & + p {
+            margin-top: 0.2rem;
+        }
     }
 }
