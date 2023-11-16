@@ -1,13 +1,25 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { Outlet } from "react-router-dom";
-import styles from "./styleLayout.module.scss";
+import styles from "./styleAdminLayout.module.scss";
 import Drawer from "./components/Drawer";
-import { ContextApi } from "../../contexts";
 
-const Layout = () => {
-  const { dimensions } = useContext(ContextApi);
+const AdminLayout = () => {
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  const handleResize = () => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  useEffect(() => {
+    window.addEventListener("resize", handleResize, false);
+  }, []);
   return (
     <React.Fragment>
       <Navbar />
@@ -23,4 +35,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default AdminLayout;

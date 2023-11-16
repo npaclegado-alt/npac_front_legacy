@@ -4,9 +4,15 @@ import PrivateWrapper from "./PrivateWrapper";
 import Login from "../pages/Auth/Login";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
+import Career from "../pages/Career";
 import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 import Layout from "../components/layout";
+import AdminLayout from "../components/adminLayout";
 import { PageProducts } from "../pages/Products/pageProducts";
+import AdminWrapper from "./AdminWrapper";
+import AdminProducts from "../pages/Admin/Products";
+import AddProducts from "../pages/Admin/Products/add";
+import { Financial } from "../pages/Financial";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -15,19 +21,29 @@ const RootRoutes: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="structure" element={<></>} />
-          <Route path="career" element={<></>} />
-          <Route path="financial" element={<></>} />
+          <Route path="career" element={<Career />} />
+          <Route path="financial" element={<Financial />} />
           <Route path="documents" element={<></>} />
           <Route path="help" element={<></>} />
           <Route path="products" element={<PageProducts />} />
         </Route>
-        <Route
-          path="/productDetails/:productId"
-          element={<PageProductsDetails />}
-        />
+        <Route element={<AdminWrapper />}>
+          <Route path="/admin/" element={<AdminLayout />}>
+            <Route path="products">
+              <Route index element={<AdminProducts />} />
+              <Route path="add" element={<AddProducts />} />
+              <Route path="add/:productId" element={<AddProducts />} />
+            </Route>
+          </Route>
+        </Route>
       </Route>
       <Route path="/login" element={<Login />} />
+      <Route path="/unauthorized" element={<></>} />
       <Route path="/*" element={<NotFound />} />
+      <Route
+        path="/productDetails/:productId"
+        element={<PageProductsDetails />}
+      />
     </Routes>
   );
 };
