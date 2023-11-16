@@ -5,20 +5,13 @@ import styles from "./styleDrawer.module.scss";
 import { Divider } from "../../../divider";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Briefcase,
-  File,
-  Home,
-  Info,
-  Layers,
   Lock,
   LogOut,
   LucideIcon,
   Settings,
   ShoppingCart,
   UserPlus,
-  Wallet,
 } from "lucide-react";
-import { ROLES } from "../../../../constants/roles";
 
 interface Path {
   name: string;
@@ -36,56 +29,21 @@ export default function Drawer() {
   const navItems: Path[] = useMemo(() => {
     const paths = [
       {
-        name: "Visão Geral",
+        name: "Acesso Agente",
         path: "/",
-        icon: Home,
+        icon: Lock,
       },
       {
-        name: "Minha Loja",
-        path: "/products",
+        name: "Produtos",
+        path: "/admin/products",
         icon: ShoppingCart,
       },
-      {
-        name: "Estrutura",
-        path: "/structure",
-        icon: Layers,
-      },
-      {
-        name: "Carreira",
-        path: "/career",
-        icon: Briefcase,
-      },
-      {
-        name: "Financeiro",
-        path: "/financial",
-        icon: Wallet,
-      },
-      {
-        name: "Documentos",
-        path: "/documents",
-        icon: File,
-      },
-      {
-        name: "Ajuda",
-        path: "/help",
-        icon: Info,
-      },
     ];
-    const fullPaths =
-      user?.role === ROLES.admin
-        ? [
-            {
-              name: "Acesso Admin",
-              path: "/admin",
-              icon: Lock,
-            },
-            ...paths,
-          ]
-        : paths;
-    return fullPaths.map((path) => {
+
+    return paths.map((path) => {
       return { ...path, active: location.pathname === path.path };
     });
-  }, [location, user]);
+  }, [location]);
 
   const handleNavigate = useCallback(
     (path: string) => {
@@ -121,10 +79,6 @@ export default function Drawer() {
             <div className={styles.userName}>{user?.name}</div>
             <div className={styles.userId}>#102030AZ</div>
             <div className={styles.userStatus}>Ativo</div>
-          </div>
-          <div className={styles.rowButtons}>
-            <div className={styles.orangeButton}>Destrava</div>
-            <div className={styles.grayButton}>Escola NPAC</div>
           </div>
           <div className={styles.rowButtons}>
             <UserPlus className={styles.icon} />

@@ -1,20 +1,9 @@
-import {
-  Briefcase,
-  File,
-  Home,
-  Info,
-  Layers,
-  Lock,
-  LucideIcon,
-  ShoppingCart,
-  Wallet,
-} from "lucide-react";
+import { Lock, LucideIcon, ShoppingCart } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
 import { useCallback, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ContextApi } from "../../../../contexts";
-import { ROLES } from "../../../../constants/roles";
 
 interface Path {
   name: string;
@@ -31,56 +20,21 @@ export default function Sidebar() {
   const navItems: Path[] = useMemo(() => {
     const paths = [
       {
-        name: "Visão Geral",
+        name: "Acesso Agente",
         path: "/",
-        icon: Home,
+        icon: Lock,
       },
       {
-        name: "Minha Loja",
-        path: "/products",
+        name: "Produtos",
+        path: "/admin/products",
         icon: ShoppingCart,
       },
-      {
-        name: "Estrutura",
-        path: "/structure",
-        icon: Layers,
-      },
-      {
-        name: "Carreira",
-        path: "/career",
-        icon: Briefcase,
-      },
-      {
-        name: "Financeiro",
-        path: "/financial",
-        icon: Wallet,
-      },
-      {
-        name: "Documentos",
-        path: "/documents",
-        icon: File,
-      },
-      {
-        name: "Ajuda",
-        path: "/help",
-        icon: Info,
-      },
     ];
-    const fullPaths =
-      user?.role === ROLES.admin
-        ? [
-            {
-              name: "Acesso Admin",
-              path: "/admin",
-              icon: Lock,
-            },
-            ...paths,
-          ]
-        : paths;
-    return fullPaths.map((path) => {
+
+    return paths.map((path) => {
       return { ...path, active: location.pathname === path.path };
     });
-  }, [location, user]);
+  }, [location]);
 
   const handleNavigate = useCallback(
     (path: string) => {
