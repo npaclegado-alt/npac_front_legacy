@@ -7,22 +7,14 @@ import { AuffText } from "./components/AuffText";
 const Career = () => {
   const { user, getAllCareer, career } = useContext(ContextApi);
 
-  //TODO: mock id de buscar "65456fc6f35b5feca1f1d629"
-  async function getRequestCareer() {
-    // await getAllCareer(user?._id as string)
-    await getAllCareer("655657289f8dff67f100f29a");
-  }
-
   useEffect(() => {
-    getRequestCareer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    getAllCareer();
+  }, [getAllCareer]);
 
   //TODO: Os dados Auffs Pessoais e Total de Auffs não estão sendo retornado
-  const careerData = Object.keys(career).length > 0;
   return (
     <>
-      {careerData && (
+      {career && (
         <section className={styles.careerPage}>
           <div className={styles.careerPageAgentData}>
             <div className={styles.careerPageAgentTitle}>

@@ -75,8 +75,8 @@ interface IContextApi {
   getAdressByPostalCode: (postalCode: string) => void;
   getAllStates: (idUf?: string) => void;
   getCitiesByUf: (ufId: string) => void;
-  getAllCareer: (id: string) => void;
-  career: Career;
+  getAllCareer: () => void;
+  career?: Career;
   ufs: [
     {
       id: number;
@@ -156,8 +156,8 @@ export const ContextApi = createContext<IContextApi>({
   getAdressByPostalCode: (postalCode: string) => {},
   getAllStates: (idUf?: string) => {},
   getCitiesByUf: (ufId: string) => {},
-  getAllCareer: (id: string) => {},
-  career: {} as Career,
+  getAllCareer: () => {},
+  career: undefined,
   ufs: [
     {
       id: 0,
@@ -242,7 +242,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [ufs, setUfs] = useState<any>([]);
   const [cities, setCities] = useState<any>([]);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [career, setCareer] = useState<Career>({} as Career);
+  const [career, setCareer] = useState<Career>();
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -418,8 +418,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
-  const getAllCareer = useCallback((id: string) => {
-    const request = getCareer(id);
+  const getAllCareer = useCallback(() => {
+    const request = getCareer();
     toast.promise(request, {
       pending: {
         render() {
