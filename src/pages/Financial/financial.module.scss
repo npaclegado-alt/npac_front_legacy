@@ -1,11 +1,8 @@
 .financialPage {
   display: grid;
   grid-gap: 15px 15px;
-  grid-template: 'financialBankData financialBankData financialBankData financialAccountAvailable' 500px 'financialInvestments financialInvestments financialProfits financialProfits' 300px;
+  grid-template: "financialBankData financialBankData financialBankData financialAccountAvailable" 500px "financialInvestments financialInvestments financialProfits financialProfits" 300px;
   width: 100%;
-
-
-
 
   .financialBankData {
     grid-area: financialBankData;
@@ -20,7 +17,7 @@
     width: 100%;
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
     }
 
     .financialBankDataButton {
@@ -29,9 +26,8 @@
       display: flex;
       align-items: center;
       padding: 1rem;
-      font-size: 1rem;
       font-weight: bold;
-      color: #F04E23;
+      color: #f04e23;
       background-color: transparent;
 
       span {
@@ -39,12 +35,10 @@
       }
     }
 
-
     .financialBankDataBorder {
       border: solid 1px #f2f2f2;
       height: 100%;
     }
-
 
     .financialBankDataUser {
       display: flex;
@@ -55,8 +49,6 @@
 
       border-bottom: solid 2px #f2f2f2;
 
-
-
       .financialBankDataUserItem {
         width: 100%;
         display: flex;
@@ -64,13 +56,12 @@
         text-align: center;
 
         h3 {
-          font-size: 1.7rem;
+          font-size: 1.5rem;
           margin-bottom: 0.8rem;
         }
 
         span {
-          color: #8B8B8B;
-          font-size: 1rem;
+          color: #8b8b8b;
         }
       }
     }
@@ -82,7 +73,6 @@
       padding: 2rem;
       height: 100%;
 
-
       .financialBankDataUserItem {
         width: 100%;
         display: flex;
@@ -90,13 +80,12 @@
         text-align: center;
 
         h3 {
-          font-size: 1.7rem;
+          font-size: 1.5rem;
           margin-bottom: 0.8rem;
         }
 
         span {
-          color: #8B8B8B;
-          font-size: 1rem;
+          color: #8b8b8b;
         }
       }
     }
@@ -118,7 +107,7 @@
     }
 
     .financialAccountAvailableItem {
-      border-bottom: solid 2px #F2F2F2;
+      border-bottom: solid 2px #f2f2f2;
       width: 100%;
       text-align: center;
       display: flex;
@@ -136,8 +125,8 @@
     }
 
     span {
-      font-size: 2rem;
-      color: #F04E23;
+      font-size: 1.5rem;
+      color: #f04e23;
     }
 
     h3 {
@@ -146,17 +135,15 @@
     }
 
     p {
-      color: #8B8B8B;
-      font-size: 1rem;
+      color: #8b8b8b;
       max-width: 270px;
       width: 100%;
     }
 
-
     button {
       width: 100%;
       height: 50px;
-      background: #F04E23;
+      background: #f04e23;
       outline: none;
       text-align: center;
       justify-content: center;
@@ -165,7 +152,6 @@
       outline: none;
       border-radius: 12px;
       border: none;
-      font-size: 1rem;
       color: #fff;
       font-weight: 600;
     }
@@ -182,18 +168,17 @@
     cursor: pointer;
 
     ::-webkit-scrollbar-track {
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
     }
 
     ::-webkit-scrollbar {
       width: 6px;
-      background: #F2F2F2;
+      background: #f2f2f2;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #D2D2D2;
+      background: #d2d2d2;
     }
-
 
     h3 {
       font-size: 2rem;
@@ -202,18 +187,17 @@
 
     .financialSeeInvestment {
       height: 100%;
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
 
       span {
-        color: #D2D2D2;
+        color: #d2d2d2;
         font-size: 1.5rem;
         padding-left: 1rem;
       }
-
     }
 
     ul {
@@ -222,7 +206,6 @@
       overflow-y: scroll;
       padding: 1rem;
 
-
       li {
         display: flex;
         width: 100%;
@@ -230,29 +213,24 @@
         margin-bottom: 1rem;
         border-bottom: 2px solid #f2f2f2;
         padding-bottom: 1rem;
-
-
       }
 
-
       .processing {
-        color: #F04E23;
+        color: #f04e23;
         font-size: 0.8rem;
-
       }
 
       .concluded {
-        color: #2FD270;
+        color: #2fd270;
         font-size: 0.8rem;
         margin-bottom: 0.5rem;
-
       }
 
       .information {
         text-align: right;
 
         p {
-          color: #8B8B8B;
+          color: #8b8b8b;
           font-size: 0.8rem;
           padding-top: 5px;
         }
@@ -260,7 +238,7 @@
 
       .values {
         p {
-          color: #8B8B8B;
+          color: #8b8b8b;
           font-size: 0.8rem;
           padding-top: 5px;
         }
@@ -269,13 +247,7 @@
           font-size: 1rem;
         }
       }
-
-
-
-
     }
-
-
   }
 
   .financialProfits {
@@ -290,16 +262,16 @@
     cursor: pointer;
 
     ::-webkit-scrollbar-track {
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
     }
 
     ::-webkit-scrollbar {
       width: 6px;
-      background: #F2F2F2;
+      background: #f2f2f2;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #D2D2D2;
+      background: #d2d2d2;
     }
 
     h3 {
@@ -309,7 +281,7 @@
 
     .financialSeeProfits {
       height: 100%;
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
       width: 100%;
       display: flex;
       justify-content: center;
@@ -317,7 +289,7 @@
       position: relative;
 
       span {
-        color: #D2D2D2;
+        color: #d2d2d2;
         font-size: 1.5rem;
         padding-left: 1rem;
       }
@@ -339,14 +311,11 @@
       background-position: center;
     }
 
-
-
     ul {
       width: 100%;
       list-style: none;
       overflow-y: scroll;
       padding: 1rem;
-
 
       li {
         display: flex;
@@ -355,29 +324,24 @@
         margin-bottom: 1rem;
         border-bottom: 2px solid #f2f2f2;
         padding-bottom: 1rem;
-
-
       }
 
-
       .processing {
-        color: #F04E23;
+        color: #f04e23;
         font-size: 0.8rem;
-
       }
 
       .concluded {
-        color: #2FD270;
+        color: #2fd270;
         font-size: 0.8rem;
         margin-bottom: 0.5rem;
-
       }
 
       .information {
         text-align: right;
 
         p {
-          color: #8B8B8B;
+          color: #8b8b8b;
           font-size: 0.8rem;
           padding-top: 5px;
         }
@@ -385,7 +349,7 @@
 
       .values {
         p {
-          color: #8B8B8B;
+          color: #8b8b8b;
           font-size: 0.8rem;
           padding-top: 5px;
         }
@@ -394,15 +358,9 @@
           font-size: 1rem;
         }
       }
-
-
-
-
     }
   }
-
 }
-
 
 .financialModalEdit {
   height: 650px;
@@ -428,9 +386,6 @@
     padding-right: 1rem;
   }
 
-
-
-
   .financialModalEditAccount {
     display: flex;
 
@@ -442,9 +397,7 @@
     text-align: center;
 
     padding-bottom: 1rem;
-
   }
-
 
   .financialModalEditKey {
     width: 100%;
@@ -453,18 +406,17 @@
     text-align: center;
     justify-content: center;
 
-
     h4 {
       font-size: 1.5rem;
     }
 
-    border-top: solid 2px #F2F2F2;
+    border-top: solid 2px #f2f2f2;
     padding-top: 2rem;
 
     button {
       height: 50px;
 
-      background-color: #F04E23;
+      background-color: #f04e23;
       border-radius: 12px;
       outline: none;
       display: flex;
@@ -488,11 +440,10 @@
         width: 83%;
       }
 
-
       button {
         height: 50px;
         width: 50px;
-        background-color: #F04E23;
+        background-color: #f04e23;
         border-radius: 12px;
         outline: none;
         display: flex;
@@ -508,16 +459,13 @@
   }
 }
 
-
 @media (max-width: 900px) {
   .financialPage {
     grid-template:
-      'financialBankData financialBankData'
-      'financialAccountAvailable financialAccountAvailable'
-      'financialInvestments financialInvestments' 300px
-      'financialProfits financialProfits' 300px
-     ;
-
+      "financialBankData financialBankData"
+      "financialAccountAvailable financialAccountAvailable"
+      "financialInvestments financialInvestments" 300px
+      "financialProfits financialProfits" 300px;
 
     .financialBankData {
       padding: 1rem;
@@ -530,7 +478,6 @@
       .financialBankDataUser {
         flex-direction: column;
         padding: 1rem;
-
 
         .financialBankDataUserItem {
           padding: 1rem;
@@ -551,43 +498,35 @@
       grid-column: 1/4;
     }
 
-    .financialInvestments { 
+    .financialInvestments {
       padding: 1rem;
-      grid-column: 1/4; 
+      grid-column: 1/4;
 
       span {
-        padding-left: 0.5rem !important; 
+        padding-left: 0.5rem !important;
         font-size: 1.3rem !important;
       }
     }
 
-
-    .financialProfits { 
+    .financialProfits {
       padding: 1rem;
-      grid-column: 1/4; 
-     
+      grid-column: 1/4;
+
       span {
-        padding-left: 0.5rem !important; 
+        padding-left: 0.5rem !important;
         font-size: 1.3rem !important;
       }
     }
   }
-} 
-
-
-
-
+}
 
 @media (min-width: 900px) and (max-width: 1300px) {
-
   .financialPage {
     grid-template:
-      'financialBankData financialBankData'
-      'financialAccountAvailable financialAccountAvailable'
-      'financialInvestments financialInvestments' 300px
-      'financialProfits financialProfits' 300px
-     ;
-
+      "financialBankData financialBankData"
+      "financialAccountAvailable financialAccountAvailable"
+      "financialInvestments financialInvestments" 300px
+      "financialProfits financialProfits" 300px;
 
     .financialBankData {
       padding: 1rem;
@@ -599,7 +538,6 @@
 
       .financialBankDataUser {
         padding: 1rem;
-
 
         .financialBankDataUserItem {
           padding: 1rem;
@@ -619,43 +557,38 @@
       grid-column: 1/4;
     }
 
-    .financialInvestments { 
+    .financialInvestments {
       padding: 1rem;
-      grid-column: 1/4; 
+      grid-column: 1/4;
 
       span {
-        padding-left: 0.5rem !important; 
+        padding-left: 0.5rem !important;
         font-size: 1.3rem !important;
       }
     }
 
-
-    .financialProfits { 
+    .financialProfits {
       padding: 1rem;
-      grid-column: 1/4; 
-     
+      grid-column: 1/4;
+
       span {
-        padding-left: 0.5rem !important; 
+        padding-left: 0.5rem !important;
         font-size: 1.3rem !important;
       }
     }
   }
-} 
-
-
+}
 
 @media (min-width: 1300px) and (max-width: 1400px) {
+  .financialBankData {
+    padding: 1rem !important;
 
-    .financialBankData {
-      padding: 1rem !important;
-
-      h3{
-         font-size: 1.5rem!important;
-      } 
-
-      span {
-        font-size: 0.8rem !important;
-      }
+    h3 {
+      font-size: 1.5rem !important;
     }
-  
+
+    span {
+      font-size: 0.8rem !important;
+    }
+  }
 }
