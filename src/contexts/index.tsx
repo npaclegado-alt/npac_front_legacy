@@ -1,9 +1,9 @@
 import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useState,
-  useMemo,
+    ReactNode,
+    createContext,
+    useCallback,
+    useState,
+    useMemo,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/requests/auth";
@@ -12,8 +12,8 @@ import { getProductById, getProducts } from "../services/requests/products";
 import api from "../services/api";
 import {
     adressByPostalCode, citiesByState, states
-} from '../services/requests/postalService'; 
-import {profileAgent} from '../services/requests/profileAgent'
+} from '../services/requests/postalService';
+import { profileAgent } from '../services/requests/profileAgent'
 import { User } from "../types/user";
 
 
@@ -26,12 +26,12 @@ interface IContextApi {
     drawerOpen: boolean;
     setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     getAllProducts: () => void,
-    getAdressByPostalCode: (postalCode:string) => void,
-    getAllStates: (idUf?:string) => void,
-    getCitiesByUf: (ufId:string) => void, 
-    profileEditAgent: (id: string, data: User) => void, 
-    editAgentProfile: boolean, 
-    setEditAgentProfile:  (action: boolean | ((action: boolean) => boolean)) => void ;
+    getAdressByPostalCode: (postalCode: string) => void,
+    getAllStates: (idUf?: string) => void,
+    getCitiesByUf: (ufId: string) => void,
+    profileEditAgent: (id: string, data: User) => void,
+    editAgentProfile: boolean,
+    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => void;
     ufs: [
         {
             id: number,
@@ -52,16 +52,16 @@ interface IContextApi {
             auffs: number,
             imageUrls: string[]
         }
-    ], 
-    productsById: (id:string) => void,
-    productFiltered:{
-            _id: string,
-            name: string,
-            description: string,
-            price: number,
-            auffs: number,
-            imageUrls: string[]
-        },
+    ],
+    productsById: (id: string) => void,
+    productFiltered: {
+        _id: string,
+        name: string,
+        description: string,
+        price: number,
+        auffs: number,
+        imageUrls: string[]
+    },
     adress: {
         cep: string,
         logradouro: string,
@@ -102,18 +102,18 @@ interface IContextApi {
 
 export const ContextApi = createContext<IContextApi>({
     isAuthenticated: false,
-    loginRequest: (email: string, password: string) => {},
-    logoutRequest: () => {},
+    loginRequest: (email: string, password: string) => { },
+    logoutRequest: () => { },
     user: undefined,
-    getAllProducts: () => {},
+    getAllProducts: () => { },
     drawerOpen: false,
-    setDrawerOpen: () => {},
-    getAdressByPostalCode: (postalCode:string) => {},
-    getAllStates: (idUf?:string) => {},
-    getCitiesByUf: (ufId:string) => {}, 
-    profileEditAgent: (id: string, data: User) => {}, 
-    editAgentProfile: false, 
-    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
+    setDrawerOpen: () => { },
+    getAdressByPostalCode: (postalCode: string) => { },
+    getAllStates: (idUf?: string) => { },
+    getCitiesByUf: (ufId: string) => { },
+    profileEditAgent: (id: string, data: User) => { },
+    editAgentProfile: false,
+    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => { },
     ufs: [
         {
             id: 0,
@@ -135,15 +135,15 @@ export const ContextApi = createContext<IContextApi>({
             imageUrls: ['']
         }
     ],
-    productsById: () => {},
+    productsById: () => { },
     productFiltered: {
-            _id: '',
-            name: '',
-            description: '',
-            price: 0,
-            auffs: 0,
-            imageUrls: ['']
-        },
+        _id: '',
+        name: '',
+        description: '',
+        price: 0,
+        auffs: 0,
+        imageUrls: ['']
+    },
     adress: {
         cep: '',
         logradouro: '',
@@ -183,69 +183,69 @@ export const ContextApi = createContext<IContextApi>({
 })
 
 interface Props {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 const ContextProvider: React.FC<Props> = ({ children }) => {
     const storedUser = localStorage.getItem("user");
     const navigate = useNavigate();
     const [user, setUser] = useState<User | undefined>(
-    storedUser ? JSON.parse(storedUser) : undefined
+        storedUser ? JSON.parse(storedUser) : undefined
     );
     const [products, setProducts] = useState<any>([]);
     const [productFiltered, setProductFiltered] = useState<any>([]);
     const [adress, setAdress] = useState<any>();
     const [ufs, setUfs] = useState<any>([]);
     const [cities, setCities] = useState<any>([]);
-    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);  
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [editAgentProfile, setEditAgentProfile] = useState(false)
 
 
 
     const isAuthenticated = useMemo(() => {
-      return !!user;
+        return !!user;
     }, [user]);
 
     const logoutRequest = useCallback(() => {
-      setUser(undefined);
-      localStorage.setItem("user", "");
-      api.defaults.headers.Authorization = "";
+        setUser(undefined);
+        localStorage.setItem("user", "");
+        api.defaults.headers.Authorization = "";
     }, []);
 
-  const loginRequest = useCallback(
-    (email: string, password: string) => {
-      const request = login(email, password);
-      toast.promise(request, {
-        pending: {
-          render() {
-            return "Carregando...";
-          },
+    const loginRequest = useCallback(
+        (email: string, password: string) => {
+            const request = login(email, password);
+            toast.promise(request, {
+                pending: {
+                    render() {
+                        return "Carregando...";
+                    },
+                },
+                success: {
+                    render({ data }: any) {
+                        const token = data.data.token;
+                        api.defaults.headers.Authorization = `Bearer ${token}`;
+                        const user = { ...data.data.user, token };
+                        setUser(user);
+                        navigate("/");
+                        localStorage.setItem("user", JSON.stringify(user));
+                        return "Logado com sucesso!";
+                    },
+                },
+                error: {
+                    render({ data }: any) {
+                        const message = data.response.data.message;
+                        return message;
+                    },
+                },
+            });
         },
-        success: {
-          render({ data }: any) {
-            const token = data.data.token;
-            api.defaults.headers.Authorization = `Bearer ${token}`;
-            const user = { ...data.data.user, token };
-            setUser(user);
-            navigate("/");
-            localStorage.setItem("user", JSON.stringify(user));
-            return "Logado com sucesso!";
-          },
-        },
-        error: {
-          render({ data }: any) {
-            const message = data.response.data.message;
-            return message;
-          },
-        },
-      });
-    },
-    [navigate]
-  );
+        [navigate]
+    );
 
-   const getAllProducts = useCallback(() => {
+    const getAllProducts = useCallback(() => {
         const request = getProducts()
-        toast.promise(request,{
+        toast.promise(request, {
             pending: {
                 render() {
                     return 'Carregando...'
@@ -265,11 +265,11 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[])
+    }, [])
 
-    const productsById = useCallback((id:string) => {
+    const productsById = useCallback((id: string) => {
         const request = getProductById(id)
-        toast.promise(request,{
+        toast.promise(request, {
             pending: {
                 render() {
                     return 'Carregando...'
@@ -289,11 +289,11 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[])
+    }, [])
 
-    const getAdressByPostalCode = useCallback((postalCode:string) => {
+    const getAdressByPostalCode = useCallback((postalCode: string) => {
         const request = adressByPostalCode(postalCode)
-        toast.promise(request,{
+        toast.promise(request, {
             pending: {
                 render() {
                     return 'Carregando...'
@@ -303,7 +303,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 render({ data }: any) {
                     //TODO
                     setAdress(data?.data)
-                    let idUf = data?.data?.ibge.slice(0,2)
+                    let idUf = data?.data?.ibge.slice(0, 2)
                     getAllStates(idUf)
                     return 'Endereço carregado com sucesso!'
                 }
@@ -316,11 +316,11 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[])
+    }, [])
 
     const getAllStates = useCallback((idUf?: string) => {
         const request = states(idUf)
-        toast.promise(request,{
+        toast.promise(request, {
             pending: {
                 render() {
                     return 'Carregando...'
@@ -347,11 +347,11 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[])
+    }, [])
 
-    const getCitiesByUf = useCallback((ufId:string) => {
+    const getCitiesByUf = useCallback((ufId: string) => {
         const request = citiesByState(ufId)
-        toast.promise(request,{
+        toast.promise(request, {
             pending: {
                 render() {
                     return 'Carregando...'
@@ -373,41 +373,49 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[]) 
+    }, [])
 
-   
-  const profileEditAgent = useCallback((id: string, data: User) => {
-    const request = profileAgent(id, data)
-    toast.promise(request,{
-        pending: {
-            render() {
-                setEditAgentProfile(true)
-                return 'Carregando...' 
-            }
-        },
-        success: {
-            render({ data }: any) { 
-                setEditAgentProfile(false)
-                return 'Perfil atualizado com  com sucesso!'
-            }
-        },
-        error: {
-            render({ data }: any) {
-                setEditAgentProfile(true)
-                return 'Falha ao atualizar o perfil!'
-            }
-        }
-    })
-  }, [])
 
-            
+    const profileEditAgent = useCallback((id: string, data: User) => {
+        console.log(data, '-----DATA')
+        const request = profileAgent(id, data)
+        toast.promise(request, {
+            pending: {
+                render() {
+                    setEditAgentProfile(true)
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) { 
+
+                    
+                     const token = user?.token
+                      const dataUser = { ...data.data, token: token};  
+                      setUser(dataUser)
+                      localStorage.setItem("user", JSON.stringify(dataUser))  
+                      setEditAgentProfile(false)
+                      return 'Perfil atualizado com  com sucesso!'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    setEditAgentProfile(true)
+                    return 'Falha ao atualizar o perfil!'
+                }
+            }
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+
 
     return (
-        <ContextApi.Provider 
+        <ContextApi.Provider
             value={{
-                isAuthenticated, 
+                isAuthenticated,
                 loginRequest,
-                user, 
+                user,
                 logoutRequest,
                 getAllProducts,
                 products,
@@ -420,7 +428,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 getCitiesByUf,
                 cities,
                 drawerOpen,
-                setDrawerOpen, 
+                setDrawerOpen,
                 profileEditAgent,
                 editAgentProfile,
                 setEditAgentProfile,

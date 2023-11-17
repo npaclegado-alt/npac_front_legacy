@@ -9,14 +9,16 @@ export interface User {
     createdAt?: string;
     __v?: number;
     avatar?: string;
-    rua: string,
-    complemento: string,
-    numero: string,
-    referencia: string,
-    estado: string,
-    cidade: string,
-    bairro: string,
-    dataNascimento: string,
-    postalCode: string;
-    token?: string;
-}
+    referencia?: string,
+    bairro?: string,
+    dataNascimento?: string,
+    token?: string;  
+    address: {
+        street: string,
+        number: string,
+        complement: string,
+        city: string,
+        state: string,
+        postalCode: string
+    }
+} 

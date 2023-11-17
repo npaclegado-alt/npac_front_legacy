@@ -8,27 +8,26 @@ import { InputTextSimple } from '../../components/inputs/simpleText/inputSimpleT
 import { InputSimpleSelect } from '../../components/inputs/simpleSelect/simpleSelectInput'
 import { ContextApi } from '../../contexts'
 import Filters from "../../libs/Filters";
-import { User } from '../../types/user'
 
 
 export default function AgentProfile() {
 
   const { user, profileEditAgent, editAgentProfile, setEditAgentProfile } = useContext(ContextApi)
 
-  const [userData, setUserData] = useState<User>({
+  const [userData, setUserData] = useState<any>({
     name: '',
     cpf: '',
     password: '',
     phone: '',
     email: '',
     role: '',
-    postalCode: '',
-    rua: '',
-    complemento: '',
-    numero: '',
     referencia: '',
-    estado: '',
-    cidade: '',
+    street: '',
+    number: '',
+    complement: '',
+    city: '',
+    state: '',
+    postalCode: '',
     bairro: '',
     dataNascimento: '',
   })
@@ -41,17 +40,31 @@ export default function AgentProfile() {
 
 
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault()      
-    await profileEditAgent(userData._id as string,  userData)
+    e.preventDefault()
+
+    const addressData = {
+      street: userData.street,
+      number: userData.number,
+      complement: userData.complement,
+      city: userData.city,
+      state: userData.state,
+      postalCode: Filters.clearStringOnlyNumbers(userData.postalCode)
+    }
+
+    const identificationData = {
+      name: userData.name,
+      cpf: userData.cpf,
+      password: userData.password,
+      phone: Filters.clearStringOnlyNumbers(userData.phone),
+      email: userData.email,
+      role: userData.role,
+    }
+
+    await profileEditAgent(user?._id as string, { ...identificationData, address: addressData })
   }
-  
-
-  
-  
-  useEffect(() => setUserData(user as User), [user])
-  
 
 
+  useEffect(() => setUserData({ ...user, ...user?.address }), [user])
 
 
 
@@ -65,13 +78,13 @@ export default function AgentProfile() {
         </button>
 
         <div className={styles.PersonalDataImg}>
-          <img src={userData?.avatar} alt={agent} />
+          <img src={user?.avatar} alt={agent} />
         </div>
 
         <div className={styles.PersonalDataNameData}>
           <div className={styles.PersonalDataNameDataItem}>
             <h3>Nome Completo</h3>
-            <span>{userData?.name}</span>
+            <span>{user?.name}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
@@ -85,7 +98,7 @@ export default function AgentProfile() {
         <div className={styles.PersonalDataPhoneEmail}>
           <div className={styles.PersonalDataPhoneEmailItem}>
             <h3>Telefone</h3>
-            <span>{user?.phone}</span>
+            <span>{Filters.inputMaskTELWithDDD(user?.phone)}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
@@ -103,28 +116,28 @@ export default function AgentProfile() {
         <div className={styles.StreetDataZipState}>
           <div className={styles.StreetDataZipStateItem}>
             <h3>CEP</h3>
-            <span>89221-170</span>
+            <span>{user?.address.postalCode}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataZipStateItem}>
             <h3>Estado</h3>
-            <span>Santa Catarina</span>
+            <span>{user?.address.state}</span>
           </div>
         </div>
 
         <div className={styles.StreetDataCityAddress}>
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Cidade</h3>
-            <span>Joinville</span>
+            <span>{user?.address.city}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Endereço</h3>
-            <span>Saguaçu, Rua Guaramirim, 200</span>
+            <span>{user?.address.street}</span>
           </div>
         </div>
       </div>
@@ -164,7 +177,10 @@ export default function AgentProfile() {
           }
         }}
         closeIcon={false}
-        onCancel={() => setEditAgentProfile(false)}
+        onCancel={() => {
+          setSeePasswordAgent(false)
+          setEditAgentProfile(false)
+        }}
       >
 
         <form className={styles.modalFormEditAgent} onSubmit={handleSubmit}>
@@ -174,7 +190,7 @@ export default function AgentProfile() {
             <div className={styles.modalFormEditIdentification}>
               <h3>Dados de Identificação</h3>
               <InputTextSimple name="name" placeholder='Davi Carlos Rodrigues' value={userData.name} onChange={handleChange} />
-              <InputTextSimple name="dataNascimento" placeholder='20/02/1990' value={userData.dataNascimento} onChange={handleChange} />
+              <InputTextSimple name="dataNascimento" placeholder='20/02/1990' type='date' value={userData.dataNascimento} onChange={handleChange} />
               <InputTextSimple name="phone" placeholder='(00) 9999-9999' value={Filters.inputMaskTELWithDDD(userData.phone)} onChange={handleChange} />
               <InputTextSimple name="email" placeholder='Email@email.com.br' value={userData.email} onChange={handleChange} />
 
@@ -204,23 +220,33 @@ export default function AgentProfile() {
               <div className={styles.modalFormEditGroupAddress}>
                 <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(userData.postalCode)} onChange={handleChange} />
                 <InputSimpleSelect data={[{
-                  id: 1,
-                  nome: 'Santa Catarina'
-                }]}
-                  optionZero='Santa Catarina'
-                  id='estado'
-                  value={userData.estado}
+                  id: 'SC',
+                  nome: 'SC'
+                },
+                {
+                  id: 'DF',
+                  nome: 'DF'
+                }
+                ]}
+                  id='state'
+                  value={userData.state}
                   onChange={handleChange}
                 />
               </div>
               <div className={styles.modalFormEditGroupAddress}>
-                <InputSimpleSelect data={[{
-                  id: 1,
-                  nome: 'Joinville'
-                }]}
-                  optionZero='Joinville'
-                  id='cidade'
-                  value={userData.cidade}
+                <InputSimpleSelect
+                  data={[{
+                    id: 'Brasilia - DF',
+                    nome: 'Brasilia - DF'
+                  },
+
+                  {
+                    id: 'Maranhão',
+                    nome: 'Maranhão'
+                  }
+                  ]}
+                  id='city'
+                  value={userData.city}
                   onChange={handleChange}
                 />
                 <InputTextSimple placeholder='Saguaçu'
@@ -229,25 +255,26 @@ export default function AgentProfile() {
                   onChange={handleChange} />
               </div>
 
-              <InputTextSimple name="rua"
-                placeholder='Rua Guaramirim'
-                value={Filters.clearStringOnlyNumbers(userData.rua)}
+              <InputTextSimple
+                name="userDat.street"
+                placeholder='street Guaramirim'
+                value={userData.street}
                 onChange={handleChange}
               />
 
               <div className={styles.modalFormEditGroupOneAddress}>
                 <InputTextSimple
-                  name="numero"
+                  name="number"
                   placeholder='200'
-                  value={Filters.clearStringOnlyNumbers(userData.numero)}
+                  value={Filters.clearStringOnlyNumbers(userData.number)}
                   onChange={handleChange}
 
 
                 />
                 <InputTextSimple
-                  name="complemento"
-                  placeholder='Complemento'
-                  value={userData.complemento?.replace(/\d/g, '')}
+                  name="complement"
+                  placeholder='complement'
+                  value={userData.complement?.replace(/\d/g, '')}
                   onChange={handleChange}
                 />
               </div>
