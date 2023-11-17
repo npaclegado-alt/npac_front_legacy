@@ -12,21 +12,11 @@ import { getProductById, getProducts } from "../services/requests/products";
 import api from "../services/api";
 import {
     adressByPostalCode, citiesByState, states
-} from '../services/requests/postalService';
+} from '../services/requests/postalService'; 
+import {profileAgent} from '../services/requests/profileAgent'
+import { User } from "../types/user";
 
-interface User {
-  _id: string;
-  name: string;
-  cpf: string;
-  email: string;
-  role: string;
-  password: string;
-  phone: string;
-  createdAt: string;
-  __v: number;
-  avatar: string;
-  token: string;
-}
+
 
 interface IContextApi {
     isAuthenticated: boolean
@@ -38,7 +28,10 @@ interface IContextApi {
     getAllProducts: () => void,
     getAdressByPostalCode: (postalCode:string) => void,
     getAllStates: (idUf?:string) => void,
-    getCitiesByUf: (ufId:string) => void,
+    getCitiesByUf: (ufId:string) => void, 
+    profileEditAgent: (id: string, data: User) => void, 
+    editAgentProfile: boolean, 
+    setEditAgentProfile:  (action: boolean | ((action: boolean) => boolean)) => void ;
     ufs: [
         {
             id: number,
@@ -59,7 +52,7 @@ interface IContextApi {
             auffs: number,
             imageUrls: string[]
         }
-    ],
+    ], 
     productsById: (id:string) => void,
     productFiltered:{
             _id: string,
@@ -117,7 +110,10 @@ export const ContextApi = createContext<IContextApi>({
     setDrawerOpen: () => {},
     getAdressByPostalCode: (postalCode:string) => {},
     getAllStates: (idUf?:string) => {},
-    getCitiesByUf: (ufId:string) => {},
+    getCitiesByUf: (ufId:string) => {}, 
+    profileEditAgent: (id: string, data: User) => {}, 
+    editAgentProfile: false, 
+    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
     ufs: [
         {
             id: 0,
@@ -201,7 +197,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     const [adress, setAdress] = useState<any>();
     const [ufs, setUfs] = useState<any>([]);
     const [cities, setCities] = useState<any>([]);
-    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);  
+    const [editAgentProfile, setEditAgentProfile] = useState(false)
+
+
 
     const isAuthenticated = useMemo(() => {
       return !!user;
@@ -374,7 +373,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 }
             }
         })
-    },[])
+    },[]) 
+
+   
+  const profileEditAgent = useCallback((id: string, data: User) => {
+    const request = profileAgent(id, data)
+    toast.promise(request,{
+        pending: {
+            render() {
+                setEditAgentProfile(true)
+                return 'Carregando...' 
+            }
+        },
+        success: {
+            render({ data }: any) { 
+                setEditAgentProfile(false)
+                return 'Perfil atualizado com  com sucesso!'
+            }
+        },
+        error: {
+            render({ data }: any) {
+                setEditAgentProfile(true)
+                return 'Falha ao atualizar o perfil!'
+            }
+        }
+    })
+  }, [])
+
             
 
     return (
@@ -395,7 +420,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 getCitiesByUf,
                 cities,
                 drawerOpen,
-                setDrawerOpen,
+                setDrawerOpen, 
+                profileEditAgent,
+                editAgentProfile,
+                setEditAgentProfile,
             }}
         >
             {children}
