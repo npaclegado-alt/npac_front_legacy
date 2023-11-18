@@ -12,17 +12,14 @@ import ReactFlow, {
     useEdgesState,
     addEdge,
     BackgroundVariant,
-    Node,
-    BaseEdge,
-    MarkerType,
     } from 'reactflow';
 
-import FloatingEdge from './floatingEdge';
-import FloatingConnectionLine from './floatingConnectionLine';
+import useCalculatePositions from '../../../hooks/calculatePositionNode';
+import createNode from './createNode';
+import connectionLines from './connectionLines';
 
 import 'reactflow/dist/style.css';
 import styles from './styleFlow.module.scss';
-import useCalculatePositions from '../../../hooks/calculatePositionNode';
 
 interface FlowProps {
     children: any;
@@ -42,101 +39,101 @@ interface NodeProps {
     children?: any;
 }
 
-const edgeTypes = {
-    floating: FloatingEdge,
-};
+const nodeTypes = {
+    custom: createNode,
+  };
 
 export function Flow({
     children,
     fullFlow
 }: FlowProps): JSX.Element {
-let initialNodes: NodeProps[] | any = [];
+    let initialNodes: NodeProps[] | any = [];
+    let nodesHook: any = [];
     let initialEdges: any = [];
     const componentRef: any = useRef<HTMLDivElement>();
+
+    nodesHook = useCalculatePositions(children, componentRef);
     
-    const nodesHook = useCalculatePositions(children, componentRef);
-
-    console.log('nodesHook', nodesHook)
-
     function obterAvatarOuIniciais(nome: string) {
-            const iniciais = nome?.split(' ')
-                .map(word => word[0])
-                .slice(0, 2) // Pegar as duas primeiras iniciais
-                .join('')
-                .toUpperCase();
-            return iniciais;
+        const iniciais = nome?.split(' ')
+        .map(word => word[0])
+        .slice(0, 2) // Pegar as duas primeiras iniciais
+        .join('')
+        .toUpperCase();
+        return iniciais;
     }
-    
+
     useEffect(() => {
         const componentWidth: any = componentRef?.current?.offsetWidth;
         const componentHeight: any = componentRef?.current?.offsetHeight;
         const left = componentWidth / 2.1;
         const top = componentHeight / 2.4; 
+
         
-        {/*if (!isNaN(left) && !isNaN(top)) {
-            initialNodes = nodesHook?.map((item: any, index: number) => {
-                const parentNode = children.find((node: any) => node.userId === item?.ref);
-
-                const centerX = parentNode ? parentNode?.position?.x : left;
-                const centerY = parentNode ? parentNode?.position?.y : top;
-
-                const degrees = index * (360 / children.length);
-                const radians = degrees * (Math.PI / 180);
-                const x = 80 * Math.cos(radians) + centerX;
-                const y = 80 * Math.sin(radians) + centerY;
+        if (nodesHook) {
+            console.log('iniTialNodes', nodesHook)
+            initialNodes = nodesHook[0]?.children?.map((item: any, index: number) => {
+                console.log('item', item)
+                const { x, y } = item.position;
                 return index === 0 ? {
-                id: `${item?.userId}`,
-                position: { x: left, y: top },
-                data: { 
-                    label: <div className={styles.customLabel}>
-                                {item.avatar ?
-                                    <img src={item.avatar} alt="" /> : 
-                                        <p>
-                                            {obterAvatarOuIniciais(item.name)}
-                                        </p>
-                                                                        }
-                            </div>, 
-                    avatar: item.avatar ?? '',
-                                    },
+                    id: `${item?.userId}`,
+                    position: { 
+                        x: left,
+                        y: top,
+                    },
+                    type: 'custom',
+                    data: { 
+                        label: obterAvatarOuIniciais(item.name), 
+                        avatar: item.avatar ?? '',
+                        position: {
+                            x: left,
+                            y: top,
+                        },
+                        index: index,
+                        childrens: item.children,
+                        id: item.userId,
+                    },
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
-                        padding: 0,
                         borderRadius: '2rem',
+                        borderColor: '#FFFFFF',
+                        borderWidth: '2px',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
                         fontWeight: 'semi-bold',
                         fontSize: '1.2rem',
                         color: '#F04E23',
-                        backgroundColor: 'transparent',
-                        boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
-                    } as React.CSSProperties,
-                } : {
+                    backgroundColor: 'transparent',
+                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
+                } as React.CSSProperties,
+            } : {
                     id: `${item?.userId}`,
                     position: { 
                         x,
                         y,
                     },
+                    type: 'custom',
                     data: { 
-                        label: <div className={styles.customLabel}>
-                                    {item.avatar ?
-                                        <img src={item.avatar} alt="" /> : 
-                                        <p>
-                                            {obterAvatarOuIniciais(item.name)}
-                                        </p>
-                                    }
-                                </div>, 
-                        avatar: item.avatar ?? ''
+                        label: obterAvatarOuIniciais(item.name), 
+                        avatar: item.avatar ?? '',
+                        position: { 
+                            x,
+                            y,
+                        },
+                        index: index,
+                        childrens: item.children,
+                        id: item.userId,
                     },
                     style: { 
                         width: '2rem', 
                         height: '2rem', 
-                    borderRadius: '2rem',
-                    borderColor: '#FFFFFF',
-                    borderWidth: '2px',
-                    display: 'flex',
-                    justifyContent: 'center',
+                        borderRadius: '2rem',
+                        borderColor: '#FFFFFF',
+                        borderWidth: '2px',
+                        display: 'flex',
+                        justifyContent: 'center',
                     alignItems: 'center',
                     fontWeight: 'semi-bold',
                     fontSize: '1.2rem',
@@ -144,77 +141,33 @@ let initialNodes: NodeProps[] | any = [];
                     backgroundColor: 'transparent',
                     boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
                 } as React.CSSProperties,
-}
-            });
-        
-            if (initialNodes) {
-                console.log('iniTialNodes', initialNodes)
-                setNodes(initialNodes)
             }
-        }*/}
-
-        if (nodesHook) {
-            console.log('iniTialNodes', nodesHook)
-            initialNodes = nodesHook[0]?.children?.map((item: any, index: number) => {
-                const { x, y } = item.position;
-                return {
-                    id: `${item?.userId}`,
-                    position: { 
-                        x,
-                        y,
-                    },
-                    data: { 
-                        label: <div className={styles.customLabel}>
-                                    {item.avatar ?
-                                        <img src={item.avatar} alt="" /> : 
-                                        <p>
-                                            {obterAvatarOuIniciais(item.name)}
-                                        </p>
-                                    }
-                                </div>, 
-                        avatar: item.avatar ?? ''
-                    },
-                    style: { 
-                        width: '2rem', 
-                        height: '2rem', 
-                    borderRadius: '2rem',
-                    borderColor: '#FFFFFF',
-                    borderWidth: '2px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontWeight: 'semi-bold',
-                    fontSize: '1.2rem',
-                    color: '#F04E23',
-                    backgroundColor: 'transparent',
-                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
-                } as React.CSSProperties,
-}
-            });
+        });
         
             if (initialNodes) {
-                console.log('iniTialNodes', initialNodes)
                 setNodes(initialNodes)
             }
         }
-
+        
         initialEdges = children?.map((item: any, index: number) => {
             return {
                 id: `edge-${index}`,
                 source: `${item?.ref}`,
                 target: `${item?.userId}`,
-                type: 'floating',
-                markerEnd: { 
-                    type: MarkerType.Arrow, 
-                }
+                sourceHandle: `${item?.userId}`,
+                type: 'straight',
+                style: { 
+                    stroke: '#F04E23',
+                },
+                MarkerType: 'arrow',
             }
         });
 
         if (initialEdges) {
             setEdges(initialEdges)
         }
-    }, [componentRef, children, fullFlow]);
-   
+    }, [componentRef, children]);
+    
 //[{ id: 'e1-2', source: '1', target: '2' }];
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -240,9 +193,8 @@ let initialNodes: NodeProps[] | any = [];
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            edgeTypes={edgeTypes}
-            
-            connectionLineComponent={FloatingConnectionLine}
+            nodeTypes={nodeTypes}
+            connectionLineComponent={connectionLines}
             >
                 {fullFlow && <MiniMap />}
                 <Controls />

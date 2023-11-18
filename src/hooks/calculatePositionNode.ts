@@ -6,19 +6,53 @@ interface Node {
 }
 
 const useCalculatePositions = (children: Node[], componentRef: RefObject<HTMLElement>) => {
+  let positionParent: any = [];
   const [nodes, setNodes] = useState<Node[]>([]);
 
-  const calculatePositions = (node: Node, angle: number, parentX: number, parentY: number): Node => {
+  const calculatePositions = (node: Node, angle: number, parentX: number, parentY: number, index: number): Node => {
     const radians = angle * (Math.PI / 180);
-    const distance = 80; // Ajuste conforme necessário
+    let x = parentX;
+    let y = parentY;
 
-    const x = distance * Math.cos(radians) + parentX;
-    const y = distance * Math.sin(radians) + parentY;
+    if (index === 0) {  
+      positionParent.push({
+        x: parentX,
+        y: parentY,
+        zero: true,
+        parentId: node.userId,
+      });
+    } else {
+      const parent = positionParent.find((item: any) => item.parentId === node.ref);
+      if (parent) {
+        if (parent.zero) {
+          x = 80 * Math.cos(radians) + parentX;
+          y = 80 * Math.sin(radians) + parentY;
+          positionParent.push({
+            x: 80 * Math.cos(radians) + parentX,
+            y: 80 * Math.sin(radians) + parentY,
+            zero: false,
+            parentId: node.userId,
+          });
+        } else {
+          x = (80 - 10) * Math.cos(radians) + parent.x;
+          y = (80 - 10) * Math.sin(radians) + parent.y;
+          positionParent.push({
+            x: (80 - 10) * Math.cos(radians) + parent.x,
+            y: (80 - 10) * Math.sin(radians) + parent.y,
+            zero: false,
+            parentId: node.userId,
+          });
+        }
+      }
+    }
 
     return {
       ...node,
-      position: { x, y },
-      children: node.children?.map((child, index) => calculatePositions(child, index * (360 / (node.children?.length || 1)), x, y)),
+      position: {
+        x,
+        y,
+      },
+      children: node.children?.map((child, index) => calculatePositions(child, index * (360 / (node.children?.length || 1)), x, y, index)),
     };
   };
 
@@ -31,10 +65,8 @@ const useCalculatePositions = (children: Node[], componentRef: RefObject<HTMLEle
 
     if (!isNaN(left) && !isNaN(top)) {
       const rootNode = {
-        position: { x: left, y: top },
-        children: children.map((child, index) => calculatePositions(child, index * (360 / children.length), left, top)),
+        children: children.map((child, index) => calculatePositions(child, index * (360 / children.length), left, top, index)),
       };
-
       setNodes([rootNode]);
     }
   }, [children, componentRef]);
