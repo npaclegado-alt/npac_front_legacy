@@ -388,9 +388,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             },
             success: {
                 render({ data }: any) { 
-
-                    
-                     const token = user?.token
+                      const token = user?.token
                       const dataUser = { ...data.data, token: token};  
                       setUser(dataUser)
                       localStorage.setItem("user", JSON.stringify(dataUser))  

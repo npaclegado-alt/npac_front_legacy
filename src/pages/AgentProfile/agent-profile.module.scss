@@ -1,7 +1,7 @@
 .AgentProfilePage {
    display: grid;
    gap: 15px 15px;
-   grid-template: 'PersonalData PersonalData StreetData StreetData' 400px 'PersonalData PersonalData ProofData ProofData' 400px;
+   grid-template: 'PersonalData StreetData' 400px 'PersonalData ProofData' 400px;
 
    .PersonalData {
       grid-area: PersonalData;
@@ -12,7 +12,7 @@
       align-items: center;
       flex-direction: column;
       padding: 2rem;
-
+      text-align: center;
 
       h2 {
          font-size: 1.5rem;
@@ -140,6 +140,8 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      text-align: center;
+
 
 
 
@@ -285,8 +287,8 @@
       background-repeat: no-repeat;
       background-position: center;
       position: absolute;
-      right: 35px;
-      bottom: 35px;
+      right: 15px;
+      bottom: 15px;
    }
 
 }
@@ -352,7 +354,7 @@
 
          input {
             height: 50px;
-            margin-bottom: 1rem; 
+            margin-bottom: 1rem;
             outline: none;
 
          }
@@ -421,7 +423,7 @@
          input {
             outline: none;
             height: 50px;
-            margin-bottom: 1rem; 
+            margin-bottom: 1rem;
             outline: none;
          }
 
@@ -457,7 +459,7 @@
             justify-content: space-between;
 
             input {
-               width: 40%; 
+               width: 40%;
                outline: none;
 
             }
@@ -495,3 +497,171 @@
 
    }
 }
+
+
+
+@media (max-width: 1200px) {
+   .AgentProfilePage {
+      grid-template:
+         'PersonalData PersonalData'
+         'StreetData StreetData'
+         'ProofData ProofData';
+
+      .PersonalData {
+         .PersonalDataNameData {
+            padding: 0 !important;
+            flex-direction: column;
+
+            border-bottom: none !important;
+
+            .PersonalDataBorder {
+               display: none !important;
+            }
+
+            .PersonalDataNameDataItem {
+               width: 100% !important;
+               border-bottom: solid 2px #F2F2F2;
+
+            }
+         }
+
+         .PersonalDataPhoneEmail {
+            padding: 0 !important;
+            flex-direction: column;
+
+            div:nth-child(3) {
+               border: none !important
+            }
+
+            .PersonalDataPhoneEmailItem {
+               width: 100% !important;
+               border-bottom: solid 2px #F2F2F2;
+            }
+
+            .PersonalDataBorder {
+               display: none !important;
+            }
+         }
+
+      }
+
+      .StreetData {
+
+         .StreetDataZipState {
+            padding: 0 !important;
+            flex-direction: column;
+
+            border-bottom: none !important;
+
+            .StreetDataZipStateItem {
+               width: 100% !important;
+               border-bottom: solid 2px #F2F2F2;
+
+            }
+
+            .PersonalDataBorder {
+               display: none !important;
+            }
+         }
+
+         .StreetDataCityAddress {
+            padding: 0 !important;
+            flex-direction: column;
+
+            div:nth-child(3) {
+               border: none !important
+            }
+
+            .StreetDataCityAddressItem {
+               width: 100% !important;
+               border-bottom: solid 2px #F2F2F2;
+            }
+
+            .PersonalDataBorder {
+               display: none !important;
+            }
+         }
+
+      }
+
+      .ProofData {
+         padding-top: 0 !important;
+         padding-bottom: 0 !important;
+
+         .ProofDataItem {
+            padding: 2rem;
+         }
+
+         .buttonChat {
+            right: 10px !important;
+            bottom: 10px !important;
+            height: 45px !important;
+            width: 45px !important
+         }
+      }
+   }
+
+
+   .modalFormEditAgent {
+      text-align: center;
+      padding-left: 1rem !important; 
+      padding-right: 1rem !important;
+
+      .modalFormEditData {
+         flex-direction: column;
+         align-items: center;
+      }
+
+      .modalFormEditIdentification {
+         width: 100% !important;
+         padding-right: 0 !important;
+
+      }
+
+      .modalFormEditAddress {
+         width: 100% !important;
+
+         padding-left: 0 !important;
+      }
+   }
+} 
+
+
+@media (min-width: 1200px) and (max-width: 1500px) {
+   .PersonalData {
+    padding: 0 !important; 
+    padding-left: 1rem !important; 
+    padding-right: 1rem !important;
+    justify-content: center !important;
+
+    .PersonalDataNameData {
+      padding: 1rem !important;
+    }
+
+    .PersonalDataPhoneEmail {
+      padding: 1rem !important; 
+
+      div:nth-child(3){
+        span {
+         word-wrap: break-word; 
+         max-width: 200px; 
+         width: 100%;
+      } 
+      }
+    }
+  } 
+
+  .StreetData {
+   padding: 0 !important; 
+   padding-left: 1.5rem !important; 
+    padding-right: 1.5rem !important;
+
+   .StreetDataZipState {
+      padding: 1rem !important;
+   }
+
+   .StreetDataCityAddress {
+      padding: 1rem !important;
+   }
+ }
+} 

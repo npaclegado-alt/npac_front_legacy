@@ -10,11 +10,31 @@ import { ContextApi } from '../../contexts'
 import Filters from "../../libs/Filters";
 
 
+type UserType = {
+  name: string,
+  cpf: string,
+  password: string,
+  phone: string,
+  email: string,
+  role: string,
+  referencia: string,
+  street: string,
+  number: string,
+  complement: string,
+  city: string,
+  state: string,
+  postalCode: string,
+  bairro: string,
+  dataNascimento: string,
+}
+
+
+
 export default function AgentProfile() {
 
   const { user, profileEditAgent, editAgentProfile, setEditAgentProfile } = useContext(ContextApi)
 
-  const [userData, setUserData] = useState<any>({
+  const [userData, setUserData] = useState<UserType>({
     name: '',
     cpf: '',
     password: '',
@@ -64,10 +84,8 @@ export default function AgentProfile() {
   }
 
 
-  useEffect(() => setUserData({ ...user, ...user?.address }), [user])
-
-
-
+  useEffect(() => setUserData({ ...user, ...user?.address } as UserType), [user])
+  
   return (
     <section className={styles.AgentProfilePage}>
       <div className={styles.PersonalData}>
