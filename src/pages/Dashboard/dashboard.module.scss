@@ -1,0 +1,347 @@
+.deshBoardPage {
+  display: grid;
+  grid-gap: 1.25rem;
+  grid-template-rows: 350px 10rem 269px;
+
+  .deshBoardPageAuff {
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    width: 100%;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
+
+    .deshBoardPageAuffProgress {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 2rem;
+
+      .progress {
+        padding-left: 2rem;
+        padding-right: 2rem;
+        margin-bottom: 0;
+      }
+
+      span {
+        color: #f04e23;
+        font-weight: 700;
+        font-size: 2rem;
+      }
+
+      .deshBoardPageAuffGift {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        span {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+
+    .deshBoardPageAuffLevel {
+      width: 100%;
+      display: flex;
+
+      border-top: solid 2px #f2f2f2;
+      padding: 2rem;
+
+      .deshBoardPageAuffLevelContainer {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+
+        h3 {
+          font-size: 2rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .deshBoardPageAuffPointsContainer {
+          span:nth-child(1) {
+            color: #f04e23;
+            margin-right: 1.5rem;
+          }
+
+          span:nth-child(2) {
+            color: #8b8b8b;
+          }
+        }
+      }
+
+      div:nth-child(1) {
+        border-right: 2px solid #f2f2f2;
+      }
+    }
+  }
+
+  .deshBoardPageTotals {
+    background-color: var(--white);
+    border-radius: 8px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    align-items: center;
+
+    .borderCenterTotals {
+      border-right: solid 2px #f2f2f2;
+      height: 100%;
+    }
+
+    .deshBoardPageTotalsItem {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 50%;
+
+      h4 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      span {
+        color: #8b8b8b;
+        font-size: 1rem;
+      }
+      height: 100px;
+    }
+
+    .deshBoardPageTotalsInfomation {
+      display: flex;
+      width: 50%;
+      justify-content: space-between;
+
+      div:nth-child(1) {
+        border-right: solid 2px #f2f2f2;
+      }
+    }
+  }
+
+  .deshBoardPageImage {
+    background-color: var(--white);
+    border-radius: 8px;
+
+    background-image: url("../../assets/imgs/plano_banner.png");
+      background-size: cover;
+     // height: 100%;
+    background-position: center;
+    display: flex;
+    justify-content: flex-end;
+    align-items: end;
+    padding: 1.5rem;
+
+    button {
+      height: 64px;
+      width: 64px;
+      background-color: #f04e23;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 50%;
+      background-image: url("../../assets/imgs/chatboxes.png");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+}
+ 
+
+
+@media (max-width: 600px) { 
+   .deshBoardPage {
+
+    grid-template-rows: 350px 220px 269px;
+
+      
+    .progress {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+      margin-bottom: 0;
+    }
+
+    .deshBoardPageAuff {
+      padding: 1.5rem !important;
+    } 
+  
+    .deshBoardPageAuffLevel {
+      flex-direction: column;   
+      padding: 0 !important;
+
+  
+      .deshBoardPageAuffLevelContainer {
+        width: 100% !important;
+      } 
+
+      div:nth-child(1) {
+        border-bottom: 2px solid #f2f2f2; 
+        border-right: none !important;
+
+      } 
+
+      .deshBoardPageAuffPointsContainer {
+        span:nth-child(1) {
+          color: #f04e23;
+          margin-right: 1rem !important; 
+          font-size: 0.75rem;
+        }
+
+        span:nth-child(2) {
+          color: #8b8b8b; 
+          font-size: 0.75rem;
+        }
+      }
+    
+    }
+  
+    .deshBoardPageTotals {
+      flex-direction: column; 
+      padding: 1rem; 
+      .deshBoardPageTotalsInfomation {
+        width: 100%; 
+         .deshBoardPageTotalsItem {
+          border-right: none !important;  
+
+          h4{
+            font-size: 1rem;
+          } 
+
+          span {
+            font-size: 0.75rem;
+          } 
+         }
+      } 
+
+      .borderCenterTotals {
+        border-bottom: solid  2px #f2f2f2; 
+        border-right: none; 
+        width: 100%;   
+      }
+    } 
+   } 
+  
+} 
+
+
+@media (max-width: 1000px) { 
+  .deshBoardPage {
+
+   grid-template-rows: 370px 220px 269px;
+
+     
+   .progress {
+     padding-left: 1rem !important;
+     padding-right: 1rem !important;
+     margin-bottom: 0;
+   }
+
+   .deshBoardPageAuff {
+     padding: 1.5rem !important;
+   } 
+ 
+   .deshBoardPageAuffLevel {
+     flex-direction: column;   
+     padding: 0 !important;
+
+ 
+     .deshBoardPageAuffLevelContainer {
+       width: 100% !important;
+     } 
+
+     div:nth-child(1) {
+       border-bottom: 2px solid #f2f2f2; 
+       border-right: none !important;
+
+     } 
+   
+   }
+ 
+   .deshBoardPageTotals {
+     flex-direction: column; 
+     padding: 1rem; 
+     .deshBoardPageTotalsInfomation {
+       width: 100%; 
+        .deshBoardPageTotalsItem {
+         border-right: none !important;  
+        }
+     } 
+
+     .borderCenterTotals {
+       border-bottom: solid  2px #f2f2f2; 
+       border-right: none; 
+       width: 100%;   
+     }
+   } 
+  } 
+} 
+
+
+
+
+
+@media (min-width: 1000px) and (max-width: 1300px) { 
+  .deshBoardPage {
+   .progress {
+     padding-left: 1rem !important;
+     padding-right: 1rem !important;
+     margin-bottom: 0;
+   }
+
+   .deshBoardPageAuff {
+     padding: 2rem !important; 
+
+     span {
+      font-size: 0.75rem;
+    } 
+   }  
+  } 
+
+  .deshBoardPageTotals {      
+     
+    h4 {
+      font-size: 1rem !important;
+    }
+  }
+}   
+
+
+@media (min-width: 1300px) and (max-width: 1400px) { 
+  .deshBoardPage {
+   .progress {
+     padding-left: 1rem !important;
+     padding-right: 1rem !important;
+     margin-bottom: 0;
+   }
+
+   .deshBoardPageAuff {
+     padding: 2rem !important; 
+
+     span {
+      font-size: 0.75rem;
+    } 
+   }  
+  } 
+
+  .deshBoardPageTotals {  
+   
+     
+    h4 {
+      font-size: 1.3rem !important;
+    }
+  }
+}  
+ 
+
+
