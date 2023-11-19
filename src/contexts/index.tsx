@@ -100,6 +100,7 @@ interface IContextApi {
   getAdressByPostalCode: (postalCode: string) => void;
   getAllStates: (idUf?: string) => void;
   getCitiesByUf: (ufId: string) => void;
+  getSpheresByUser: (userId: string) => void;
   getAllCareer: () => void;
   career?: Career;
   ufs: [
@@ -655,7 +656,7 @@ const getSpheresByUser = useCallback((userId: string | undefined) => {
         drawerOpen,
         setDrawerOpen,
         spheresResp,
-        getSpheresByUser
+        getSpheresByUser,
         getAllCareer,
         career,
         clearProductFiltered,
