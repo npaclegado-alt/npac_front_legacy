@@ -120,7 +120,7 @@ export function GridButtom(): JSX.Element {
                         position: 'absolute',
                         right: '1.5rem',
                         top: '1.5rem',
-                        zIndex: 1,
+                        zIndex: 99,
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.75)',

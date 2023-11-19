@@ -1,59 +1,24 @@
-import React, 
-{ 
-    useCallback,
-    useEffect, 
-    useRef
-} from 'react';
-import ReactFlow, {
-    MiniMap,
-    Controls,
-    Background,
-    useNodesState,
-    useEdgesState,
-    addEdge,
-    BackgroundVariant,
-    } from 'reactflow';
+import React, { useEffect, useId } from 'react';
 
+import * as go from 'gojs';
+import { ReactDiagram } from 'gojs-react';
+import styles from './styleFlow.module.scss'
 import useCalculatePositions from '../../../hooks/calculatePositionNode';
-import createNode from './createNode';
-import connectionLines from './connectionLines';
-
-import 'reactflow/dist/style.css';
-import styles from './styleFlow.module.scss';
-
 interface FlowProps {
     children: any;
     fullFlow: boolean;
 }
 
-interface NodeData {
-    label: React.ReactNode;
-    avatar: any;
-}
-
-interface NodeProps {
-    id: string;
-    position: any;
-    data: NodeData;
-    style: React.CSSProperties;
-    children?: any;
-}
-
-const nodeTypes = {
-    custom: createNode,
-  };
-
 export function Flow({
     children,
     fullFlow
 }: FlowProps): JSX.Element {
-    let initialNodes: NodeProps[] | any = [];
-    let nodesHook: any = [];
-    let initialEdges: any = [];
-    const componentRef: any = useRef<HTMLDivElement>();
+let diagranRef: any = React.useRef(null);
+let initialNodes: any = [];
 
-    nodesHook = useCalculatePositions(children, componentRef);
-    
+    const diagramNodes = useCalculatePositions(children, diagranRef);
+    const diagranNodesInitial: any = diagramNodes[0]?.children;
+
     function obterAvatarOuIniciais(nome: string) {
         const iniciais = nome?.split(' ')
         .map(word => word[0])
@@ -64,151 +29,185 @@ export function Flow({
     }
 
     useEffect(() => {
-        const componentWidth: any = componentRef?.current?.offsetWidth;
-        const componentHeight: any = componentRef?.current?.offsetHeight;
+        const componentWidth: number = diagranRef.current?.offsetWidth || 0;
+        const componentHeight: number = diagranRef.current?.offsetHeight || 0;
+
         const left = componentWidth / 2.1;
-        const top = componentHeight / 2.4; 
+        const top = componentHeight / 2.4;
 
-        
-        if (nodesHook) {
-            console.log('iniTialNodes', nodesHook)
-            initialNodes = nodesHook[0]?.children?.map((item: any, index: number) => {
-                console.log('item', item)
-                const { x, y } = item.position;
-                return index === 0 ? {
-                    id: `${item?.userId}`,
-                    position: { 
-                        x: left,
-                        y: top,
-                    },
-                    type: 'custom',
-                    data: { 
-                        label: obterAvatarOuIniciais(item.name), 
-                        avatar: item.avatar ?? '',
-                        position: {
-                            x: left,
-                            y: top,
-                        },
-                        index: index,
-                        childrens: item.children,
-                        id: item.userId,
-                    },
-                    style: { 
-                        width: '2rem', 
-                        height: '2rem', 
-                        borderRadius: '2rem',
-                        borderColor: '#FFFFFF',
-                        borderWidth: '2px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        fontWeight: 'semi-bold',
-                        fontSize: '1.2rem',
-                        color: '#F04E23',
-                    backgroundColor: 'transparent',
-                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
-                } as React.CSSProperties,
+        initialNodes = diagranNodesInitial?.map((item: any, index: number) => {
+            return index === 0 ? {
+                ...item,
+                id: Math.floor(Math.random() * 1000),
+                position: {
+                    x: left,
+                    y: top
+                }
             } : {
-                    id: `${item?.userId}`,
-                    position: { 
-                        x,
-                        y,
+                ...item,
+                id: Math.floor(Math.random() * 1000),
+            };
+        })
+    }, [children, diagranRef, fullFlow]);
+
+    function initDiagram() {
+        const $ = go.GraphObject.make;
+        const diagram: any =
+          $(go.Diagram,
+            {
+              'undoManager.isEnabled': true,  
+              //'clickCreatingTool.archetypeNodeData': { text: 'new node', color: 'lightblue'},
+              model: new go.GraphLinksModel(
+                {
+                  linkKeyProperty: 'key', 
+                }),
+                initialScale: 0.8,
+                initialViewportSpot: go.Spot.Center,
+            });
+
+            diagram.grid =
+              $(go.Panel, "Grid",
+                $(go.Shape, "LineH", { strokeWidth: 0.5, strokeDashArray: [0, 9.5, 0.5, 0] })
+              );
+                    
+            diagram.toolManager.draggingTool.isGridSnapEnabled = true;
+      
+        diagram.nodeTemplate =
+          $(go.Node, 'auto', 
+             { 
+                isTreeExpanded: true, 
+                isClipping: true,  
+            },
+            { // when the user clicks on a Node, highlight all Links coming out of the node
+                // and all of the Nodes at the other ends of those Links.
+              click: (e, node: any) => {
+                  // highlight all Links and Nodes coming out of a given Node
+                  var diagram: any = node.diagram;
+                  diagram.startTransaction("highlight");
+                  // remove any previous highlighting
+                  diagram.clearHighlighteds();
+                  // for each Link coming out of the Node, set Link.isHighlighted
+                  node?.findLinksOutOf().each((l: any) => l.isHighlighted = true);
+                  // for each Node destination for the Node, set Node.isHighlighted
+                  node?.findNodesOutOf().each((n: any) => n.isHighlighted = true);
+                  diagram.commitTransaction("highlight");
+                }
+            },
+                new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
+                $(go.Panel, "Spot",
+                    { 
+                        isClipping: true, 
                     },
-                    type: 'custom',
-                    data: { 
-                        label: obterAvatarOuIniciais(item.name), 
-                        avatar: item.avatar ?? '',
-                        position: { 
-                            x,
-                            y,
-                        },
-                        index: index,
-                        childrens: item.children,
-                        id: item.userId,
+                    $(go.Shape, "Ellipse", 
+                    { 
+                        maxSize: new go.Size(55, 55), 
+                        margin: new go.Margin(10),
+                        strokeWidth: 0
                     },
-                    style: { 
-                        width: '2rem', 
-                        height: '2rem', 
-                        borderRadius: '2rem',
-                        borderColor: '#FFFFFF',
-                        borderWidth: '2px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                    alignItems: 'center',
-                    fontWeight: 'semi-bold',
-                    fontSize: '1.2rem',
-                    color: '#F04E23',
-                    backgroundColor: 'transparent',
-                    boxShadow: '-2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
-                } as React.CSSProperties,
-            }
-        });
-        
-            if (initialNodes) {
-                setNodes(initialNodes)
-            }
-        }
-        
-        initialEdges = children?.map((item: any, index: number) => {
-            return {
-                id: `edge-${index}`,
-                source: `${item?.ref}`,
-                target: `${item?.userId}`,
-                sourceHandle: `${item?.userId}`,
-                type: 'straight',
-                style: { 
-                    stroke: '#F04E23',
+                    new go.Binding("fill", "color"),
+                    new go.Binding("stroke", "isHighlighted", h => h ? "#F04E23" : "black")
+                    .ofObject(),
+                    ),
+                    $(go.Picture,
+                    { 
+                        maxSize: new go.Size(55, 55), 
+                        margin: new go.Margin(10),
+                    },
+                    new go.Binding("source", "img" )),
+                    $(go.TextBlock,
+                    {   margin: new go.Margin(10),
+                        maxSize: new go.Size(100, 30),
+                        isMultiline: false,
+                        font: "bold 14pt sans-serif",
+                        stroke: "#F04E23",
+                    },
+                    new go.Binding('text').makeTwoWay()
+                )),
+          );
+
+          diagram.layout = $(go.TreeLayout);
+
+          diagram.linkTemplate =
+          $(go.Link,
+            { toShortLength: 4 },
+            $(go.Shape,
+              // the Shape.stroke color depends on whether Link.isHighlighted is true
+              new go.Binding("stroke", "isHighlighted", h => h ? "#F04E23" : "#D2D2D2")
+                  .ofObject(),
+                  new go.Binding("strokeWidth", "isHighlighted", h => h ? 2 : 1)
+                  .ofObject()
+                  ),
+            $(go.Shape,
+              { toArrow: "Standard", strokeWidth: 0 },
+              // the Shape.fill color depends on whether Link.isHighlighted is true
+              new go.Binding("fill", "isHighlighted", h => h ? "#F04E23" : "#D2D2D2")
+                  .ofObject()),
+
+            $(go.TextBlock, 
+                { 
+                    margin: new go.Margin(10),
+                    maxSize: new go.Size(100, 30),
+                    isMultiline: false,
+                    font: "bold 10pt sans-serif",
+                    stroke: "#F04E23",
+                    segmentIndex: 0, 
+                    segmentFraction: 0.2
                 },
-                MarkerType: 'arrow',
-            }
-        });
+                new go.Binding("text").makeTwoWay(),
+            ),
+            );
 
-        if (initialEdges) {
-            setEdges(initialEdges)
-        }
-    }, [componentRef, children]);
-    
-//[{ id: 'e1-2', source: '1', target: '2' }];
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-    
-    const onConnect = useCallback(
-      (params: any) => setEdges((eds) => addEdge(params, eds)),
-      [setEdges],
-    );
 
-    const variant: BackgroundVariant | any = 'dots';
+            diagram.click = (e: any) => {
+                e.diagram.commit((d: any) => d.clearHighlighteds(), "no highlighteds");
+              };
+      
+        return diagram;
+      }
 
+      function handleModelChange(changes: go.IncrementalData) {
+        console.log('GoJS model changed!', changes);
+      }
+
+      function getIndexByRef(ref: string) {
+        return diagranNodesInitial.findIndex((item: any) => item.userId === ref);
+      }
+
+      function getIndexByUserId(userId: string) {
+        return diagranNodesInitial.findIndex((item: any) => item.userId === userId);
+      }
+   
     return (
         <div
-            ref={(ref) => (componentRef.current = ref)}
+            ref={diagranRef}
             style={{
                 width: '100%',
                 height: '100%',
             }}
         >
-            <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            connectionLineComponent={connectionLines}
-            >
-                {fullFlow && <MiniMap />}
-                <Controls />
-                <Background 
-                    variant={variant} 
-                    gap={12} 
-                    size={1} 
-                    color="#2b2b2b"
-                    style={{
-                        backgroundColor: "#f2f2f2",
-                        borderRadius: '0.25rem'
-                    }}
-                />
-            </ReactFlow>
+            <ReactDiagram
+              initDiagram={initDiagram}
+              divClassName={styles.diagram_component}
+              nodeDataArray={diagranNodesInitial?.map((item: any, index: number) => {
+                return {
+                    key: getIndexByUserId(item.userId),
+                    text: item?.avatar ? '' : obterAvatarOuIniciais(item?.name),
+                    fig: 'Circle',
+                    img: item?.avatar ?? '',
+                    color: '#F04E23',
+                    //loc: `${item.position.x} ${item.position.y}`
+                }
+              })}
+              linkDataArray={diagranNodesInitial?.map((item: any, index: number) => {
+                return {
+                    key: index,
+                    //text: obterAvatarOuIniciais(item?.name),
+                    from:  index === 0 ? '' : getIndexByRef(item.ref),
+                    to: getIndexByUserId(item.userId),
+                }
+              })}
+              onModelChange={handleModelChange}
+            />
         </div>
     );
 }

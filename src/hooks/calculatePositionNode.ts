@@ -25,20 +25,20 @@ const useCalculatePositions = (children: Node[], componentRef: RefObject<HTMLEle
       const parent = positionParent.find((item: any) => item.parentId === node.ref);
       if (parent) {
         if (parent.zero) {
-          x = 80 * Math.cos(radians) + parentX;
-          y = 80 * Math.sin(radians) + parentY;
+          x = 100 * Math.cos(radians) + parentX;
+          y = 100 * Math.sin(radians) + parentY;
           positionParent.push({
-            x: 80 * Math.cos(radians) + parentX,
-            y: 80 * Math.sin(radians) + parentY,
+            x: 100 * Math.cos(radians) + parentX,
+            y: 100 * Math.sin(radians) + parentY,
             zero: false,
             parentId: node.userId,
           });
         } else {
-          x = (80 - 10) * Math.cos(radians) + parent.x;
-          y = (80 - 10) * Math.sin(radians) + parent.y;
+          x = (100 - 10) * Math.cos(radians) + parent.x;
+          y = (100 - 10) * Math.sin(radians) + parent.y;
           positionParent.push({
-            x: (80 - 10) * Math.cos(radians) + parent.x,
-            y: (80 - 10) * Math.sin(radians) + parent.y,
+            x: (100 - 10) * Math.cos(radians) + parent.x,
+            y: (100 - 10) * Math.sin(radians) + parent.y,
             zero: false,
             parentId: node.userId,
           });
@@ -50,7 +50,7 @@ const useCalculatePositions = (children: Node[], componentRef: RefObject<HTMLEle
       ...node,
       position: {
         x,
-        y,
+        y
       },
       children: node.children?.map((child, index) => calculatePositions(child, index * (360 / (node.children?.length || 1)), x, y, index)),
     };
