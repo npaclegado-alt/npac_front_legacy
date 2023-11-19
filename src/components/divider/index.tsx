@@ -1,8 +1,14 @@
 import styles from './stylesDivider.module.scss';
 
-export function Divider(): JSX.Element {
+interface DividerProps {
+    horizontal?: boolean;
+}
+
+export function Divider({
+    horizontal = true,
+}: DividerProps): JSX.Element {
     return (
-        <div className={styles.divider}>
+        <div className={horizontal ? styles.dividerHorizontal : styles.dividerVertical}>
         </div>
     );
 }

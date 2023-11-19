@@ -1,0 +1,26 @@
+.lineContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid var(--gray-100);
+
+    div {
+        width: 27.5%;
+
+        p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &:nth-child(1) {
+            width: 16%;
+            p {
+                font-size: 0.75rem;
+                color: var(--gray-300);
+            }
+        }
+    }
+}

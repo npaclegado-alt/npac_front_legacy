@@ -9,6 +9,7 @@ import { PageProductsDetails } from "../pages/ProductsDetails/productsDetails";
 import Layout from "../components/layout";
 import AdminLayout from "../components/adminLayout";
 import { PageProducts } from "../pages/Products/pageProducts";
+import { StructurePage } from "../pages/Structures/structurePage";
 import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
@@ -20,7 +21,7 @@ const RootRoutes: React.FC = () => {
       <Route element={<PrivateWrapper />}>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="structure" element={<></>} />
+          <Route path="structure" element={<StructurePage />} />
           <Route path="career" element={<Career />} />
           <Route path="financial" element={<Financial />} />
           <Route path="documents" element={<></>} />

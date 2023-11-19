@@ -22,6 +22,7 @@ import {
   states,
 } from "../services/requests/postalService";
 
+import { getSpheres } from "../services/requests/spheres";
 import { uploadProductImage } from "../services/requests/files";
 import { X } from "lucide-react";
 
@@ -172,8 +173,16 @@ interface IContextApi {
       };
     }
   ];
+  spheresResp:{
+        userId: string,
+        role: string,
+        name: string,
+        email: string,
+        children: any[],
+        avatar: string
+   }
 }
-
+          
 export const ContextApi = createContext<IContextApi>({
   isAuthenticated: false,
   loginRequest: (email: string, password: string) => {},
@@ -192,6 +201,7 @@ export const ContextApi = createContext<IContextApi>({
   getAdressByPostalCode: (postalCode: string) => {},
   getAllStates: (idUf?: string) => {},
   getCitiesByUf: (ufId: string) => {},
+  getSpheresByUser: (userId: string) => {},
   getAllCareer: () => {},
   career: undefined,
   ufs: [
@@ -265,6 +275,14 @@ export const ContextApi = createContext<IContextApi>({
       },
     },
   ],
+  spheresResp: {
+     userId: '',
+     role: '',
+     name: '',
+     email: '',
+     children: [],
+     avatar: ''
+ }
 });
 
 interface Props {
@@ -284,6 +302,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [ufs, setUfs] = useState<any>([]);
   const [cities, setCities] = useState<any>([]);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [spheresResp, setSpheresResp] = useState<any>([]);
   const [career, setCareer] = useState<Career>();
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
@@ -441,8 +460,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 });
               });
             });
-        })
-        .catch(() => {
+        }).catch(() => {
           toast.update(toastId, {
             render: "Falha ao cadastrar produto!",
             type: "error",
@@ -455,7 +473,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },
     [navigate]
   );
-
+    
   const deleteProductRequest = useCallback(
     (id: string) => {
       const request = deleteProduct(id);
@@ -589,6 +607,32 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+const getSpheresByUser = useCallback((userId: string | undefined) => {
+        const request = getSpheres(userId)
+        toast.promise(request,{
+            pending: {
+                render() {  
+                    return 'Carregando...'
+                }
+            },
+            success: {
+                render({ data }: any) {
+                    setSpheresResp(data?.data);
+                    return ''
+                },
+                style: {
+                    display: 'none'
+                }
+            },
+            error: {
+                render({ data }: any) {
+                    //TODO
+                    return 'Falha ao carregar Esferas!'
+                }
+            }
+        })
+    },[])
+
   return (
     <ContextApi.Provider
       value={{
@@ -610,6 +654,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         cities,
         drawerOpen,
         setDrawerOpen,
+        spheresResp,
+        getSpheresByUser
         getAllCareer,
         career,
         clearProductFiltered,
