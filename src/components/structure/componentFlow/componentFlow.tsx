@@ -100,29 +100,52 @@ let initialNodes: any = [];
                     },
                     $(go.Shape, "Ellipse", 
                     { 
+                        fill: 'white',
                         maxSize: new go.Size(55, 55), 
-                        margin: new go.Margin(10),
-                        strokeWidth: 0
+                        margin: new go.Margin(0),
+                        strokeWidth: 0.3,
                     },
-                    new go.Binding("fill", "color"),
                     new go.Binding("stroke", "isHighlighted", h => h ? "#F04E23" : "black")
                     .ofObject(),
+                    ),
+                    $(go.TextBlock,
+                      {   margin: new go.Margin(10),
+                          maxSize: new go.Size(100, 30),
+                          isMultiline: false,
+                          font: "bold 14pt sans-serif",
+                          stroke: "#F04E23",
+                      },
+                      new go.Binding('text').makeTwoWay()
                     ),
                     $(go.Picture,
                     { 
                         maxSize: new go.Size(55, 55), 
                         margin: new go.Margin(10),
                     },
-                    new go.Binding("source", "img" )),
-                    $(go.TextBlock,
-                    {   margin: new go.Margin(10),
-                        maxSize: new go.Size(100, 30),
-                        isMultiline: false,
-                        font: "bold 14pt sans-serif",
-                        stroke: "#F04E23",
-                    },
-                    new go.Binding('text').makeTwoWay()
-                )),
+                    new go.Binding("source", "img", (img: string) => img ? img : require('../../../assets/images/user.png')),
+                    ),                   
+                    ),
+                    $(go.Panel, "Spot",
+                        $(go.Shape, "RoundedRectangle",
+                          {
+                            fill: 'white',
+                            maxSize: new go.Size(45, 20),
+                            margin: new go.Margin(56, 0, 0, 5),
+                            strokeWidth: 0.3,
+                          }, 
+                          new go.Binding("stroke", "isHighlighted", h => h ? "#F04E23" : "black")
+                        ),
+                        $(go.TextBlock,
+                          {
+                            margin: new go.Margin(0),
+                            maxSize: new go.Size(45, 20),
+                            isMultiline: false,
+                            font: "bold 10pt sans-serif",
+                            stroke: "#F04E23",
+                          },
+                          new go.Binding('text', 'textBadge').makeTwoWay()
+                          )
+                    )
           );
 
           diagram.layout = $(go.TreeLayout);
@@ -192,6 +215,7 @@ let initialNodes: any = [];
                 return {
                     key: getIndexByUserId(item.userId),
                     text: item?.avatar ? '' : obterAvatarOuIniciais(item?.name),
+                    textBadge: obterAvatarOuIniciais(item?.name),
                     fig: 'Circle',
                     img: item?.avatar ?? '',
                     color: '#F04E23',
