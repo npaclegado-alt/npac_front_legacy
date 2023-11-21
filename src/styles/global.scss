@@ -21,7 +21,11 @@
   } 
 
   .ant-collapse-item {
-    border-radius: 0px 0px 0px 0px !important;
+    border-radius: 0px 0px 0px 0px !important; 
+  } 
+
+  .ant-collapse-content {
+    border-top: none !important;
   }
 
 

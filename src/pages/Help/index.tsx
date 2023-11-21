@@ -31,7 +31,7 @@ export const Help = () => {
                     }
                 })}
                     size='middle'
-                    expandIconPosition="end"
+                    expandIconPosition="end" 
                     expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                 />
 
