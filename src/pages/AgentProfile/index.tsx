@@ -32,7 +32,7 @@ type UserType = {
 
 export default function AgentProfile() {
 
-  const { user, profileEditAgent, editAgentProfile, setEditAgentProfile } = useContext(ContextApi)
+  const { user, profileEditAgent, editAgentProfile, setEditAgentProfile, ufs, getAllStates, cities, getCitiesByUf, getAdressByPostalCode } = useContext(ContextApi)
 
   const [userData, setUserData] = useState<UserType>({
     name: '',
@@ -52,7 +52,29 @@ export default function AgentProfile() {
     dataNascimento: '',
   })
 
-  const [seePasswordAgent, setSeePasswordAgent] = useState(false)
+  const [seePasswordAgent, setSeePasswordAgent] = useState(false) 
+
+  const ufStorage =  ufs.find(uf => uf.nome === user?.address.state)?.id as number
+  const cityStorage =  cities.find(uf => uf.nome === user?.address.city)?.id as number
+ 
+  useEffect(() => {
+    setUserData({ ...user, ...user?.address, state: ufStorage?.toString(), city: cityStorage?.toString()} as UserType) 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, ufStorage, cityStorage])  
+  
+
+  useEffect(() => {
+     getAllStates()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+   useEffect(() => {
+    if(ufStorage){
+      getCitiesByUf(ufStorage.toString()) 
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ufStorage])   
+ 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setUserData({ ...userData, [e.target.id]: e.target.value })
@@ -62,12 +84,15 @@ export default function AgentProfile() {
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    const ufById =  ufs.find((uf) => uf.id === +userData.state)?.nome as string
+    const citieById = cities.find((citie) => citie.id === +userData.city)?.nome as string
+
     const addressData = {
       street: userData.street,
       number: userData.number,
       complement: userData.complement,
-      city: userData.city,
-      state: userData.state,
+      city: citieById,
+      state: ufById,
       postalCode: Filters.clearStringOnlyNumbers(userData.postalCode)
     }
 
@@ -84,8 +109,8 @@ export default function AgentProfile() {
   }
 
 
-  useEffect(() => setUserData({ ...user, ...user?.address } as UserType), [user])
   
+
   return (
     <section className={styles.AgentProfilePage}>
       <div className={styles.PersonalData}>
@@ -236,33 +261,27 @@ export default function AgentProfile() {
             <div className={styles.modalFormEditAddress}>
               <h3>Dados de Endereço</h3>
               <div className={styles.modalFormEditGroupAddress}>
-                <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(userData.postalCode)} onChange={handleChange} />
-                <InputSimpleSelect data={[{
-                  id: 'SC',
-                  nome: 'SC'
-                },
-                {
-                  id: 'DF',
-                  nome: 'DF'
+                <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(userData.postalCode)} onChange={(e) => {
+                  handleChange(e) 
+                  const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
+                  if(cepString.length === 8){ 
+                    getAdressByPostalCode(cepString)  
                 }
-                ]}
+                }} />
+                <InputSimpleSelect data={ufs}
                   id='state'
+                  optionZero="Selecione seu estado"
                   value={userData.state}
-                  onChange={handleChange}
+                  onChange={(e)  => { 
+                    handleChange(e)
+                    getCitiesByUf(e.target.value)
+                  }}
                 />
               </div>
               <div className={styles.modalFormEditGroupAddress}>
-                <InputSimpleSelect
-                  data={[{
-                    id: 'Brasilia - DF',
-                    nome: 'Brasilia - DF'
-                  },
-
-                  {
-                    id: 'Maranhão',
-                    nome: 'Maranhão'
-                  }
-                  ]}
+                <InputSimpleSelect 
+                  optionZero="Selecione sua cidade"
+                  data={cities}
                   id='city'
                   value={userData.city}
                   onChange={handleChange}
@@ -274,7 +293,7 @@ export default function AgentProfile() {
               </div>
 
               <InputTextSimple
-                name="userDat.street"
+                name="street"
                 placeholder='street Guaramirim'
                 value={userData.street}
                 onChange={handleChange}

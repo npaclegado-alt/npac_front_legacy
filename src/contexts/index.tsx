@@ -377,7 +377,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
 
 
     const profileEditAgent = useCallback((id: string, data: User) => {
-        console.log(data, '-----DATA')
         const request = profileAgent(id, data)
         toast.promise(request, {
             pending: {
