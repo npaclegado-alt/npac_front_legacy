@@ -4,6 +4,27 @@
     box-sizing: border-box;
   }
   
+
+  //TODO: A estilização do collapsble não funcionar nos arquivos .module.scss por isso coloquei aqui
+  .ant-collapse {
+    border: none; 
+    width: 100%; 
+    background: transparent; 
+    max-width: 1200px;
+  }
+
+  .ant-collapse-header {
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important; 
+    padding: 25px 16px !important; 
+  } 
+
+  .ant-collapse-item {
+    border-radius: 0px 0px 0px 0px !important;
+  }
+
+
   :root {
     --white: #ffffff;
 

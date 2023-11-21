@@ -26,7 +26,8 @@ import { getSpheres } from "../services/requests/spheres";
 import { uploadProductImage } from "../services/requests/files";
 import { X } from "lucide-react";
 
-import { getCareer } from "../services/requests/career";
+import { getCareer } from "../services/requests/career"; 
+import {getFaq} from '../services/requests/faq'
 
 interface Career {
   front1: {
@@ -57,6 +58,15 @@ interface Career {
   careerLevel: string;
   careerPoints: string;
   user: string;
+}
+
+
+interface Faq {
+  _id: string;  
+  question: string;  
+  answer: string 
+  position: number,
+
 }
 
 interface User {
@@ -101,8 +111,10 @@ interface IContextApi {
   getAllStates: (idUf?: string) => void;
   getCitiesByUf: (ufId: string) => void;
   getSpheresByUser: (userId: string) => void;
-  getAllCareer: () => void;
-  career?: Career;
+  getAllCareer: () => void; 
+  getAllFaq: () => void;
+  career?: Career; 
+  allFaq: Faq[],
   ufs: [
     {
       id: number;
@@ -203,8 +215,10 @@ export const ContextApi = createContext<IContextApi>({
   getAllStates: (idUf?: string) => {},
   getCitiesByUf: (ufId: string) => {},
   getSpheresByUser: (userId: string) => {},
-  getAllCareer: () => {},
-  career: undefined,
+  getAllCareer: () => {},  
+  getAllFaq: () => {},
+  career: undefined, 
+  allFaq: [] as Faq[],
   ufs: [
     {
       id: 0,
@@ -308,7 +322,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
-  });
+  }); 
+  const [allFaq, setAllFaq] = useState<Faq[]>([])
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -606,6 +621,35 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         },
       },
     });
+  }, []); 
+
+
+  const getAllFaq = useCallback(() => {
+    const request = getFaq();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setAllFaq(data?.data);
+          return ''
+        },
+
+        style: {
+          display: 'none'
+        }
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar perguntas!";
+        },
+      },
+    });
   }, []);
 
 const getSpheresByUser = useCallback((userId: string | undefined) => {
@@ -660,7 +704,9 @@ const getSpheresByUser = useCallback((userId: string | undefined) => {
         getAllCareer,
         career,
         clearProductFiltered,
-        dimensions,
+        dimensions, 
+        getAllFaq,
+        allFaq
       }}
     >
       {children}
