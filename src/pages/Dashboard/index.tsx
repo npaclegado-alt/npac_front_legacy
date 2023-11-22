@@ -68,9 +68,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.deshBoardPageImage}>
-        <button type="button" onClick={() => window.alert("####")}/>
-      </div>
+      <div className={styles.deshBoardPageImage} />    
     </section>
   );
 };
