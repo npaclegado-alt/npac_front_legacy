@@ -13,6 +13,7 @@ import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
 import { Financial } from "../pages/Financial";
+import { PageDocuments } from "../pages/Documents/pageDocuments";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -23,7 +24,7 @@ const RootRoutes: React.FC = () => {
           <Route path="structure" element={<></>} />
           <Route path="career" element={<Career />} />
           <Route path="financial" element={<Financial />} />
-          <Route path="documents" element={<></>} />
+          <Route path="documents" element={<PageDocuments />} />
           <Route path="help" element={<></>} />
           <Route path="products" element={<PageProducts />} />
         </Route>
