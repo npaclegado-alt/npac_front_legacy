@@ -14,6 +14,7 @@ import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
 import { Financial } from "../pages/Financial";
+import { Invitation } from "../pages/Invitation";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -26,7 +27,7 @@ const RootRoutes: React.FC = () => {
           <Route path="financial" element={<Financial />} />
           <Route path="documents" element={<></>} />
           <Route path="help" element={<></>} />
-          <Route path="products" element={<PageProducts />} />
+          <Route path="products" element={<PageProducts />} /> 
         </Route>
         <Route element={<AdminWrapper />}>
           <Route path="/admin/" element={<AdminLayout />}>
@@ -39,6 +40,7 @@ const RootRoutes: React.FC = () => {
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
+      <Route path="invitation" element={<Invitation />} />
       <Route path="/unauthorized" element={<></>} />
       <Route path="/*" element={<NotFound />} />
       <Route
