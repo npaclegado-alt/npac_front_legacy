@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import Filters from "../../../libs/Filters";
 
 interface Address {
   country: string;
@@ -98,6 +99,8 @@ const formatDataForApi = (
       throw new Error(`Missing mandatory field: ${field}`);
     }
   }
+
+  const phoneNumberOnlyNumbers = Filters.clearStringOnlyNumbers(formData.phone);
   const formattedData = {
     customer: {
       address: {
@@ -111,8 +114,8 @@ const formatDataForApi = (
       phones: {
         mobile_phone: {
           country_code: "55",
-          area_code: formData.phone.substring(1, 4),
-          number: formData.phone.substring(4),
+          area_code: phoneNumberOnlyNumbers.substring(0, 2),
+          number: phoneNumberOnlyNumbers.substring(2),
         },
       },
       name: formData.name,
@@ -124,7 +127,7 @@ const formatDataForApi = (
     },
     shipping: {
       amount: 1,
-      description: product.description,
+      description: product.description.slice(0, 50),
       recipient_name: formData.name,
       recipient_phone: formData.phone,
       address: {
@@ -152,7 +155,7 @@ const formatDataForApi = (
     items: [
       {
         amount: product.price * 100,
-        description: product.description,
+        description: product.description.slice(0, 50),
         quantity: 1,
         code: product._id,
       },

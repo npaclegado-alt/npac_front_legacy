@@ -39,7 +39,8 @@ const PageProductsDetails = () => {
   const { productId } = useParams();
   const [nextIndex, setNextIndex] = useState(0);
   const [formData, setFormData] = useState(initialState);
-
+  
+  const decoderProductId = atob(productId as string);
   const imgProduct = productFiltered?.imageUrls ?? [];
   const currentScreen = window.innerWidth;
 
@@ -78,7 +79,7 @@ const PageProductsDetails = () => {
   };
 
   useEffect(() => {
-    productsById(productId as string);
+    productsById(JSON.parse(decoderProductId)?.productId as string);
     getAllStates();
   }, [productId, getAllStates, productsById]);
 
@@ -117,6 +118,7 @@ const PageProductsDetails = () => {
           getCitiesByUf={getCitiesByUf}
           cities={cities}
           onProceed={startTransaction}
+          saleIdentification={productId ?? ''}
         />
       </div>
     </div>

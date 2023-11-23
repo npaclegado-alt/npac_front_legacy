@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { 
+    useState, 
+    useContext
+} from "react";
 import { Files, CopyCheck } from "lucide-react";
 
-import { Divider } from "../divider";
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
+
+import { Divider } from "../divider";
+import { ContextApi } from "../../contexts";
 
 import styles from "./styleProduct.module.scss";
 import Filters from "../../libs/Filters";
@@ -25,7 +30,18 @@ export function Products({
   key
 }: ProductsProps): JSX.Element {
     const location = window.location.href.split('/');
-    const redirectUrlProductsDetails = location[0] + '//' + location[2] + '/productDetails/' + link;
+    const {
+        user
+      } = useContext(ContextApi);
+
+    const salesIdentify = {
+        userId: user?._id,
+        productId: link,
+    };
+
+    const criptoIdentify = btoa(JSON.stringify(salesIdentify));
+
+    const redirectUrlProductsDetails = location[0] + '//' + location[2] + '/productDetails/' + criptoIdentify;
 
     const [copied, setCopied] = useState<boolean>(false);
 

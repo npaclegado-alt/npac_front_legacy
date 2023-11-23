@@ -17,6 +17,7 @@ import {
 } from '../services/requests/postalService';
 import { FormDataTransaction, formatDataForApi } from "../pages/ProductsDetails/domain/Formatters";
 import { submitTransaction } from "../services/requests/transactions";
+import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
 interface User {
     expiresIn: string;
@@ -62,7 +63,7 @@ interface IContextApi {
             _id: string,
             name: string,
             price: number,
-            auffs: number,
+            auff: number,
             imageUrls: string[]
         }
     ],
@@ -72,7 +73,7 @@ interface IContextApi {
         name: string,
         description: string,
         price: number,
-        auffs: number,
+        auff: number,
         imageUrls: string[]
     },
     adress: {
@@ -111,7 +112,7 @@ interface IContextApi {
             }
         }
     ];
-    startTransaction: (formData: FormDataTransaction) => Promise<void>;
+    startTransaction: (formData: FormDataTransaction, startTransaction: ProductDetailsContentProps['saleIdentification']) => Promise<void>;
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -142,7 +143,7 @@ export const ContextApi = createContext<IContextApi>({
             _id: '',
             name: '',
             price: 0,
-            auffs: 0,
+            auff: 0,
             imageUrls: ['']
         }
     ],
@@ -152,7 +153,7 @@ export const ContextApi = createContext<IContextApi>({
         name: '',
         description: '',
         price: 0,
-        auffs: 0,
+        auff: 0,
         imageUrls: ['']
     },
     adress: {
@@ -191,7 +192,7 @@ export const ContextApi = createContext<IContextApi>({
             }
         }
     ],
-    startTransaction: async (formData: FormDataTransaction) => { },
+    startTransaction: async (formData: FormDataTransaction, startTransaction: ProductDetailsContentProps['saleIdentification']) => { },
 })
 
 interface Props {
@@ -254,7 +255,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         [navigate]
     );
 
-    const startTransaction = useCallback(async (formData: FormDataTransaction) => {
+    const startTransaction = useCallback(async (formData: FormDataTransaction, saleIdentification: ProductDetailsContentProps['saleIdentification']) => {
         try {
             const payload = formatDataForApi(formData, productFiltered, adress);
 
@@ -263,7 +264,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 return;
             }
 
-            const { checkouts } = await submitTransaction(payload);
+            const { checkouts } = await submitTransaction(payload, saleIdentification);
             window.location.href = checkouts[0].payment_url;
         } catch (error: any) {
             toast.error('Erro ao procesar a compra', error)

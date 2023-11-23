@@ -10,7 +10,8 @@ import { ContextApi } from "../../contexts";
 export function PageProducts(): JSX.Element {
   const {
     getAllProducts,
-    products
+    products,
+    user
   } = useContext(ContextApi);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export function PageProducts(): JSX.Element {
                       key={product?._id}
                       name={product?.name}
                       value={product?.price}
-                      auffs={product?.auffs ?? 0}
+                      auffs={product?.auff ?? 0}
                       image={product?.imageUrls[0]}
                       link={product?._id}
                     />

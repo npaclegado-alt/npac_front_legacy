@@ -9,6 +9,7 @@ import { InputSimpleSelect } from '../../../components/inputs/simpleSelect/simpl
 import { InputTextSimple } from '../../../components/inputs/simpleText/inputSimpleText';
 import Filters from '../../../libs/Filters';
 import { FormDataTransaction } from './Formatters';
+import { JsTyping } from 'typescript';
 
 interface Uf {
     id: number;
@@ -22,7 +23,7 @@ interface City {
     // Add other properties as needed
 }
 
-interface ProductDetailsContentProps {
+export interface ProductDetailsContentProps {
     cities: City[];
     ufs: Uf[];
     product: {
@@ -30,7 +31,7 @@ interface ProductDetailsContentProps {
         name: string;
         description: string;
         price: number;
-        auffs: number;
+        auff: number;
         imageUrls: string[];
     };
     formData: {
@@ -47,12 +48,13 @@ interface ProductDetailsContentProps {
         stateSelected: number;
         citiesSelected: string | number;
     };
+    saleIdentification: string | any;
     getAdressByPostalCode: (cep: string) => void;
     getCitiesByUf: (ufId: string) => void;
     changeWidthInput: (value: number, defaultWidth: string) => React.CSSProperties;
     currentScreen: number;
     onOptionsUpdate: (data?: Partial<ProductDetailsContentProps['formData']>) => void;
-    onProceed: (formData: FormDataTransaction) => void;
+    onProceed: (formData: FormDataTransaction, startTransaction: ProductDetailsContentProps['saleIdentification']) => void;
 }
 
 
@@ -67,6 +69,7 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
     getAdressByPostalCode,
     getCitiesByUf,
     onProceed,
+    saleIdentification
 }) => {
 
 
@@ -216,7 +219,7 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                             style={changeWidthInput(currentScreen, '49%')}
                         />
                         <CustomButton
-                            onClick={() => onProceed(formData)}
+                            onClick={() => onProceed(formData, saleIdentification)}
                             style={changeWidthInput(currentScreen, '49%')}>Prosseguir para o pagamento</CustomButton>
                     </div>
                 </div>
