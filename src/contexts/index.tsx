@@ -92,6 +92,10 @@ interface IContextApi {
     price: number,
     auff: number,
     files: File[],
+    createUser: boolean,
+    commissionDistributionSpheres: number[],
+    commissionDistributionGroup: number[],
+    commissionDistributionCarrer: number[],
     isCommissionable: boolean,
     commissionType?: string
   ) => void;
@@ -123,6 +127,10 @@ interface IContextApi {
       imageUrls: string[];
       isCommissionable: boolean;
       commissionType?: string;
+      createUser: boolean;
+      commissionDistributionSpheres: number[];
+      commissionDistributionGroup: number[];
+      commissionDistributionCarrer: number[];
     }
   ];
   productsById: (id: string) => void;
@@ -135,6 +143,10 @@ interface IContextApi {
     imageUrls: string[];
     isCommissionable: boolean;
     commissionType?: string;
+    createUser: boolean;
+    commissionDistributionSpheres: number[];
+    commissionDistributionGroup: number[];
+    commissionDistributionCarrer: number[];
   };
   adress: {
     cep: string;
@@ -216,6 +228,10 @@ export const ContextApi = createContext<IContextApi>({
       imageUrls: [""],
       isCommissionable: false,
       commissionType: "",
+      createUser: false,
+      commissionDistributionSpheres: [],
+      commissionDistributionGroup: [],
+      commissionDistributionCarrer: [],
     },
   ],
   productsById: () => {},
@@ -228,6 +244,10 @@ export const ContextApi = createContext<IContextApi>({
     imageUrls: [""],
     isCommissionable: false,
     commissionType: "",
+    createUser: false,
+    commissionDistributionSpheres: [],
+    commissionDistributionGroup: [],
+    commissionDistributionCarrer: [],
   },
   adress: {
     cep: "",
@@ -402,6 +422,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       price: number,
       auff: number,
       files: File[],
+      createUser: boolean,
+      commissionDistributionSpheres: number[],
+      commissionDistributionGroup: number[],
+      commissionDistributionCarrer: number[],
       isCommissionable: boolean,
       commissionType?: string
     ) => {
@@ -411,6 +435,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         description,
         price,
         auff,
+        createUser,
+        commissionDistributionSpheres,
+        commissionDistributionGroup,
+        commissionDistributionCarrer,
         isCommissionable,
         commissionType
       )

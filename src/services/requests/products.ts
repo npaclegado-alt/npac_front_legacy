@@ -44,6 +44,10 @@ export async function addProduct(
   description: string,
   price: number,
   auff: number,
+  createUser: boolean,
+  commissionDistributionSpheres: number[],
+  commissionDistributionGroup: number[],
+  commissionDistributionCarrer: number[],
   isCommissionable: boolean,
   commissionType?: string
 ) {
@@ -54,6 +58,10 @@ export async function addProduct(
         description,
         price,
         auff,
+        createUser,
+        commissionDistributionSpheres,
+        commissionDistributionGroup,
+        commissionDistributionCarrer,
         isCommissionable,
         commissionType,
       })

@@ -44,6 +44,16 @@
 
 .label {
   margin-left: 0.1rem;
+  align-self: flex-start;
+}
+
+.labelWithIcon {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 0.1rem;
+  align-items: center;
+  cursor: text;
+  align-self: flex-start;
 }
 
 .row {
