@@ -40,7 +40,7 @@ const RootRoutes: React.FC = () => {
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
-      <Route path="invitation" element={<Invitation />} />
+      <Route path="/invitation/:userId" element={<Invitation />} />
       <Route path="/unauthorized" element={<></>} />
       <Route path="/*" element={<NotFound />} />
       <Route

@@ -4,6 +4,7 @@ import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleT
 import { LoginLayout } from "../../components/loginLayout"
 import styles from "./invitation.module.scss"
 import Filters from "../../libs/Filters"
+import { useParams } from "react-router-dom"
 export const Invitation = () => {
 
   const [invationUser, setInvationUser] = useState({
@@ -18,6 +19,14 @@ export const Invitation = () => {
   })
 
   const [termsServices, setTermsService] = useState(false)
+  
+  const {userId} = useParams<{userId: string}>() 
+  
+  const idInvationUser = atob(userId as string) 
+
+  console.log(idInvationUser)
+
+
 
   const handleChangeInvitation = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setInvationUser({ ...invationUser, [e.target.id]: e.target.value })
