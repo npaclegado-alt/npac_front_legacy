@@ -25,6 +25,9 @@ const AddProducts: React.FC = () => {
     productsById,
     productFiltered: initialData,
     clearProductFiltered,
+    getAllProductImages,
+    productImages,
+    editProductRequest,
   } = useContext(ContextApi);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -39,16 +42,21 @@ const AddProducts: React.FC = () => {
     useState(["", "", ""]);
   const [commissionType, setCommissionType] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [defaultFileList, setDefaultFileList] = useState<any>([]);
   const [createUser, setCreateUser] = useState(false);
+  const [directCommissionValue, setDirectCommissionValue] = useState("");
+  const [width, setWidth] = useState("");
+  const [height, setHeight] = useState("");
+  const [length, setLength] = useState("");
+  const [weight, setWeight] = useState("");
 
   useEffect(() => () => clearProductFiltered(), [clearProductFiltered]);
 
   useEffect(() => {
     if (productId) {
       productsById(productId);
+      getAllProductImages(productId);
     }
-  }, [productId, productsById]);
+  }, [getAllProductImages, productId, productsById]);
 
   useEffect(() => {
     if (initialData) {
@@ -58,8 +66,37 @@ const AddProducts: React.FC = () => {
       setAuff(String(initialData.auff));
       setIsCommissionable(initialData.isCommissionable);
       setCommissionType(initialData.commissionType ?? "");
+      setCreateUser(initialData.createUser);
+      setCommissionDistributionSpheres(
+        initialData.commissionDistributionSpheres.map((item) => String(item))
+      );
+      setCommissionDistributionGroup(
+        initialData.commissionDistributionGroup.map((item) => String(item))
+      );
+      setCommissionDistributionCarrer(
+        initialData.commissionDistributionCarrer.map((item) => String(item))
+      );
+      setDirectCommissionValue(
+        initialData.directCommissionValue
+          ? Filters.convertMoneyInputMask(initialData.directCommissionValue)
+          : ""
+      );
+      setWeight(String(initialData.shippingValues?.weight ?? ""));
+      setWidth(String(initialData.shippingValues?.width ?? ""));
+      setHeight(String(initialData.shippingValues?.height ?? ""));
+      setLength(String(initialData.shippingValues?.length ?? ""));
     }
-  }, [initialData]);
+    if (productImages) {
+      setFileList(
+        productImages.map((item) => {
+          return {
+            ...item,
+            url: item.path,
+          };
+        }) as any
+      );
+    }
+  }, [initialData, productImages]);
 
   const commissionTypeOptions = [
     { id: "esfera", nome: "Esfera" },
@@ -135,9 +172,13 @@ const AddProducts: React.FC = () => {
       hasError = true;
       messages.push(<li>Auffs</li>);
     }
-    if (isCommissionable && commissionType === "") {
+    if (commissionType.length === 0) {
       hasError = true;
       messages.push(<li>Tipo de comissão</li>);
+    }
+    if (isCommissionable && directCommissionValue === "") {
+      hasError = true;
+      messages.push(<li>Valor da comissão direta</li>);
     }
 
     if (
@@ -162,6 +203,26 @@ const AddProducts: React.FC = () => {
       messages.push(<li>% Comissao (Carreira)</li>);
     }
 
+    if (width.length === 0) {
+      hasError = true;
+      messages.push(<li>Largura</li>);
+    }
+
+    if (height.length === 0) {
+      hasError = true;
+      messages.push(<li>Altura</li>);
+    }
+
+    if (length.length === 0) {
+      hasError = true;
+      messages.push(<li>Comprimento</li>);
+    }
+
+    if (weight.length === 0) {
+      hasError = true;
+      messages.push(<li>Peso</li>);
+    }
+
     if (fileList.length === 0) {
       hasError = true;
       messages.push(<li>Imagem</li>);
@@ -182,7 +243,6 @@ const AddProducts: React.FC = () => {
     return true;
   }, [
     auff,
-    commissionType,
     description,
     fileList,
     isCommissionable,
@@ -191,12 +251,57 @@ const AddProducts: React.FC = () => {
     commissionDistributionSpheres,
     commissionDistributionGroup,
     commissionDistributionCarrer,
+    directCommissionValue,
+    weight,
+    height,
+    width,
+    length,
+    commissionType,
   ]);
 
   const handleSubmit = useCallback(() => {
     if (validateFields()) {
-      const files: File[] = fileList.map((item) => item.response.file);
+      const files: File[] = fileList
+        .filter((item) => !!item?.response?.file)
+        .map((item) => item.response.file);
       if (productId) {
+        const newFiles = [...files];
+        const updatedOldFilesIds = fileList
+          .filter((item) => !item?.response?.file)
+          .map((item: any) => item._id);
+        const removedFiles = [...productImages].filter(
+          (item) => !updatedOldFilesIds.includes(item._id)
+        );
+        editProductRequest(
+          productId,
+          name,
+          description,
+          Filters.removeMoneyMask(price),
+          Number(auff),
+          createUser,
+          commissionDistributionSpheres.map((item) =>
+            Number(Filters.clearStringOnlyNumbers(item))
+          ),
+          commissionDistributionGroup.map((item) =>
+            Number(Filters.clearStringOnlyNumbers(item))
+          ),
+          commissionDistributionCarrer.map((item) =>
+            Number(Filters.clearStringOnlyNumbers(item))
+          ),
+          commissionType,
+          {
+            height: Number(height),
+            weight: Number(weight),
+            width: Number(width),
+            length: Number(length),
+          },
+          newFiles,
+          removedFiles,
+          isCommissionable,
+          isCommissionable
+            ? Filters.removeMoneyMask(directCommissionValue)
+            : undefined
+        );
       } else {
         addProductRequest(
           name,
@@ -214,8 +319,17 @@ const AddProducts: React.FC = () => {
           commissionDistributionCarrer.map((item) =>
             Number(Filters.clearStringOnlyNumbers(item))
           ),
+          commissionType,
+          {
+            height: Number(height),
+            weight: Number(weight),
+            width: Number(width),
+            length: Number(length),
+          },
           isCommissionable,
-          isCommissionable ? commissionType : undefined
+          isCommissionable
+            ? Filters.removeMoneyMask(directCommissionValue)
+            : undefined
         );
       }
     }
@@ -234,11 +348,17 @@ const AddProducts: React.FC = () => {
     validateFields,
     addProductRequest,
     productId,
+    directCommissionValue,
+    weight,
+    width,
+    height,
+    length,
+    productImages,
   ]);
 
   return (
     <div className={styles.container}>
-      {productId && !initialData ? (
+      {productId && !initialData && !productImages ? (
         <></>
       ) : (
         <>
@@ -260,7 +380,7 @@ const AddProducts: React.FC = () => {
                 <InputTextSimple
                   name="name"
                   value={name}
-                  placeholder="Insira o nome do produto"
+                  placeholder="Insira o nome"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
@@ -270,7 +390,7 @@ const AddProducts: React.FC = () => {
                 <InputTextSimple
                   name="description"
                   value={description}
-                  placeholder="Insira a descrição do produto"
+                  placeholder="Insira a descrição"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
@@ -282,7 +402,7 @@ const AddProducts: React.FC = () => {
                 <InputTextSimple
                   name="price"
                   value={price}
-                  placeholder="Insira o preço do produto"
+                  placeholder="Insira o preço"
                   onChange={(e) =>
                     setPrice(Filters.convertMoneyInputMask(e.target.value))
                   }
@@ -293,38 +413,12 @@ const AddProducts: React.FC = () => {
                 <InputTextSimple
                   name="auff"
                   value={auff}
-                  placeholder="Insira os auffs do produto"
+                  placeholder="Insira os auffs"
                   onChange={(e) =>
                     setAuff(Filters.clearStringOnlyNumbers(e.target.value))
                   }
                 />
               </div>
-            </div>
-
-            <div className={styles.row}>
-              <div className={styles.formGroup}>
-                <div className={styles.label}>Possui comissão?</div>
-                <InputSimpleSelect
-                  disableOptionZero
-                  data={commissionableOptions}
-                  onChange={(e) => {
-                    setIsCommissionable(e.target.value === "1");
-                  }}
-                  value={isCommissionable ? "1" : "2"}
-                />
-              </div>
-              {isCommissionable && (
-                <div className={styles.formGroup}>
-                  <div className={styles.label}>Tipo de comissão</div>
-                  <InputSimpleSelect
-                    data={commissionTypeOptions}
-                    onChange={(e) => {
-                      setCommissionType(e.target.value);
-                    }}
-                    value={commissionType}
-                  />
-                </div>
-              )}
             </div>
 
             <div className={styles.row}>
@@ -336,7 +430,7 @@ const AddProducts: React.FC = () => {
                   }
                 >
                   <div className={styles.labelWithIcon}>
-                    Gera Usuário? <HelpCircleIcon size={14} />
+                    Gera usuário? <HelpCircleIcon size={14} />
                   </div>
                 </Tooltip>
                 <InputSimpleSelect
@@ -348,6 +442,45 @@ const AddProducts: React.FC = () => {
                   value={createUser ? "1" : "2"}
                 />
               </div>
+              <div className={styles.formGroup}>
+                <div className={styles.label}>Tipo de comissão</div>
+                <InputSimpleSelect
+                  data={commissionTypeOptions}
+                  onChange={(e) => {
+                    setCommissionType(e.target.value);
+                  }}
+                  value={commissionType}
+                />
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.formGroup}>
+                <div className={styles.label}>Possui comissão direta?</div>
+                <InputSimpleSelect
+                  disableOptionZero
+                  data={commissionableOptions}
+                  onChange={(e) => {
+                    setIsCommissionable(e.target.value === "1");
+                  }}
+                  value={isCommissionable ? "1" : "2"}
+                />
+              </div>
+              {isCommissionable && (
+                <div className={styles.formGroup}>
+                  <div className={styles.label}>Valor da comissão direta</div>
+                  <InputTextSimple
+                    name="directCommissionValue"
+                    value={directCommissionValue}
+                    placeholder="Insira o valor da comissão direta"
+                    onChange={(e) =>
+                      setDirectCommissionValue(
+                        Filters.convertMoneyInputMask(e.target.value)
+                      )
+                    }
+                  />
+                </div>
+              )}
             </div>
 
             <div className={styles.row}>
@@ -686,15 +819,72 @@ const AddProducts: React.FC = () => {
               </div>
             </div>
 
+            <div className={styles.row}>
+              <div className={styles.formGroup}>
+                <div className={styles.label}>Dimensões</div>
+                <div className={styles.row}>
+                  <div className={styles.formGroup}>
+                    <div className={styles.label}>Largura</div>
+                    <InputTextSimple
+                      name="width"
+                      value={width}
+                      placeholder="Insira a largura"
+                      onChange={(e) =>
+                        setWidth(Filters.clearStringOnlyNumbers(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <div className={styles.label}>Altura</div>
+                    <InputTextSimple
+                      name="height"
+                      value={height}
+                      placeholder="Insira a altura"
+                      onChange={(e) =>
+                        setHeight(
+                          Filters.clearStringOnlyNumbers(e.target.value)
+                        )
+                      }
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <div className={styles.label}>Comprimento</div>
+                    <InputTextSimple
+                      name="length"
+                      value={length}
+                      placeholder="Insira o comprimento"
+                      onChange={(e) =>
+                        setLength(
+                          Filters.clearStringOnlyNumbers(e.target.value)
+                        )
+                      }
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <div className={styles.label}>Peso</div>
+                    <InputTextSimple
+                      name="weight"
+                      value={weight}
+                      placeholder="Insira o peso"
+                      onChange={(e) =>
+                        setWeight(
+                          Filters.clearStringOnlyNumbers(e.target.value)
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className={styles.formGroup}>
               <div className={styles.label}>Imagens</div>
               <Upload
-                defaultFileList={defaultFileList}
                 listType="picture"
                 onChange={handleChange}
                 maxCount={10}
                 showUploadList={{
-                  removeIcon: <Trash className={styles.icon} />,
+                  removeIcon: <Trash size={14} className={styles.icon} />,
                 }}
                 multiple
                 fileList={fileList}
