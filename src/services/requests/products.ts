@@ -44,8 +44,19 @@ export async function addProduct(
   description: string,
   price: number,
   auff: number,
+  createUser: boolean,
+  commissionDistributionSpheres: number[],
+  commissionDistributionGroup: number[],
+  commissionDistributionCarrer: number[],
+  commissionType: string,
+  shippingValues: {
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+  },
   isCommissionable: boolean,
-  commissionType?: string
+  directCommissionValue?: number
 ) {
   return new Promise((resolve, reject) => {
     api
@@ -54,8 +65,14 @@ export async function addProduct(
         description,
         price,
         auff,
-        isCommissionable,
+        createUser,
+        commissionDistributionSpheres,
+        commissionDistributionGroup,
+        commissionDistributionCarrer,
         commissionType,
+        shippingValues,
+        isCommissionable,
+        directCommissionValue,
       })
       .then((response) => {
         resolve(response);
@@ -67,14 +84,41 @@ export async function addProduct(
 }
 
 export async function editProduct(
+  id: string,
   name: string,
   description: string,
   price: number,
-  imageUrls: string[]
+  auff: number,
+  createUser: boolean,
+  commissionDistributionSpheres: number[],
+  commissionDistributionGroup: number[],
+  commissionDistributionCarrer: number[],
+  commissionType: string,
+  shippingValues: {
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+  },
+  isCommissionable: boolean,
+  directCommissionValue?: number
 ) {
   return new Promise((resolve, reject) => {
     api
-      .post("products", { name, description, price, imageUrls })
+      .put(`products/${id}`, {
+        name,
+        description,
+        price,
+        auff,
+        createUser,
+        commissionDistributionSpheres,
+        commissionDistributionGroup,
+        commissionDistributionCarrer,
+        commissionType,
+        shippingValues,
+        isCommissionable,
+        directCommissionValue,
+      })
       .then((response) => {
         resolve(response);
       })

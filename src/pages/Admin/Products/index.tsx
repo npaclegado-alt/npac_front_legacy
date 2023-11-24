@@ -43,7 +43,7 @@ const Products: React.FC = () => {
         return (
           <Space size="middle">
             <Edit
-              // onClick={() => navigate(`add/${data._id}`)}
+              onClick={() => navigate(`add/${data._id}`)}
               className={styles.icon}
             />
             <Tooltip
