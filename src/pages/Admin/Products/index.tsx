@@ -8,7 +8,6 @@ import Filters from "../../../libs/Filters";
 import { Edit, Plus, Trash } from "lucide-react";
 import { CustomButton } from "../../../components/buttons/customButton";
 import { useNavigate } from "react-router-dom";
-import { MagicMotion } from "react-magic-motion";
 
 interface DataType {
   name: string;
