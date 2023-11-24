@@ -8,6 +8,7 @@ import Filters from "../../../libs/Filters";
 import { Edit, Plus, Trash } from "lucide-react";
 import { CustomButton } from "../../../components/buttons/customButton";
 import { useNavigate } from "react-router-dom";
+import { MagicMotion } from "react-magic-motion";
 
 interface DataType {
   name: string;
@@ -43,7 +44,7 @@ const Products: React.FC = () => {
         return (
           <Space size="middle">
             <Edit
-              // onClick={() => navigate(`add/${data._id}`)}
+              onClick={() => navigate(`add/${data._id}`)}
               className={styles.icon}
             />
             <Tooltip

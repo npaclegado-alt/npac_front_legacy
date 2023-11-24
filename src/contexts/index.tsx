@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import {
   addProduct,
   deleteProduct,
+  editProduct,
   getProductById,
   getProducts,
 } from "../services/requests/products";
@@ -23,10 +24,26 @@ import {
 } from "../services/requests/postalService";
 
 import { getSpheres } from "../services/requests/spheres";
-import { uploadProductImage } from "../services/requests/files";
+import {
+  deleteFile,
+  getProductImages,
+  uploadProductImage,
+} from "../services/requests/files";
 import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
+
+interface IFile {
+  _id: string;
+  name: string;
+  originalName: string;
+  fieldName: string;
+  fieldId: string;
+  path: string;
+  size: number;
+  type: string;
+  createdAt: string;
+}
 
 interface Career {
   front1: {
@@ -86,6 +103,7 @@ interface IContextApi {
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
   getAllProducts: () => void;
+  getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
   addProductRequest: (
     name: string,
@@ -93,8 +111,41 @@ interface IContextApi {
     price: number,
     auff: number,
     files: File[],
+    createUser: boolean,
+    commissionDistributionSpheres: number[],
+    commissionDistributionGroup: number[],
+    commissionDistributionCarrer: number[],
+    commissionType: string,
+    shippingValues: {
+      width: number;
+      height: number;
+      length: number;
+      weight: number;
+    },
     isCommissionable: boolean,
-    commissionType?: string
+    directCommissionValue?: number
+  ) => void;
+  editProductRequest: (
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    auff: number,
+    createUser: boolean,
+    commissionDistributionSpheres: number[],
+    commissionDistributionGroup: number[],
+    commissionDistributionCarrer: number[],
+    commissionType: string,
+    shippingValues: {
+      width: number;
+      height: number;
+      length: number;
+      weight: number;
+    },
+    newFiles: File[],
+    removedFiles: IFile[],
+    isCommissionable: boolean,
+    directCommissionValue?: number
   ) => void;
   deleteProductRequest: (id: string) => void;
   getAdressByPostalCode: (postalCode: string) => void;
@@ -124,7 +175,18 @@ interface IContextApi {
       auff: number;
       imageUrls: string[];
       isCommissionable: boolean;
-      commissionType?: string;
+      directCommissionValue?: number;
+      commissionType: string;
+      createUser: boolean;
+      commissionDistributionSpheres: number[];
+      commissionDistributionGroup: number[];
+      commissionDistributionCarrer: number[];
+      shippingValues: {
+        width: number;
+        height: number;
+        length: number;
+        weight: number;
+      };
     }
   ];
   productsById: (id: string) => void;
@@ -136,8 +198,20 @@ interface IContextApi {
     auff: number;
     imageUrls: string[];
     isCommissionable: boolean;
-    commissionType?: string;
+    directCommissionValue?: number;
+    commissionType: string;
+    createUser: boolean;
+    commissionDistributionSpheres: number[];
+    commissionDistributionGroup: number[];
+    commissionDistributionCarrer: number[];
+    shippingValues: {
+      width: number;
+      height: number;
+      length: number;
+      weight: number;
+    };
   };
+  productImages: IFile[];
   adress: {
     cep: string;
     logradouro: string;
@@ -174,16 +248,16 @@ interface IContextApi {
       };
     }
   ];
-  spheresResp:{
-        userId: string,
-        role: string,
-        name: string,
-        email: string,
-        children: any[],
-        avatar: string
-   }
+  spheresResp: {
+    userId: string;
+    role: string;
+    name: string;
+    email: string;
+    children: any[];
+    avatar: string;
+  };
 }
-          
+
 export const ContextApi = createContext<IContextApi>({
   isAuthenticated: false,
   loginRequest: (email: string, password: string) => {},
@@ -194,7 +268,10 @@ export const ContextApi = createContext<IContextApi>({
   },
   user: undefined,
   getAllProducts: () => {},
+  getAllProductImages: (id: string) => {},
+  productImages: [],
   addProductRequest: () => {},
+  editProductRequest: () => {},
   clearProductFiltered: () => {},
   deleteProductRequest: () => {},
   drawerOpen: false,
@@ -226,7 +303,18 @@ export const ContextApi = createContext<IContextApi>({
       auff: 0,
       imageUrls: [""],
       isCommissionable: false,
+      directCommissionValue: 0,
       commissionType: "",
+      createUser: false,
+      commissionDistributionSpheres: [],
+      commissionDistributionGroup: [],
+      commissionDistributionCarrer: [],
+      shippingValues: {
+        width: 0,
+        height: 0,
+        length: 0,
+        weight: 0,
+      },
     },
   ],
   productsById: () => {},
@@ -238,7 +326,18 @@ export const ContextApi = createContext<IContextApi>({
     auff: 0,
     imageUrls: [""],
     isCommissionable: false,
+    directCommissionValue: 0,
     commissionType: "",
+    createUser: false,
+    commissionDistributionSpheres: [],
+    commissionDistributionGroup: [],
+    commissionDistributionCarrer: [],
+    shippingValues: {
+      width: 0,
+      height: 0,
+      length: 0,
+      weight: 0,
+    },
   },
   adress: {
     cep: "",
@@ -277,13 +376,13 @@ export const ContextApi = createContext<IContextApi>({
     },
   ],
   spheresResp: {
-     userId: '',
-     role: '',
-     name: '',
-     email: '',
-     children: [],
-     avatar: ''
- }
+    userId: "",
+    role: "",
+    name: "",
+    email: "",
+    children: [],
+    avatar: "",
+  },
 });
 
 interface Props {
@@ -298,6 +397,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     storedUser ? JSON.parse(storedUser) : undefined
   );
   const [products, setProducts] = useState<any>([]);
+  const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
   const [adress, setAdress] = useState<any>();
   const [ufs, setUfs] = useState<any>([]);
@@ -363,6 +463,16 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     [navigate]
   );
 
+  const getAllProductImages = useCallback((id: string) => {
+    getProductImages(id)
+      .then((data: any) => {
+        setProductImages(data?.data?.response);
+      })
+      .catch(() => {
+        toast.error("Falha ao carregar imagens!");
+      });
+  }, []);
+
   const getAllProducts = useCallback(() => {
     const request = getProducts();
     toast.promise(request, {
@@ -374,7 +484,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       success: {
         render({ data }: any) {
           //TODO
-          setProducts(data?.data);
+          setProducts(data?.data.products);
           return "Produtos carregados com sucesso!";
         },
       },
@@ -389,6 +499,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
 
   const clearProductFiltered = useCallback(() => {
     setProductFiltered(null);
+    setProductImages([]);
   }, []);
 
   const productsById = useCallback((id: string) => {
@@ -402,7 +513,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       success: {
         render({ data }: any) {
           //TODO
-          setProductFiltered(data?.data);
+          setProductFiltered({
+            ...data?.data.product,
+            imageUrls: [...data?.data.imageUrls],
+          });
           return "Produtos carregados com sucesso!";
         },
       },
@@ -422,8 +536,19 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       price: number,
       auff: number,
       files: File[],
+      createUser: boolean,
+      commissionDistributionSpheres: number[],
+      commissionDistributionGroup: number[],
+      commissionDistributionCarrer: number[],
+      commissionType: string,
+      shippingValues: {
+        width: number;
+        height: number;
+        length: number;
+        weight: number;
+      },
       isCommissionable: boolean,
-      commissionType?: string
+      directCommissionValue?: number
     ) => {
       const toastId = toast.loading("Carregando...");
       addProduct(
@@ -431,8 +556,14 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         description,
         price,
         auff,
+        createUser,
+        commissionDistributionSpheres,
+        commissionDistributionGroup,
+        commissionDistributionCarrer,
+        commissionType,
+        shippingValues,
         isCommissionable,
-        commissionType
+        directCommissionValue
       )
         .then((data: any) => {
           const id = data.data._id;
@@ -461,7 +592,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
                 });
               });
             });
-        }).catch(() => {
+        })
+        .catch(() => {
           toast.update(toastId, {
             render: "Falha ao cadastrar produto!",
             type: "error",
@@ -474,7 +606,117 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },
     [navigate]
   );
-    
+
+  const editProductRequest = useCallback(
+    async (
+      id: string,
+      name: string,
+      description: string,
+      price: number,
+      auff: number,
+      createUser: boolean,
+      commissionDistributionSpheres: number[],
+      commissionDistributionGroup: number[],
+      commissionDistributionCarrer: number[],
+      commissionType: string,
+      shippingValues: {
+        width: number;
+        height: number;
+        length: number;
+        weight: number;
+      },
+      newFiles: File[],
+      removedFiles: IFile[],
+      isCommissionable: boolean,
+      directCommissionValue?: number
+    ) => {
+      const toastId = toast.loading("Carregando...");
+
+      removedFiles.forEach(async (file) => {
+        deleteFile(file.originalName);
+      });
+
+      if (newFiles.length > 0) {
+        uploadProductImage(id, newFiles).then(() => {
+          editProduct(
+            id,
+            name,
+            description,
+            price,
+            auff,
+            createUser,
+            commissionDistributionSpheres,
+            commissionDistributionGroup,
+            commissionDistributionCarrer,
+            commissionType,
+            shippingValues,
+            isCommissionable,
+            directCommissionValue
+          )
+            .then(() => {
+              toast.update(toastId, {
+                render: "Produto editado com sucesso!",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000,
+                closeButton: <X size={16} color="#8B8B8B" />,
+                closeOnClick: true,
+              });
+              navigate("/admin/products");
+            })
+            .catch(() => {
+              toast.update(toastId, {
+                render: "Falha ao editar produto!",
+                type: "error",
+                isLoading: false,
+                autoClose: 2000,
+                closeButton: <X size={16} color="#8B8B8B" />,
+                closeOnClick: true,
+              });
+            });
+        });
+      } else {
+        editProduct(
+          id,
+          name,
+          description,
+          price,
+          auff,
+          createUser,
+          commissionDistributionSpheres,
+          commissionDistributionGroup,
+          commissionDistributionCarrer,
+          commissionType,
+          shippingValues,
+          isCommissionable,
+          directCommissionValue
+        )
+          .then(() => {
+            toast.update(toastId, {
+              render: "Produto editado com sucesso!",
+              type: "success",
+              isLoading: false,
+              autoClose: 2000,
+              closeButton: <X size={16} color="#8B8B8B" />,
+              closeOnClick: true,
+            });
+            navigate("/admin/products");
+          })
+          .catch(() => {
+            toast.update(toastId, {
+              render: "Falha ao editar produto!",
+              type: "error",
+              isLoading: false,
+              autoClose: 2000,
+              closeButton: <X size={16} color="#8B8B8B" />,
+              closeOnClick: true,
+            });
+          });
+      }
+    },
+    [navigate]
+  );
+
   const deleteProductRequest = useCallback(
     (id: string) => {
       const request = deleteProduct(id);
@@ -608,31 +850,31 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
-const getSpheresByUser = useCallback((userId: string | undefined) => {
-        const request = getSpheres(userId)
-        toast.promise(request,{
-            pending: {
-                render() {  
-                    return 'Carregando...'
-                }
-            },
-            success: {
-                render({ data }: any) {
-                    setSpheresResp(data?.data);
-                    return ''
-                },
-                style: {
-                    display: 'none'
-                }
-            },
-            error: {
-                render({ data }: any) {
-                    //TODO
-                    return 'Falha ao carregar Esferas!'
-                }
-            }
-        })
-    },[])
+  const getSpheresByUser = useCallback((userId: string | undefined) => {
+    const request = getSpheres(userId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setSpheresResp(data?.data);
+          return "";
+        },
+        style: {
+          display: "none",
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar Esferas!";
+        },
+      },
+    });
+  }, []);
 
   return (
     <ContextApi.Provider
@@ -643,6 +885,7 @@ const getSpheresByUser = useCallback((userId: string | undefined) => {
         logoutRequest,
         getAllProducts,
         addProductRequest,
+        editProductRequest,
         deleteProductRequest,
         products,
         productFiltered,
@@ -661,6 +904,8 @@ const getSpheresByUser = useCallback((userId: string | undefined) => {
         career,
         clearProductFiltered,
         dimensions,
+        getAllProductImages,
+        productImages,
       }}
     >
       {children}
