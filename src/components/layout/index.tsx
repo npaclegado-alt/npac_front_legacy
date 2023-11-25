@@ -6,44 +6,32 @@ import styles from "./styleLayout.module.scss";
 import Drawer from "./components/Drawer";
 import { ContextApi } from "../../contexts";
 
-
 interface Page {
-  pathname: string, 
-  buttonChat: boolean 
+  pathname: string;
 }
 
-
 const Layout = () => {
-  const { dimensions } = useContext(ContextApi); 
-   
-  const [displayButtonChat, setDisplayButtonChat] = useState(false)
-  
-  const showPageChatButton: Page[] = [
-    {
-       pathname: '/', 
-       buttonChat: true
-    }, 
-    {
-      pathname: '/financial', 
-      buttonChat: false
-    }, 
-    {
-      pathname: '/help', 
-      buttonChat: true
-    },
-    {
-      pathname: '/career', 
-      buttonChat: true
-    } 
-]  
- 
-const pathPage =  showPageChatButton.find((page) => page.pathname === window.location.pathname) as Page
+  const { dimensions } = useContext(ContextApi);
 
- useEffect(() => {
-   if(pathPage){
-    setDisplayButtonChat(pathPage.buttonChat) 
-   }
- }, [pathPage])
+  const [displayButtonChat, setDisplayButtonChat] = useState(false);
+
+  const hidePageChatButton: Page[] = [
+    // {exemplo
+    //   pathname: "/financial",
+    // },
+  ];
+
+  const pathPage = hidePageChatButton.find(
+    (page) => page.pathname === window.location.pathname
+  ) as Page;
+
+  useEffect(() => {
+    if (pathPage) {
+      setDisplayButtonChat(false);
+    } else {
+      setDisplayButtonChat(true);
+    }
+  }, [pathPage]);
 
   return (
     <React.Fragment>
@@ -54,7 +42,7 @@ const pathPage =  showPageChatButton.find((page) => page.pathname === window.loc
         </div>
         <main className={styles.content}>
           <Outlet />
-         {displayButtonChat &&  <button className={styles.buttonChat}/>} 
+          {displayButtonChat && <button className={styles.buttonChat} />}
         </main>
       </div>
     </React.Fragment>
