@@ -178,6 +178,7 @@ interface IContextApi {
   };
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  getAllTransactionsByUserId: (userId: string) => void;
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
@@ -315,6 +316,7 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
+  getAllTransactionsByUserId: (userId: string) => {},
   profileEditAgent: (id: string, data: User) => {},
   editAgentProfile: false,
   setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
