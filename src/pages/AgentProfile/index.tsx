@@ -117,11 +117,12 @@ export default function AgentProfile() {
       email: userData.email,
       role: userData.role,
     };
-
-    await profileEditAgent(user?._id as string, {
-      ...identificationData,
-      address: addressData,
-    });
+    if (user)
+      await profileEditAgent(user._id as string, {
+        ...user,
+        ...identificationData,
+        address: addressData,
+      });
   };
 
   console.log(user);
