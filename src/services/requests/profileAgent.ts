@@ -12,14 +12,16 @@ const profileAgent = async (id: string, data: User) => {
         phone: Filters.clearStringOnlyNumbers(data.phone),
         email: data.email,
         role: data.role,
-        address: {
-          street: data.address.street,
-          number: data.address.number,
-          complement: data.address.complement,
-          city: data.address.city,
-          state: data.address.state,
-          postalCode: data.address.postalCode,
-        },
+        address: data.address
+          ? {
+              street: data.address.street,
+              number: data.address.number,
+              complement: data.address.complement,
+              city: data.address.city,
+              state: data.address.state,
+              postalCode: data.address.postalCode,
+            }
+          : undefined,
       })
       .then((response) => {
         resolve(response);

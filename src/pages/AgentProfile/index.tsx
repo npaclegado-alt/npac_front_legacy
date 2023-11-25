@@ -1,91 +1,104 @@
-import { useContext, ChangeEvent, useEffect } from 'react'
-import styles from './agent-profile.module.scss'
-import { Download, Eye, EyeOff, PenSquare, Upload } from 'lucide-react'
-import agent from '../../assets/imgs/download.jpg'
-import { useState } from 'react'
-import { Modal } from 'antd'
-import { InputTextSimple } from '../../components/inputs/simpleText/inputSimpleText'
-import { InputSimpleSelect } from '../../components/inputs/simpleSelect/simpleSelectInput'
-import { ContextApi } from '../../contexts'
+import { useContext, ChangeEvent, useEffect } from "react";
+import styles from "./agent-profile.module.scss";
+import { Download, Eye, EyeOff, PenSquare, Upload } from "lucide-react";
+import agent from "../../assets/imgs/download.jpg";
+import { useState } from "react";
+import { Modal } from "antd";
+import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
+import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
+import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 
-
 type UserType = {
-  name: string,
-  cpf: string,
-  password: string,
-  phone: string,
-  email: string,
-  role: string,
-  referencia: string,
-  street: string,
-  number: string,
-  complement: string,
-  city: string,
-  state: string,
-  postalCode: string,
-  bairro: string,
-  dataNascimento: string,
-}
-
-
+  name: string;
+  cpf: string;
+  password: string;
+  phone: string;
+  email: string;
+  role: string;
+  referencia: string;
+  street: string;
+  number: string;
+  complement: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  bairro: string;
+  dataNascimento: string;
+};
 
 export default function AgentProfile() {
-
-  const { user, profileEditAgent, editAgentProfile, setEditAgentProfile, ufs, getAllStates, cities, getCitiesByUf, getAdressByPostalCode } = useContext(ContextApi)
+  const {
+    user,
+    profileEditAgent,
+    editAgentProfile,
+    setEditAgentProfile,
+    ufs,
+    getAllStates,
+    cities,
+    getCitiesByUf,
+    getAdressByPostalCode,
+  } = useContext(ContextApi);
 
   const [userData, setUserData] = useState<UserType>({
-    name: '',
-    cpf: '',
-    password: '',
-    phone: '',
-    email: '',
-    role: '',
-    referencia: '',
-    street: '',
-    number: '',
-    complement: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    bairro: '',
-    dataNascimento: '',
-  })
+    name: "",
+    cpf: "",
+    password: "",
+    phone: "",
+    email: "",
+    role: "",
+    referencia: "",
+    street: "",
+    number: "",
+    complement: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    bairro: "",
+    dataNascimento: "",
+  });
 
-  const [seePasswordAgent, setSeePasswordAgent] = useState(false) 
+  const [seePasswordAgent, setSeePasswordAgent] = useState(false);
 
-  const ufStorage =  ufs.find(uf => uf.nome === user?.address.state)?.id as number
-  const cityStorage =  cities.find(uf => uf.nome === user?.address.city)?.id as number
- 
+  const ufStorage = ufs.find((uf) => uf.nome === user?.address?.state)
+    ?.id as number;
+  const cityStorage = cities.find((uf) => uf.nome === user?.address?.city)
+    ?.id as number;
+
   useEffect(() => {
-    setUserData({ ...user, ...user?.address, state: ufStorage?.toString(), city: cityStorage?.toString()} as UserType) 
+    setUserData({
+      ...user,
+      ...user?.address,
+      state: ufStorage?.toString(),
+      city: cityStorage?.toString(),
+    } as UserType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, ufStorage, cityStorage])  
-  
+  }, [user, ufStorage, cityStorage]);
 
   useEffect(() => {
-     getAllStates()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    getAllStates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-   useEffect(() => {
-    if(ufStorage){
-      getCitiesByUf(ufStorage.toString()) 
+  useEffect(() => {
+    if (ufStorage) {
+      getCitiesByUf(ufStorage.toString());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ufStorage])   
- 
+  }, [ufStorage]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setUserData({ ...userData, [e.target.id]: e.target.value })
-  }
-
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setUserData({ ...userData, [e.target.id]: e.target.value });
+  };
 
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const ufById =  ufs.find((uf) => uf.id === +userData.state)?.nome as string
-    const citieById = cities.find((citie) => citie.id === +userData.city)?.nome as string
+    const ufById = ufs.find((uf) => uf.id === +userData.state)?.nome as string;
+    const citieById = cities.find((citie) => citie.id === +userData.city)
+      ?.nome as string;
 
     const addressData = {
       street: userData.street,
@@ -93,8 +106,8 @@ export default function AgentProfile() {
       complement: userData.complement,
       city: citieById,
       state: ufById,
-      postalCode: Filters.clearStringOnlyNumbers(userData.postalCode)
-    }
+      postalCode: Filters.clearStringOnlyNumbers(userData.postalCode),
+    };
 
     const identificationData = {
       name: userData.name,
@@ -103,13 +116,15 @@ export default function AgentProfile() {
       phone: Filters.clearStringOnlyNumbers(userData.phone),
       email: userData.email,
       role: userData.role,
-    }
+    };
 
-    await profileEditAgent(user?._id as string, { ...identificationData, address: addressData })
-  }
+    await profileEditAgent(user?._id as string, {
+      ...identificationData,
+      address: addressData,
+    });
+  };
 
-
-  
+  console.log(user);
 
   return (
     <section className={styles.AgentProfilePage}>
@@ -121,7 +136,7 @@ export default function AgentProfile() {
         </button>
 
         <div className={styles.PersonalDataImg}>
-          <img src={user?.avatar} alt={agent} />
+          {user?.avatar && <img src={user.avatar} alt={agent} />}
         </div>
 
         <div className={styles.PersonalDataNameData}>
@@ -151,36 +166,33 @@ export default function AgentProfile() {
             <span>{user?.email}</span>
           </div>
         </div>
-
-
-
       </div>
       <div className={styles.StreetData}>
         <div className={styles.StreetDataZipState}>
           <div className={styles.StreetDataZipStateItem}>
             <h3>CEP</h3>
-            <span>{user?.address.postalCode}</span>
+            <span>{user?.address?.postalCode}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataZipStateItem}>
             <h3>Estado</h3>
-            <span>{user?.address.state}</span>
+            <span>{user?.address?.state}</span>
           </div>
         </div>
 
         <div className={styles.StreetDataCityAddress}>
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Cidade</h3>
-            <span>{user?.address.city}</span>
+            <span>{user?.address?.city}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Endereço</h3>
-            <span>{user?.address.street}</span>
+            <span>{user?.address?.street}</span>
           </div>
         </div>
       </div>
@@ -201,100 +213,134 @@ export default function AgentProfile() {
         </div>
 
         <button className={styles.buttonChat} />
-
       </div>
 
       <Modal
         centered
         open={editAgentProfile}
-        width={'75rem'}
+        width={"75rem"}
         cancelButtonProps={{
           style: {
-            display: 'none'
-          }
+            display: "none",
+          },
         }}
-
         okButtonProps={{
           style: {
-            display: 'none'
-          }
+            display: "none",
+          },
         }}
         closeIcon={false}
         onCancel={() => {
-          setSeePasswordAgent(false)
-          setEditAgentProfile(false)
+          setSeePasswordAgent(false);
+          setEditAgentProfile(false);
         }}
       >
-
         <form className={styles.modalFormEditAgent} onSubmit={handleSubmit}>
           <h2>Alterar Dados Pessoais</h2>
 
           <div className={styles.modalFormEditData}>
             <div className={styles.modalFormEditIdentification}>
               <h3>Dados de Identificação</h3>
-              <InputTextSimple name="name" placeholder='Davi Carlos Rodrigues' value={userData.name} onChange={handleChange} />
-              <InputTextSimple name="dataNascimento" placeholder='20/02/1990' type='date' value={userData.dataNascimento} onChange={handleChange} />
-              <InputTextSimple name="phone" placeholder='(00) 9999-9999' value={Filters.inputMaskTELWithDDD(userData.phone)} onChange={handleChange} />
-              <InputTextSimple name="email" placeholder='Email@email.com.br' value={userData.email} onChange={handleChange} />
+              <InputTextSimple
+                name="name"
+                placeholder="Davi Carlos Rodrigues"
+                value={userData.name}
+                onChange={handleChange}
+              />
+              <InputTextSimple
+                name="dataNascimento"
+                placeholder="20/02/1990"
+                type="date"
+                value={userData.dataNascimento}
+                onChange={handleChange}
+              />
+              <InputTextSimple
+                name="phone"
+                placeholder="(00) 9999-9999"
+                value={Filters.inputMaskTELWithDDD(userData.phone)}
+                onChange={handleChange}
+              />
+              <InputTextSimple
+                name="email"
+                placeholder="Email@email.com.br"
+                value={userData.email}
+                onChange={handleChange}
+              />
 
               <div className={styles.modalFormEditSeePassword}>
-                <InputTextSimple type={seePasswordAgent ? 'text' : 'password'} name="password" value={userData.password} onChange={handleChange} />
-                <button onClick={() => setSeePasswordAgent(look => !look)} type='button'>
-                  {
-                    seePasswordAgent ? <EyeOff size={25} color="#AEAEAE" /> : <Eye size={25} color="#AEAEAE" />
-                  }
+                <InputTextSimple
+                  type={seePasswordAgent ? "text" : "password"}
+                  name="password"
+                  value={userData.password}
+                  onChange={handleChange}
+                />
+                <button
+                  onClick={() => setSeePasswordAgent((look) => !look)}
+                  type="button"
+                >
+                  {seePasswordAgent ? (
+                    <EyeOff size={25} color="#AEAEAE" />
+                  ) : (
+                    <Eye size={25} color="#AEAEAE" />
+                  )}
                 </button>
               </div>
 
-              <button type='button'>
+              <button type="button">
                 <span>Adicionar Comprovante de Identidade</span>
                 <Upload />
               </button>
             </div>
 
-
             <div className={styles.modalFormEditBorder} />
-
-
-
 
             <div className={styles.modalFormEditAddress}>
               <h3>Dados de Endereço</h3>
               <div className={styles.modalFormEditGroupAddress}>
-                <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(userData.postalCode)} onChange={(e) => {
-                  handleChange(e) 
-                  const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
-                  if(cepString.length === 8){ 
-                    getAdressByPostalCode(cepString)  
-                }
-                }} />
-                <InputSimpleSelect data={ufs}
-                  id='state'
+                <InputTextSimple
+                  name="postalCode"
+                  placeholder="89221-170"
+                  value={Filters.inputMaskCEP(userData.postalCode)}
+                  onChange={(e) => {
+                    handleChange(e);
+                    const cepString = Filters.clearStringOnlyNumbers(
+                      e.target.value
+                    ).toString();
+                    if (cepString.length === 8) {
+                      getAdressByPostalCode(cepString);
+                    }
+                  }}
+                />
+                <InputSimpleSelect
+                  data={ufs}
+                  id="state"
                   optionZero="Selecione seu estado"
                   value={userData.state}
-                  onChange={(e)  => { 
-                    handleChange(e)
-                    getCitiesByUf(e.target.value)
+                  onChange={(e) => {
+                    handleChange(e);
+                    getCitiesByUf(e.target.value);
                   }}
                 />
               </div>
               <div className={styles.modalFormEditGroupAddress}>
-                <InputSimpleSelect 
+                <InputSimpleSelect
                   optionZero="Selecione sua cidade"
                   data={cities}
-                  id='city'
+                  id="city"
                   value={userData.city}
                   onChange={handleChange}
                 />
-                <InputTextSimple placeholder='Saguaçu'
-                  name='bairro'
-                  value={userData.bairro?.replace(/\d/g, '')}
-                  onChange={handleChange} />
+                <InputTextSimple
+                  placeholder="Saguaçu"
+                  name="bairro"
+                  value={userData.bairro?.replace(/\d/g, "")}
+                  onChange={handleChange}
+                />
               </div>
 
               <InputTextSimple
                 name="street"
-                placeholder='street Guaramirim'
+                placeholder="street Guaramirim"
                 value={userData.street}
                 onChange={handleChange}
               />
@@ -302,36 +348,34 @@ export default function AgentProfile() {
               <div className={styles.modalFormEditGroupOneAddress}>
                 <InputTextSimple
                   name="number"
-                  placeholder='200'
+                  placeholder="200"
                   value={Filters.clearStringOnlyNumbers(userData.number)}
                   onChange={handleChange}
-
-
                 />
                 <InputTextSimple
                   name="complement"
-                  placeholder='complement'
-                  value={userData.complement?.replace(/\d/g, '')}
+                  placeholder="complement"
+                  value={userData.complement?.replace(/\d/g, "")}
                   onChange={handleChange}
                 />
               </div>
 
-              <InputTextSimple name="referencia"
-                placeholder='Ponto de referência'
-                value={userData.referencia?.replace(/\d/g, '')}
-                onChange={handleChange} />
+              <InputTextSimple
+                name="referencia"
+                placeholder="Ponto de referência"
+                value={userData.referencia?.replace(/\d/g, "")}
+                onChange={handleChange}
+              />
 
-              <button type='button'>
+              <button type="button">
                 <span>Adicionar Comprovante de Endereço</span>
                 <Upload />
               </button>
             </div>
           </div>
-          <button type='submit'>Salvar Alterações de Dados Pessoais</button>
-
+          <button type="submit">Salvar Alterações de Dados Pessoais</button>
         </form>
       </Modal>
     </section>
-  )
-
+  );
 }
