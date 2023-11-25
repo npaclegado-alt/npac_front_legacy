@@ -141,7 +141,7 @@ export interface User {
   bairro?: string;
   dataNascimento?: string;
   token?: string;
-  address: {
+  address?: {
     street: string;
     number: string;
     complement: string;

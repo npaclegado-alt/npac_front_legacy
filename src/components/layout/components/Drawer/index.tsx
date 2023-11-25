@@ -129,7 +129,10 @@ export default function Drawer() {
           <div className={styles.rowButtons}>
             <UserPlus className={styles.icon} />
             <div className={styles.divider} />
-            <Settings className={styles.icon} />
+            <Settings
+              onClick={() => handleNavigate("/agent-profile")}
+              className={styles.icon}
+            />
             <div className={styles.divider} />
             <LogOut onClick={logoutRequest} className={styles.icon} />
           </div>
