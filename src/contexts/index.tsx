@@ -41,7 +41,7 @@ import {
 import { submitTransaction } from "../services/requests/transactions";
 import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
-import { profileAgent } from '../services/requests/profileAgent'
+import { profileAgent } from "../services/requests/profileAgent";
 
 interface BaseCrudProduct {
   name: string;
@@ -125,30 +125,30 @@ interface Faq {
   answer: string;
   position: number;
 }
-interface User {
-    expiresIn: string;
-    _id?: string;
-    name: string;
-    cpf: string;
-    email: string;
-    role: string;
-    password: string;
-    phone: string;
-    createdAt?: string;
-    __v?: number;
-    avatar?: string;
-    referencia?: string,
-    bairro?: string,
-    dataNascimento?: string,
-    token?: string;
-    address: {
-        street: string,
-        number: string,
-        complement: string,
-        city: string,
-        state: string,
-        postalCode: string
-    }
+export interface User {
+  expiresIn: string;
+  _id?: string;
+  name: string;
+  cpf: string;
+  email: string;
+  role: string;
+  password: string;
+  phone: string;
+  createdAt?: string;
+  __v?: number;
+  avatar?: string;
+  referencia?: string;
+  bairro?: string;
+  dataNascimento?: string;
+  token?: string;
+  address: {
+    street: string;
+    number: string;
+    complement: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
 }
 
 interface IContextApi {
@@ -156,9 +156,11 @@ interface IContextApi {
   loginRequest: (email: string, password: string) => void;
   logoutRequest: () => void;
   user?: User | null;
-    profileEditAgent: (id: string, data: User) => void,
-    editAgentProfile: boolean,
-    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => void;
+  profileEditAgent: (id: string, data: User) => void;
+  editAgentProfile: boolean;
+  setEditAgentProfile: (
+    action: boolean | ((action: boolean) => boolean)
+  ) => void;
   dimensions: {
     width: number;
     height: number;
@@ -302,9 +304,9 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
-    profileEditAgent: (id: string, data: User) => { },
-    editAgentProfile: false,
-    setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => { },
+  profileEditAgent: (id: string, data: User) => {},
+  editAgentProfile: false,
+  setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
   getAllProducts: () => {},
   getAllProductImages: (id: string) => {},
   productImages: [],
@@ -450,7 +452,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     height: window.innerHeight,
   });
   const [allFaq, setAllFaq] = useState<Faq[]>([]);
-    const [editAgentProfile, setEditAgentProfile] = useState(false)
+  const [editAgentProfile, setEditAgentProfile] = useState(false);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -892,34 +894,34 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
-    const profileEditAgent = useCallback((id: string, data: User) => {
-        const request = profileAgent(id, data)
-        toast.promise(request, {
-            pending: {
-                render() {
-                    setEditAgentProfile(true)
-                    return 'Carregando...'
-                }
-            },
-            success: {
-                render({ data }: any) {
-                    const token = user?.token
-                    const dataUser = { ...data.data, token: token};
-                    setUser(dataUser)
-                    localStorage.setItem("user", JSON.stringify(dataUser))
-                    setEditAgentProfile(false)
-                    return 'Perfil atualizado com  com sucesso!'
-                }
-            },
-            error: {
-                render({ data }: any) {
-                    setEditAgentProfile(true)
-                    return 'Falha ao atualizar o perfil!'
-                }
-            }
-        })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+  const profileEditAgent = useCallback((id: string, data: User) => {
+    const request = profileAgent(id, data);
+    toast.promise(request, {
+      pending: {
+        render() {
+          setEditAgentProfile(true);
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          const token = user?.token;
+          const dataUser = { ...data.data, token: token };
+          setUser(dataUser);
+          localStorage.setItem("user", JSON.stringify(dataUser));
+          setEditAgentProfile(false);
+          return "Perfil atualizado com  com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          setEditAgentProfile(true);
+          return "Falha ao atualizar o perfil!";
+        },
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ContextApi.Provider
@@ -955,9 +957,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         startTransaction,
         allFaq,
 
-          profileEditAgent,
-          editAgentProfile,
-          setEditAgentProfile,
+        profileEditAgent,
+        editAgentProfile,
+        setEditAgentProfile,
       }}
     >
       {children}
