@@ -185,7 +185,7 @@ interface IContextApi {
   getAllTransactionsByUserId: (userId: string) => void;
   transactions: any[];
   getAllCommissionsByUserId: (userId: string) => void;
-  commissions: any[];
+  commissions: any;
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
@@ -326,7 +326,7 @@ export const ContextApi = createContext<IContextApi>({
   getAllTransactionsByUserId: (userId: string) => {},
   transactions: [],
   getAllCommissionsByUserId: (userId: string) => {},
-  commissions: [],
+  commissions: undefined,
   profileEditAgent: (id: string, data: User) => {},
   editAgentProfile: false,
   setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
@@ -463,7 +463,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
   const [products, setProducts] = useState<any>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [commissions, setCommissions] = useState<any[]>([]);
+  const [commissions, setCommissions] = useState<any[]>();
   const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
   const [adress, setAdress] = useState<any>();
@@ -567,7 +567,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       success: {
         render({ data }: any) {
           //TODO
-          setTransactions(data?.data);
+          setCommissions(data?.data);
           return "Comissões carregadas com sucesso!";
         },
       },

@@ -100,7 +100,7 @@ export const Financial = () => {
       <div className={styles.financialAccountAvailable}>
         <div className={styles.financialAccountAvailableItem}>
           <h2>Disponível em Minha Conta</h2>
-          <span>R$ 100.000,00</span>
+          <span>{Filters.convertMoneyTextMask(commissions.balance.money)}</span>
         </div>
 
         <div className={styles.financialAccountAvailableTransfer}>
@@ -159,86 +159,28 @@ export const Financial = () => {
 
         {seeProfits ? (
           <ul onClick={() => setSeeProfits(false)}>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
+            {commissions.commissions.map((commission: any) => {
+              const status = getStatus(commission.status);
+              const date = moment(commission.updatedAt ?? commission.createdAt);
+              const amount = Filters.convertMoneyTextMask(commission.amount);
+              const name = commission.productName;
 
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
+              return (
+                <li>
+                  <div className={styles.values}>
+                    <h6>{amount}</h6>
+                    <p>{name}</p>
+                  </div>
 
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.concluded}>Concluido</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
+                  <div className={styles.information}>
+                    <span className={status.style}>{status.label}</span>
+                    <p>{`${String(date.day()).padStart(2, "0")}/${String(
+                      date.month()
+                    ).padStart(2, "0")}/${date.year()}`}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <div className={styles.financialSeeProfits}>
