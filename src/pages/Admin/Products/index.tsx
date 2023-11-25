@@ -34,7 +34,7 @@ const Products: React.FC = () => {
       title: "Preço",
       dataIndex: "price",
       key: "price",
-      render: (price) => <div>{Filters.convertMoneyInputMask(price)}</div>,
+      render: (price) => <div>{Filters.convertMoneyTextMask(price)}</div>,
     },
     {
       title: "Ações",
