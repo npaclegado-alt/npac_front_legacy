@@ -1,19 +1,53 @@
 import { Eye, PenSquare, Plus } from "lucide-react";
 import styles from "./financial.module.scss";
 import { Modal } from "antd";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
 import { ContextApi } from "../../contexts";
+import Filters from "../../libs/Filters";
+import moment from "moment";
 
 export const Financial = () => {
-  const { user } = useContext(ContextApi);
+  const {
+    user,
+    transactions,
+    getAllTransactionsByUserId,
+    products,
+    getAllProducts,
+    commissions,
+    getAllCommissionsByUserId,
+  } = useContext(ContextApi);
+
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      getAllTransactionsByUserId(user._id);
+      getAllCommissionsByUserId(user._id);
+    }
+  }, [user, getAllTransactionsByUserId, getAllCommissionsByUserId]);
 
   const [openEditBankDetails, setOpenEditBankDetails] = useState(false);
   const [seeProfits, setSeeProfits] = useState(false);
   const [seeInvestment, setSeeInvestment] = useState(false);
 
-  console.log(user);
+  const getStatus = (status: string) => {
+    if (status === "pending") {
+      return { label: "Processando", style: styles.processing };
+    }
+    if (status === "canceled") {
+      return { label: "Cancelado", style: styles.canceled };
+    }
+    if (status === "paid") {
+      return { label: "Concluído", style: styles.concluded };
+    }
+    return { label: "", style: styles.processing };
+  };
+
+  console.log(commissions);
 
   return (
     <section className={styles.financialPage}>
@@ -83,86 +117,32 @@ export const Financial = () => {
         <h3>Investimentos</h3>
         {seeInvestment ? (
           <ul onClick={() => setSeeInvestment(false)}>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
+            {transactions.map((transaction) => {
+              const status = getStatus(transaction.status);
+              const date = moment(transaction.updatedAt);
+              const amount = Filters.convertMoneyTextMask(transaction.amount);
+              const name = transaction.items
+                .map(
+                  (item: any) =>
+                    products.find((product) => product._id === item.code)?.name
+                )
+                .join(",");
+              return (
+                <li>
+                  <div className={styles.values}>
+                    <h6>{amount}</h6>
+                    <p>{name}</p>
+                  </div>
 
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.concluded}>Concluido</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
-            <li>
-              <div className={styles.values}>
-                <h6>R$ 1500,00</h6>
-                <p>NPAC Box</p>
-              </div>
-
-              <div className={styles.information}>
-                <span className={styles.processing}>Processando</span>
-                <p>03/04/2023</p>
-              </div>
-            </li>
+                  <div className={styles.information}>
+                    <span className={status.style}>{status.label}</span>
+                    <p>{`${String(date.day()).padStart(2, "0")}/${String(
+                      date.month()
+                    ).padStart(2, "0")}/${date.year()}`}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <div className={styles.financialSeeInvestment}>
