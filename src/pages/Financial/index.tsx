@@ -169,9 +169,7 @@ export const Financial = () => {
               const date = moment(
                 commission?.updatedAt ?? commission?.createdAt
               );
-              const amount = Filters.convertMoneyTextMask(
-                commission?.amount / 100
-              );
+              const amount = Filters.convertMoneyTextMask(commission?.amount);
               const name = commission?.productName;
 
               return (
