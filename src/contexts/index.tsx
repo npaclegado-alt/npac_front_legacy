@@ -32,6 +32,38 @@ import {
 import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
+interface BaseCrudProduct {
+  name: string;
+  description: string;
+  price: number;
+  auff: number;
+  createUser: boolean;
+  commissionDistributionSpheres?: number[];
+  commissionDistributionGroup?: number[];
+  commissionDistributionCarrer: number[];
+  commissionType: string;
+  shippingValues?: {
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+  };
+  isCommissionable: boolean;
+  directCommissionValue?: number;
+  digitalProduct: boolean;
+  freeShipping: boolean;
+  recurrence: string;
+}
+
+export interface AddCrudProduct extends BaseCrudProduct {
+  files: File[];
+}
+
+export interface EditCrudProduct extends BaseCrudProduct {
+  id: string;
+  newFiles: File[];
+  removedFiles: IFile[];
+}
 
 interface IFile {
   _id: string;
@@ -105,48 +137,8 @@ interface IContextApi {
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
-  addProductRequest: (
-    name: string,
-    description: string,
-    price: number,
-    auff: number,
-    files: File[],
-    createUser: boolean,
-    commissionDistributionSpheres: number[],
-    commissionDistributionGroup: number[],
-    commissionDistributionCarrer: number[],
-    commissionType: string,
-    shippingValues: {
-      width: number;
-      height: number;
-      length: number;
-      weight: number;
-    },
-    isCommissionable: boolean,
-    directCommissionValue?: number
-  ) => void;
-  editProductRequest: (
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    auff: number,
-    createUser: boolean,
-    commissionDistributionSpheres: number[],
-    commissionDistributionGroup: number[],
-    commissionDistributionCarrer: number[],
-    commissionType: string,
-    shippingValues: {
-      width: number;
-      height: number;
-      length: number;
-      weight: number;
-    },
-    newFiles: File[],
-    removedFiles: IFile[],
-    isCommissionable: boolean,
-    directCommissionValue?: number
-  ) => void;
+  addProductRequest: (product: AddCrudProduct) => void;
+  editProductRequest: (product: EditCrudProduct) => void;
   deleteProductRequest: (id: string) => void;
   getAdressByPostalCode: (postalCode: string) => void;
   getAllStates: (idUf?: string) => void;
@@ -178,15 +170,18 @@ interface IContextApi {
       directCommissionValue?: number;
       commissionType: string;
       createUser: boolean;
-      commissionDistributionSpheres: number[];
-      commissionDistributionGroup: number[];
+      commissionDistributionSpheres?: number[];
+      commissionDistributionGroup?: number[];
       commissionDistributionCarrer: number[];
-      shippingValues: {
+      shippingValues?: {
         width: number;
         height: number;
         length: number;
         weight: number;
       };
+      digitalProduct: boolean;
+      freeShipping: boolean;
+      recurrence: string;
     }
   ];
   productsById: (id: string) => void;
@@ -201,15 +196,18 @@ interface IContextApi {
     directCommissionValue?: number;
     commissionType: string;
     createUser: boolean;
-    commissionDistributionSpheres: number[];
-    commissionDistributionGroup: number[];
+    commissionDistributionSpheres?: number[];
+    commissionDistributionGroup?: number[];
     commissionDistributionCarrer: number[];
-    shippingValues: {
+    shippingValues?: {
       width: number;
       height: number;
       length: number;
       weight: number;
     };
+    digitalProduct: boolean;
+    freeShipping: boolean;
+    recurrence: string;
   };
   productImages: IFile[];
   adress: {
@@ -309,12 +307,10 @@ export const ContextApi = createContext<IContextApi>({
       commissionDistributionSpheres: [],
       commissionDistributionGroup: [],
       commissionDistributionCarrer: [],
-      shippingValues: {
-        width: 0,
-        height: 0,
-        length: 0,
-        weight: 0,
-      },
+      shippingValues: undefined,
+      digitalProduct: false,
+      freeShipping: false,
+      recurrence: "",
     },
   ],
   productsById: () => {},
@@ -332,12 +328,10 @@ export const ContextApi = createContext<IContextApi>({
     commissionDistributionSpheres: [],
     commissionDistributionGroup: [],
     commissionDistributionCarrer: [],
-    shippingValues: {
-      width: 0,
-      height: 0,
-      length: 0,
-      weight: 0,
-    },
+    shippingValues: undefined,
+    digitalProduct: false,
+    freeShipping: false,
+    recurrence: "",
   },
   adress: {
     cep: "",
@@ -530,45 +524,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   const addProductRequest = useCallback(
-    async (
-      name: string,
-      description: string,
-      price: number,
-      auff: number,
-      files: File[],
-      createUser: boolean,
-      commissionDistributionSpheres: number[],
-      commissionDistributionGroup: number[],
-      commissionDistributionCarrer: number[],
-      commissionType: string,
-      shippingValues: {
-        width: number;
-        height: number;
-        length: number;
-        weight: number;
-      },
-      isCommissionable: boolean,
-      directCommissionValue?: number
-    ) => {
+    async (product: AddCrudProduct) => {
       const toastId = toast.loading("Carregando...");
-      addProduct(
-        name,
-        description,
-        price,
-        auff,
-        createUser,
-        commissionDistributionSpheres,
-        commissionDistributionGroup,
-        commissionDistributionCarrer,
-        commissionType,
-        shippingValues,
-        isCommissionable,
-        directCommissionValue
-      )
+      addProduct(product)
         .then((data: any) => {
           const id = data.data._id;
 
-          uploadProductImage(id, files)
+          uploadProductImage(id, product.files)
             .then(() => {
               toast.update(toastId, {
                 render: "Produto cadastrado com sucesso!",
@@ -608,51 +570,16 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
   const editProductRequest = useCallback(
-    async (
-      id: string,
-      name: string,
-      description: string,
-      price: number,
-      auff: number,
-      createUser: boolean,
-      commissionDistributionSpheres: number[],
-      commissionDistributionGroup: number[],
-      commissionDistributionCarrer: number[],
-      commissionType: string,
-      shippingValues: {
-        width: number;
-        height: number;
-        length: number;
-        weight: number;
-      },
-      newFiles: File[],
-      removedFiles: IFile[],
-      isCommissionable: boolean,
-      directCommissionValue?: number
-    ) => {
+    async (product: EditCrudProduct) => {
       const toastId = toast.loading("Carregando...");
 
-      removedFiles.forEach(async (file) => {
+      product.removedFiles.forEach(async (file) => {
         deleteFile(file.originalName);
       });
 
-      if (newFiles.length > 0) {
-        uploadProductImage(id, newFiles).then(() => {
-          editProduct(
-            id,
-            name,
-            description,
-            price,
-            auff,
-            createUser,
-            commissionDistributionSpheres,
-            commissionDistributionGroup,
-            commissionDistributionCarrer,
-            commissionType,
-            shippingValues,
-            isCommissionable,
-            directCommissionValue
-          )
+      if (product.newFiles.length > 0) {
+        uploadProductImage(product.id, product.newFiles).then(() => {
+          editProduct(product)
             .then(() => {
               toast.update(toastId, {
                 render: "Produto editado com sucesso!",
@@ -676,21 +603,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             });
         });
       } else {
-        editProduct(
-          id,
-          name,
-          description,
-          price,
-          auff,
-          createUser,
-          commissionDistributionSpheres,
-          commissionDistributionGroup,
-          commissionDistributionCarrer,
-          commissionType,
-          shippingValues,
-          isCommissionable,
-          directCommissionValue
-        )
+        editProduct(product)
           .then(() => {
             toast.update(toastId, {
               render: "Produto editado com sucesso!",
