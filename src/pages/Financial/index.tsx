@@ -123,7 +123,9 @@ export const Financial = () => {
             {transactions.map((transaction) => {
               const status = getStatus(transaction?.status);
               const date = moment(transaction?.updatedAt);
-              const amount = Filters.convertMoneyTextMask(transaction?.amount);
+              const amount = Filters.convertMoneyTextMask(
+                transaction?.amount / 100
+              );
               const name = transaction?.items
                 .map(
                   (item: any) =>
@@ -167,7 +169,9 @@ export const Financial = () => {
               const date = moment(
                 commission?.updatedAt ?? commission?.createdAt
               );
-              const amount = Filters.convertMoneyTextMask(commission?.amount);
+              const amount = Filters.convertMoneyTextMask(
+                commission?.amount / 100
+              );
               const name = commission?.productName;
 
               return (
