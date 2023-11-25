@@ -54,14 +54,12 @@ export const Invitation = () => {
               <InputTextSimple name="cpf" placeholder="CPF" onChange={handleChangeInvitation} value={Filters.inputMaskCPFCNPJ(invationUser.cpf)} />
               <InputTextSimple name="tefefone" placeholder="Telefone" onChange={handleChangeInvitation} value={Filters.inputMaskTELWithDDD(invationUser.tefefone)} />
               <InputTextSimple name='email' placeholder="Confirmar Email" onChange={handleChangeInvitation} value={invationUser.email} type="email" />
-              <InputTextSimple name='confirmaEmail' placeholder="Confirmar Email" onChange={handleChangeInvitation} value={invationUser.confirmaEmail} type="email" />
               <InputTextSimple name='senha' placeholder="Senha" onChange={handleChangeInvitation} value={invationUser.senha} />
-              <InputTextSimple name='confirmaSenha' placeholder="Confirmar Senha" onChange={handleChangeInvitation} value={invationUser.confirmaSenha} />
-              <InputSimpleSelect optionZero="Escola NPAC + Box" data={[]} id="npac" onChange={handleChangeInvitation} value={invationUser.npac} />
-
             </div>
 
             <div>
+            <InputTextSimple name='confirmaSenha' placeholder="Confirmar Senha" onChange={handleChangeInvitation} value={invationUser.confirmaSenha} />
+            <InputSimpleSelect optionZero="Escola NPAC + Box" data={[]} id="npac" onChange={handleChangeInvitation} value={invationUser.npac} />
               <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(invationUser.postalCode)} onChange={(e) => {
                 handleChangeInvitation(e)
                 const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
