@@ -3,6 +3,7 @@ import styles from "./dashboard.module.scss";
 import { Progress } from "antd";
 import { Gift } from "lucide-react";
 import { ContextApi } from "../../contexts";
+import Filters from "../../libs/Filters";
 
 const Dashboard: React.FC = () => {
   const { user, commissions, getAllCommissionsByUserId } =
@@ -19,7 +20,7 @@ const Dashboard: React.FC = () => {
         <h2>Auffs Gerados</h2>
 
         <div className={styles.deshBoardPageAuffProgress}>
-          <span>0</span>
+          <span>{commissions.balance.virtualCurrency}</span>
           <Progress
             percent={70}
             showInfo={false}

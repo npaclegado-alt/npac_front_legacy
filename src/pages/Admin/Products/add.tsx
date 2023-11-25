@@ -65,7 +65,7 @@ const AddProducts: React.FC = () => {
     if (initialData) {
       setName(initialData.name);
       setDescription(initialData.description);
-      setPrice(Filters.convertMoneyInputMask(initialData.price));
+      setPrice(Filters.convertMoneyTextMask(initialData.price));
       setAuff(String(initialData.auff));
       setIsCommissionable(initialData.isCommissionable);
       setCommissionType(initialData.commissionType ?? "");
@@ -85,9 +85,10 @@ const AddProducts: React.FC = () => {
       setCommissionDistributionCarrer(
         initialData.commissionDistributionCarrer.map((item) => String(item))
       );
+      console.log(initialData.directCommissionValue);
       setDirectCommissionValue(
         initialData.directCommissionValue
-          ? Filters.convertMoneyInputMask(initialData.directCommissionValue)
+          ? Filters.convertMoneyTextMask(initialData.directCommissionValue)
           : ""
       );
       setWeight(String(initialData.shippingValues?.weight ?? ""));
