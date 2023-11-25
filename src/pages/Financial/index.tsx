@@ -48,6 +48,7 @@ export const Financial = () => {
   };
 
   console.log(commissions);
+  console.log(transactions);
 
   return (
     <section className={styles.financialPage}>
@@ -100,7 +101,9 @@ export const Financial = () => {
       <div className={styles.financialAccountAvailable}>
         <div className={styles.financialAccountAvailableItem}>
           <h2>Disponível em Minha Conta</h2>
-          <span>{Filters.convertMoneyTextMask(commissions.balance.money)}</span>
+          <span>
+            {Filters.convertMoneyTextMask(commissions?.balance?.money)}
+          </span>
         </div>
 
         <div className={styles.financialAccountAvailableTransfer}>
@@ -118,10 +121,10 @@ export const Financial = () => {
         {seeInvestment ? (
           <ul onClick={() => setSeeInvestment(false)}>
             {transactions.map((transaction) => {
-              const status = getStatus(transaction.status);
-              const date = moment(transaction.updatedAt);
-              const amount = Filters.convertMoneyTextMask(transaction.amount);
-              const name = transaction.items
+              const status = getStatus(transaction?.status);
+              const date = moment(transaction?.updatedAt);
+              const amount = Filters.convertMoneyTextMask(transaction?.amount);
+              const name = transaction?.items
                 .map(
                   (item: any) =>
                     products.find((product) => product._id === item.code)?.name
@@ -159,11 +162,13 @@ export const Financial = () => {
 
         {seeProfits ? (
           <ul onClick={() => setSeeProfits(false)}>
-            {commissions.commissions.map((commission: any) => {
-              const status = getStatus(commission.status);
-              const date = moment(commission.updatedAt ?? commission.createdAt);
-              const amount = Filters.convertMoneyTextMask(commission.amount);
-              const name = commission.productName;
+            {commissions?.commissions.map((commission: any) => {
+              const status = getStatus(commission?.status);
+              const date = moment(
+                commission?.updatedAt ?? commission?.createdAt
+              );
+              const amount = Filters.convertMoneyTextMask(commission?.amount);
+              const name = commission?.productName;
 
               return (
                 <li>
