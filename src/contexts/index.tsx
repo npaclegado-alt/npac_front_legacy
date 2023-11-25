@@ -4,7 +4,7 @@ import {
   useCallback,
   useState,
   useMemo,
-  useEffect,
+    useEffect,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/requests/auth";
@@ -33,6 +33,14 @@ import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
 import {getFaq} from '../services/requests/faq'
+
+import {
+    FormDataTransaction,
+    formatDataForApi,
+} from "../pages/ProductsDetails/domain/Formatters";
+import { submitTransaction } from "../services/requests/transactions";
+import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
+
 
 interface BaseCrudProduct {
   name: string;
@@ -118,7 +126,6 @@ interface Faq {
   position: number,
 
 }
-
 interface User {
   expiresIn: string;
   _id: string;
@@ -267,6 +274,10 @@ interface IContextApi {
     children: any[];
     avatar: string;
   };
+    startTransaction: (
+        formData: FormDataTransaction,
+        startTransaction: ProductDetailsContentProps["saleIdentification"]
+    ) => Promise<void>;
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -392,6 +403,10 @@ export const ContextApi = createContext<IContextApi>({
     children: [],
     avatar: "",
   },
+    startTransaction: async (
+        formData: FormDataTransaction,
+        startTransaction: ProductDetailsContentProps["saleIdentification"]
+    ) => {},
 });
 
 interface Props {
@@ -407,7 +422,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
   const [products, setProducts] = useState<any>([]);
   const [productImages, setProductImages] = useState<IFile[]>([]);
-  const [productFiltered, setProductFiltered] = useState<any>();
+  const [productFiltered, setProductFiltered] = useState<any>([]);
   const [adress, setAdress] = useState<any>();
   const [ufs, setUfs] = useState<any>([]);
   const [cities, setCities] = useState<any>([]);
@@ -472,6 +487,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },
     [navigate]
   );
+
+    const startTransaction = useCallback(
+        async (
+            formData: FormDataTransaction,
+            saleIdentification: ProductDetailsContentProps["saleIdentification"]
+        ) => {
+            try {
+                const payload = formatDataForApi(formData, productFiltered, adress);
+
+                if (!payload) {
+                    toast.error(
+                        "Esta faltando uma informacao, por favor check o formulario e tente novamente"
+                    );
+                    return;
+                }
+
+                const { checkouts } = await submitTransaction(
+                    payload,
+                    saleIdentification
+                );
+                window.location.href = checkouts[0].payment_url;
+            } catch (error: any) {
+                toast.error("Erro ao procesar a compra", error);
+            }
+        },
+        [productFiltered, adress]
+    );
 
   const getAllProductImages = useCallback((id: string) => {
     getProductImages(id)
@@ -864,6 +906,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         getAllProductImages,
         productImages,
         getAllFaq,
+          startTransaction,
         allFaq
       }}
     >
