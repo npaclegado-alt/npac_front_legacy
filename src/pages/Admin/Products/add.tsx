@@ -48,6 +48,9 @@ const AddProducts: React.FC = () => {
   const [height, setHeight] = useState("");
   const [length, setLength] = useState("");
   const [weight, setWeight] = useState("");
+  const [digitalProduct, setDigitalProduct] = useState(false);
+  const [freeShipping, setFreeShipping] = useState(false);
+  const [recurrence, setRecurrence] = useState("");
 
   useEffect(() => () => clearProductFiltered(), [clearProductFiltered]);
 
@@ -68,10 +71,16 @@ const AddProducts: React.FC = () => {
       setCommissionType(initialData.commissionType ?? "");
       setCreateUser(initialData.createUser);
       setCommissionDistributionSpheres(
-        initialData.commissionDistributionSpheres.map((item) => String(item))
+        initialData.commissionDistributionSpheres
+          ? initialData.commissionDistributionSpheres.map((item) =>
+              String(item)
+            )
+          : ["", "", ""]
       );
       setCommissionDistributionGroup(
-        initialData.commissionDistributionGroup.map((item) => String(item))
+        initialData.commissionDistributionGroup
+          ? initialData.commissionDistributionGroup.map((item) => String(item))
+          : ["", "", ""]
       );
       setCommissionDistributionCarrer(
         initialData.commissionDistributionCarrer.map((item) => String(item))
@@ -85,6 +94,9 @@ const AddProducts: React.FC = () => {
       setWidth(String(initialData.shippingValues?.width ?? ""));
       setHeight(String(initialData.shippingValues?.height ?? ""));
       setLength(String(initialData.shippingValues?.length ?? ""));
+      setRecurrence(initialData.recurrence);
+      setFreeShipping(initialData.freeShipping);
+      setDigitalProduct(initialData.digitalProduct);
     }
     if (productImages) {
       setFileList(
@@ -104,12 +116,18 @@ const AddProducts: React.FC = () => {
     { id: "ambos", nome: "Ambos" },
   ];
 
-  const commissionableOptions = [
-    { id: 1, nome: "Sim" },
-    { id: 2, nome: "Não" },
+  const recurrenceOptions = [
+    { id: "nenhuma", nome: "Nenhuma" },
+    { id: "mensal", nome: "Mensal" },
+    { id: "anual", nome: "Anual" },
   ];
 
-  const createUserOptions = [
+  const digitalProductOptions = [
+    { id: 1, nome: "Produto Digital" },
+    { id: 2, nome: "Produto físico" },
+  ];
+
+  const yesOrNotOptions = [
     { id: 1, nome: "Sim" },
     { id: 2, nome: "Não" },
   ];
@@ -172,7 +190,11 @@ const AddProducts: React.FC = () => {
       hasError = true;
       messages.push(<li>Auffs</li>);
     }
-    if (commissionType.length === 0) {
+    if (recurrence.length === 0 || recurrence === "0") {
+      hasError = true;
+      messages.push(<li>Tipo de recorrencia</li>);
+    }
+    if (commissionType.length === 0 || commissionType === "0") {
       hasError = true;
       messages.push(<li>Tipo de comissão</li>);
     }
@@ -182,14 +204,16 @@ const AddProducts: React.FC = () => {
     }
 
     if (
+      (commissionType === "esfera" || commissionType === "ambos") &&
       commissionDistributionSpheres.findIndex((item) => item.length === 0) !==
-      -1
+        -1
     ) {
       hasError = true;
       messages.push(<li>% Comissao (Esferas)</li>);
     }
 
     if (
+      (commissionType === "grupo" || commissionType === "ambos") &&
       commissionDistributionGroup.findIndex((item) => item.length === 0) !== -1
     ) {
       hasError = true;
@@ -203,22 +227,22 @@ const AddProducts: React.FC = () => {
       messages.push(<li>% Comissao (Carreira)</li>);
     }
 
-    if (width.length === 0) {
+    if (!digitalProduct && width.length === 0) {
       hasError = true;
       messages.push(<li>Largura</li>);
     }
 
-    if (height.length === 0) {
+    if (!digitalProduct && height.length === 0) {
       hasError = true;
       messages.push(<li>Altura</li>);
     }
 
-    if (length.length === 0) {
+    if (!digitalProduct && length.length === 0) {
       hasError = true;
       messages.push(<li>Comprimento</li>);
     }
 
-    if (weight.length === 0) {
+    if (!digitalProduct && weight.length === 0) {
       hasError = true;
       messages.push(<li>Peso</li>);
     }
@@ -257,6 +281,8 @@ const AddProducts: React.FC = () => {
     width,
     length,
     commissionType,
+    digitalProduct,
+    recurrence,
   ]);
 
   const handleSubmit = useCallback(() => {
@@ -272,65 +298,85 @@ const AddProducts: React.FC = () => {
         const removedFiles = [...productImages].filter(
           (item) => !updatedOldFilesIds.includes(item._id)
         );
-        editProductRequest(
-          productId,
+        editProductRequest({
+          id: productId,
           name,
           description,
-          Filters.removeMoneyMask(price),
-          Number(auff),
+          price: Filters.removeMoneyMask(price),
+          auff: Number(auff),
           createUser,
-          commissionDistributionSpheres.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
-          ),
-          commissionDistributionGroup.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
-          ),
-          commissionDistributionCarrer.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
+          commissionDistributionSpheres:
+            commissionType === "esfera" || commissionType === "ambos"
+              ? commissionDistributionSpheres.map((item) =>
+                  Number(Filters.clearStringOnlyNumbersWithDots(item))
+                )
+              : undefined,
+          commissionDistributionGroup:
+            commissionType === "grupo" || commissionType === "ambos"
+              ? commissionDistributionGroup.map((item) =>
+                  Number(Filters.clearStringOnlyNumbersWithDots(item))
+                )
+              : undefined,
+          commissionDistributionCarrer: commissionDistributionCarrer.map(
+            (item) => Number(Filters.clearStringOnlyNumbersWithDots(item))
           ),
           commissionType,
-          {
-            height: Number(height),
-            weight: Number(weight),
-            width: Number(width),
-            length: Number(length),
-          },
+          shippingValues: digitalProduct
+            ? undefined
+            : {
+                height: Number(height),
+                weight: Number(weight),
+                width: Number(width),
+                length: Number(length),
+              },
           newFiles,
           removedFiles,
           isCommissionable,
-          isCommissionable
+          directCommissionValue: isCommissionable
             ? Filters.removeMoneyMask(directCommissionValue)
-            : undefined
-        );
+            : undefined,
+          digitalProduct,
+          freeShipping,
+          recurrence,
+        });
       } else {
-        addProductRequest(
+        addProductRequest({
           name,
           description,
-          Filters.removeMoneyMask(price),
-          Number(auff),
+          price: Filters.removeMoneyMask(price),
+          auff: Number(auff),
           files,
           createUser,
-          commissionDistributionSpheres.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
-          ),
-          commissionDistributionGroup.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
-          ),
-          commissionDistributionCarrer.map((item) =>
-            Number(Filters.clearStringOnlyNumbers(item))
+          commissionDistributionSpheres:
+            commissionType === "esfera" || commissionType === "ambos"
+              ? commissionDistributionSpheres.map((item) =>
+                  Number(Filters.clearStringOnlyNumbersWithDots(item))
+                )
+              : undefined,
+          commissionDistributionGroup:
+            commissionType === "grupo" || commissionType === "ambos"
+              ? commissionDistributionGroup.map((item) =>
+                  Number(Filters.clearStringOnlyNumbersWithDots(item))
+                )
+              : undefined,
+          commissionDistributionCarrer: commissionDistributionCarrer.map(
+            (item) => Number(Filters.clearStringOnlyNumbersWithDots(item))
           ),
           commissionType,
-          {
+          shippingValues: {
             height: Number(height),
             weight: Number(weight),
             width: Number(width),
             length: Number(length),
           },
           isCommissionable,
-          isCommissionable
+          directCommissionValue: isCommissionable
             ? Filters.removeMoneyMask(directCommissionValue)
-            : undefined
-        );
+            : undefined,
+          digitalProduct,
+          freeShipping,
+          recurrence,
+        });
       }
     }
   }, [
@@ -354,6 +400,10 @@ const AddProducts: React.FC = () => {
     height,
     length,
     productImages,
+    editProductRequest,
+    digitalProduct,
+    freeShipping,
+    recurrence,
   ]);
 
   return (
@@ -415,10 +465,25 @@ const AddProducts: React.FC = () => {
                   value={auff}
                   placeholder="Insira os auffs"
                   onChange={(e) =>
-                    setAuff(Filters.clearStringOnlyNumbers(e.target.value))
+                    setAuff(
+                      String(
+                        Filters.clearStringOnlyNumbersWithDots(e.target.value)
+                      )
+                    )
                   }
                 />
               </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <div className={styles.label}>Tipo de recorrencia</div>
+              <InputSimpleSelect
+                data={recurrenceOptions}
+                onChange={(e) => {
+                  setRecurrence(e.target.value);
+                }}
+                value={recurrence}
+              />
             </div>
 
             <div className={styles.row}>
@@ -435,7 +500,7 @@ const AddProducts: React.FC = () => {
                 </Tooltip>
                 <InputSimpleSelect
                   disableOptionZero
-                  data={createUserOptions}
+                  data={yesOrNotOptions}
                   onChange={(e) => {
                     setCreateUser(e.target.value === "1");
                   }}
@@ -459,7 +524,7 @@ const AddProducts: React.FC = () => {
                 <div className={styles.label}>Possui comissão direta?</div>
                 <InputSimpleSelect
                   disableOptionZero
-                  data={commissionableOptions}
+                  data={yesOrNotOptions}
                   onChange={(e) => {
                     setIsCommissionable(e.target.value === "1");
                   }}
@@ -483,230 +548,269 @@ const AddProducts: React.FC = () => {
               )}
             </div>
 
-            <div className={styles.row}>
-              <div className={styles.formGroup}>
-                <div className={styles.label}>
-                  Porcentagem da Comissão (Esferas)
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>1º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionSpheres0"
-                      value={commissionDistributionSpheres[0]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
+            {(commissionType === "esfera" || commissionType === "ambos") && (
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <div className={styles.label}>
+                    Porcentagem da Comissão (Esferas)
                   </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>2º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionSpheres1"
-                      value={commissionDistributionSpheres[1]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>3º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionSpheres2"
-                      value={commissionDistributionSpheres[2]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionSpheres,
-                          setCommissionDistributionSpheres,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.row}>
-              <div className={styles.formGroup}>
-                <div className={styles.label}>
-                  Porcentagem da Comissão (Grupo)
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>1º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionGroup0"
-                      value={commissionDistributionGroup[0]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          0,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>2º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionGroup1"
-                      value={commissionDistributionGroup[1]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          1,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>3º Nível</div>
-                    <InputTextSimple
-                      name="commissionDistributionGroup2"
-                      value={commissionDistributionGroup[2]}
-                      placeholder="Insira a porcentagem (%)"
-                      onFocus={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          ""
-                        )
-                      }
-                      onBlur={(e) =>
-                        handleCommisionMask(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
-                          "%"
-                        )
-                      }
-                      onChange={(e) =>
-                        handleCommisionField(
-                          commissionDistributionGroup,
-                          setCommissionDistributionGroup,
-                          2,
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
+                  <div className={styles.row}>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>1º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionSpheres0"
+                        value={commissionDistributionSpheres[0]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>2º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionSpheres1"
+                        value={commissionDistributionSpheres[1]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>3º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionSpheres2"
+                        value={commissionDistributionSpheres[2]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionSpheres,
+                            setCommissionDistributionSpheres,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
+            {(commissionType === "grupo" || commissionType === "ambos") && (
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <div className={styles.label}>
+                    Porcentagem da Comissão (Grupo)
+                  </div>
+                  <div className={styles.row}>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>1º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionGroup0"
+                        value={commissionDistributionGroup[0]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            0,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>2º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionGroup1"
+                        value={commissionDistributionGroup[1]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            1,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>3º Nível</div>
+                      <InputTextSimple
+                        name="commissionDistributionGroup2"
+                        value={commissionDistributionGroup[2]}
+                        placeholder="Insira a porcentagem (%)"
+                        onFocus={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            ""
+                          )
+                        }
+                        onBlur={(e) =>
+                          handleCommisionMask(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            ),
+                            "%"
+                          )
+                        }
+                        onChange={(e) =>
+                          handleCommisionField(
+                            commissionDistributionGroup,
+                            setCommissionDistributionGroup,
+                            2,
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className={styles.row}>
               <div className={styles.formGroup}>
                 <div className={styles.label}>
@@ -724,7 +828,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           ""
                         )
                       }
@@ -733,7 +839,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           0,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           "%"
                         )
                       }
@@ -742,7 +850,7 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           0,
-                          Filters.clearStringOnlyNumbers(e.target.value)
+                          Filters.clearStringOnlyNumbersWithDots(e.target.value)
                         )
                       }
                     />
@@ -758,7 +866,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           ""
                         )
                       }
@@ -767,7 +877,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           1,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           "%"
                         )
                       }
@@ -776,7 +888,7 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           1,
-                          Filters.clearStringOnlyNumbers(e.target.value)
+                          Filters.clearStringOnlyNumbersWithDots(e.target.value)
                         )
                       }
                     />
@@ -792,7 +904,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           ""
                         )
                       }
@@ -801,7 +915,9 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           2,
-                          Filters.clearStringOnlyNumbers(e.target.value),
+                          Filters.clearStringOnlyNumbersWithDots(
+                            e.target.value
+                          ),
                           "%"
                         )
                       }
@@ -810,7 +926,7 @@ const AddProducts: React.FC = () => {
                           commissionDistributionCarrer,
                           setCommissionDistributionCarrer,
                           2,
-                          Filters.clearStringOnlyNumbers(e.target.value)
+                          Filters.clearStringOnlyNumbersWithDots(e.target.value)
                         )
                       }
                     />
@@ -821,61 +937,100 @@ const AddProducts: React.FC = () => {
 
             <div className={styles.row}>
               <div className={styles.formGroup}>
-                <div className={styles.label}>Dimensões</div>
-                <div className={styles.row}>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>Largura</div>
-                    <InputTextSimple
-                      name="width"
-                      value={width}
-                      placeholder="Insira a largura"
-                      onChange={(e) =>
-                        setWidth(Filters.clearStringOnlyNumbers(e.target.value))
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>Altura</div>
-                    <InputTextSimple
-                      name="height"
-                      value={height}
-                      placeholder="Insira a altura"
-                      onChange={(e) =>
-                        setHeight(
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>Comprimento</div>
-                    <InputTextSimple
-                      name="length"
-                      value={length}
-                      placeholder="Insira o comprimento"
-                      onChange={(e) =>
-                        setLength(
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <div className={styles.label}>Peso</div>
-                    <InputTextSimple
-                      name="weight"
-                      value={weight}
-                      placeholder="Insira o peso"
-                      onChange={(e) =>
-                        setWeight(
-                          Filters.clearStringOnlyNumbers(e.target.value)
-                        )
-                      }
-                    />
+                <div className={styles.label}>Tipo de produto</div>
+                <InputSimpleSelect
+                  disableOptionZero
+                  data={digitalProductOptions}
+                  onChange={(e) => {
+                    setDigitalProduct(e.target.value === "1");
+                  }}
+                  value={digitalProduct ? "1" : "2"}
+                />
+              </div>
+              {!digitalProduct && (
+                <div className={styles.formGroup}>
+                  <div className={styles.label}>Possui frete grátis?</div>
+                  <InputSimpleSelect
+                    disableOptionZero
+                    data={yesOrNotOptions}
+                    onChange={(e) => {
+                      setFreeShipping(e.target.value === "1");
+                    }}
+                    value={freeShipping ? "1" : "2"}
+                  />
+                </div>
+              )}
+            </div>
+
+            {!digitalProduct && (
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <div className={styles.label}>Dimensões</div>
+                  <div className={styles.row}>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>Largura</div>
+                      <InputTextSimple
+                        name="width"
+                        value={width}
+                        placeholder="Insira a largura"
+                        onChange={(e) =>
+                          setWidth(
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>Altura</div>
+                      <InputTextSimple
+                        name="height"
+                        value={height}
+                        placeholder="Insira a altura"
+                        onChange={(e) =>
+                          setHeight(
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>Comprimento</div>
+                      <InputTextSimple
+                        name="length"
+                        value={length}
+                        placeholder="Insira o comprimento"
+                        onChange={(e) =>
+                          setLength(
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <div className={styles.label}>Peso</div>
+                      <InputTextSimple
+                        name="weight"
+                        value={weight}
+                        placeholder="Insira o peso"
+                        onChange={(e) =>
+                          setWeight(
+                            Filters.clearStringOnlyNumbersWithDots(
+                              e.target.value
+                            )
+                          )
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className={styles.formGroup}>
               <div className={styles.label}>Imagens</div>
