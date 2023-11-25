@@ -1,6 +1,27 @@
 .container {
   padding-top: 6.2rem;
-}
+
+  
+} 
+ 
+
+ .buttonChat {
+    position: fixed;
+    right: 15px;
+    bottom: 20px;
+    height: 60px;
+    width: 60px;
+    background-color: #f04e23;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 50%;
+    background-image: url("../../assets/imgs/chatboxes.png");
+    background-repeat: no-repeat;
+    background-position: center;
+  } 
+
+
 
 .content {
   padding-left: 1rem;

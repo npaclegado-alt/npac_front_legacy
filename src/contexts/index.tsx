@@ -32,6 +32,17 @@ import {
 import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
+import { getFaq } from "../services/requests/faq";
+
+import {
+  FormDataTransaction,
+  formatDataForApi,
+} from "../pages/ProductsDetails/domain/Formatters";
+import { submitTransaction } from "../services/requests/transactions";
+import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
+
+import { profileAgent } from "../services/requests/profileAgent";
+
 interface BaseCrudProduct {
   name: string;
   description: string;
@@ -108,19 +119,36 @@ interface Career {
   user: string;
 }
 
-interface User {
-  expiresIn: string;
+interface Faq {
   _id: string;
+  question: string;
+  answer: string;
+  position: number;
+}
+export interface User {
+  expiresIn?: string;
+  _id?: string;
   name: string;
   cpf: string;
   email: string;
   role: string;
   password: string;
   phone: string;
-  createdAt: string;
-  __v: number;
-  avatar: string;
-  token: string;
+  createdAt?: string;
+  __v?: number;
+  avatar?: string;
+  referencia?: string;
+  bairro?: string;
+  dataNascimento?: string;
+  token?: string;
+  address: {
+    street: string;
+    number: string;
+    complement: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
 }
 
 interface IContextApi {
@@ -128,6 +156,11 @@ interface IContextApi {
   loginRequest: (email: string, password: string) => void;
   logoutRequest: () => void;
   user?: User | null;
+  profileEditAgent: (id: string, data: User) => void;
+  editAgentProfile: boolean;
+  setEditAgentProfile: (
+    action: boolean | ((action: boolean) => boolean)
+  ) => void;
   dimensions: {
     width: number;
     height: number;
@@ -145,7 +178,9 @@ interface IContextApi {
   getCitiesByUf: (ufId: string) => void;
   getSpheresByUser: (userId: string) => void;
   getAllCareer: () => void;
+  getAllFaq: () => void;
   career?: Career;
+  allFaq: Faq[];
   ufs: [
     {
       id: number;
@@ -254,6 +289,10 @@ interface IContextApi {
     children: any[];
     avatar: string;
   };
+  startTransaction: (
+    formData: FormDataTransaction,
+    startTransaction: ProductDetailsContentProps["saleIdentification"]
+  ) => Promise<void>;
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -265,6 +304,9 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
+  profileEditAgent: (id: string, data: User) => {},
+  editAgentProfile: false,
+  setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
   getAllProducts: () => {},
   getAllProductImages: (id: string) => {},
   productImages: [],
@@ -279,7 +321,9 @@ export const ContextApi = createContext<IContextApi>({
   getCitiesByUf: (ufId: string) => {},
   getSpheresByUser: (userId: string) => {},
   getAllCareer: () => {},
+  getAllFaq: () => {},
   career: undefined,
+  allFaq: [] as Faq[],
   ufs: [
     {
       id: 0,
@@ -377,6 +421,10 @@ export const ContextApi = createContext<IContextApi>({
     children: [],
     avatar: "",
   },
+  startTransaction: async (
+    formData: FormDataTransaction,
+    startTransaction: ProductDetailsContentProps["saleIdentification"]
+  ) => {},
 });
 
 interface Props {
@@ -403,6 +451,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [allFaq, setAllFaq] = useState<Faq[]>([]);
+  const [editAgentProfile, setEditAgentProfile] = useState(false);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -455,6 +505,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       });
     },
     [navigate]
+  );
+
+  const startTransaction = useCallback(
+    async (
+      formData: FormDataTransaction,
+      saleIdentification: ProductDetailsContentProps["saleIdentification"]
+    ) => {
+      try {
+        const payload = formatDataForApi(formData, productFiltered, adress);
+
+        if (!payload) {
+          toast.error(
+            "Esta faltando uma informacao, por favor check o formulario e tente novamente"
+          );
+          return;
+        }
+
+        const { checkouts } = await submitTransaction(
+          payload,
+          saleIdentification
+        );
+        window.location.href = checkouts[0].payment_url;
+      } catch (error: any) {
+        toast.error("Erro ao procesar a compra", error);
+      }
+    },
+    [productFiltered, adress]
   );
 
   const getAllProductImages = useCallback((id: string) => {
@@ -789,6 +866,63 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const getAllFaq = useCallback(() => {
+    const request = getFaq();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setAllFaq(data?.data);
+          return "";
+        },
+
+        style: {
+          display: "none",
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar perguntas!";
+        },
+      },
+    });
+  }, []);
+
+  const profileEditAgent = useCallback((id: string, data: User) => {
+    const request = profileAgent(id, data);
+    toast.promise(request, {
+      pending: {
+        render() {
+          setEditAgentProfile(true);
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          const token = user?.token;
+          const dataUser = { ...data.data, token: token };
+          setUser(dataUser);
+          localStorage.setItem("user", JSON.stringify(dataUser));
+          setEditAgentProfile(false);
+          return "Perfil atualizado com  com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          setEditAgentProfile(true);
+          return "Falha ao atualizar o perfil!";
+        },
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <ContextApi.Provider
       value={{
@@ -819,6 +953,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         dimensions,
         getAllProductImages,
         productImages,
+        getAllFaq,
+        startTransaction,
+        allFaq,
+
+        profileEditAgent,
+        editAgentProfile,
+        setEditAgentProfile,
       }}
     >
       {children}

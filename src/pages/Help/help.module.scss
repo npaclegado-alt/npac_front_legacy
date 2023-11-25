@@ -1,0 +1,87 @@
+.helpPage {
+    display: grid;
+    gap: 15px 15px;
+    height: 100%;
+
+    ::-webkit-scrollbar-track {
+        background-color: #f2f2f2;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        background: #f2f2f2;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #d2d2d2;
+    }
+
+    grid-template: 'commonQuestions commonQuestions' 250px
+    'support support' 550px;
+    
+
+    
+
+    .commonQuestions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        grid-area: commonQuestions;
+        background-color: var(--white);
+        border-radius: 8px;
+        text-align: center;
+        justify-content: center;
+        padding: 2rem;
+
+        h2 {
+            font-size: 1.7rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #8B8B8B;
+            max-width: 1300px;
+            width: 100%;
+            line-height: 1.5rem;
+        }
+
+        span {
+            color: #F04E23;
+        }
+    }
+
+    .support {
+        display: flex;
+        flex-direction: column;
+        grid-area: support;
+        background-color: var(--white);
+        border-radius: 8px;
+        text-align: center;
+        align-items: center;
+        padding: 2rem;
+        height: 100%;
+        overflow-y: auto; 
+        p {
+            font-size: 1rem;
+            color: #8B8B8B;
+            width: 100%;
+            line-height: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem; 
+            text-align: start;
+
+        }
+    }
+} 
+
+
+
+@media(max-width: 600px) {
+    .helpPage{
+        grid-template: 'commonQuestions commonQuestions' 350px
+        'support support' 
+    }
+}

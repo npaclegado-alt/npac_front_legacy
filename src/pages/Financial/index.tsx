@@ -7,9 +7,12 @@ import { InputTextSimple } from '../../components/inputs/simpleText/inputSimpleT
 
 export const Financial = () => {
 
+
     const [openEditBankDetails, setOpenEditBankDetails] = useState(false)
     const [seeProfits, setSeeProfits] = useState(false) 
     const [seeInvestment, setSeeInvestment] = useState(false)
+
+    
 
 
     return (
@@ -262,8 +265,6 @@ export const Financial = () => {
                         </div>
 
                 }
-
-                <button />
             </div>
 
             <button hidden />

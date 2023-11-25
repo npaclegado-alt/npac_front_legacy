@@ -1,290 +1,130 @@
-import { 
-    useContext, 
-    useEffect, 
-    useState 
-} from "react";
-import { useParams } from "react-router-dom";
-
-import { Divider } from "../../components/divider";
-import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
-import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
-import { CustomButton } from "../../components/buttons/customButton";
-import { ContextApi } from "../../contexts";
-
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { ContextApi } from '../../contexts';
+import ProductDetailsHeader from './domain/ProductDetailsHeader';
+import ProductImageGallery from './domain/ProductImageGallery';
+import ProductDetailsContent from './domain/ProductDetailsContent';
 import styles from './stylesProdDetails.module.scss';
-import Filters from "../../libs/Filters";
+import _debounce from 'lodash/debounce';
 
-export function PageProductsDetails(): JSX.Element {
-    let currentScreen = window.screen.width;
-    const {
-        productsById,
-        productFiltered,
-        getAdressByPostalCode,
-        adress,
-        getAllStates,
-        ufs,
-        getCitiesByUf,
-        cities,
-    } = useContext(ContextApi);
-    const { productId }: any = useParams();
-    const [nextIndex, setNextIndex] = useState(0);
-    const [name, setName] = useState('');
-    const [cpf, setCpf] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [cep, setCep] = useState('');
-    const [logradouro, setLogradouro] = useState('');
-    const [numero, setNumero] = useState('');
-    const [bairro, setBairro] = useState('');
-    const [complemento, setComplemento] = useState('');
-    const [referencia, setReferencia] = useState('');
-    const [stateSelected, setStateSelected] = useState<any>(0);
-    const [citiesSelected, setCitiesSelected] = useState<any>(0);
 
-    const imgProduct = productFiltered?.imageUrls ?? [];
+const initialState = {
+  name: '',
+  cpf: '',
+  email: '',
+  phone: '',
+  cep: '',
+  logradouro: '',
+  numero: '',
+  bairro: '',
+  complemento: '',
+  referencia: '',
+  stateSelected: 0,
+  citiesSelected: 0,
+};
 
-    const changeWidthInput = (value: number, defautWidth: string) => {
-        if ((value < 1024) && (value > 718)) {
-            return {
-                width: '49%',
-                marginBottom: '10px',
-            }
-        }
+const PageProductsDetails = () => {
+  const {
+    productsById,
+    productFiltered,
+    getAdressByPostalCode,
+    adress,
+    getAllStates,
+    ufs,
+    getCitiesByUf,
+    cities,
+    startTransaction
+  } = useContext(ContextApi);
 
-        if ((value <= 718) && (value > 557)) {
-            return {
-                width: '49%',
-                marginBottom: '10px',
-            }
-        }
+  const { productId } = useParams();
+  const [nextIndex, setNextIndex] = useState(0);
+  const [formData, setFormData] = useState(initialState);
+  
+  const decoderProductId = atob(productId as string);
+  const imgProduct = productFiltered?.imageUrls ?? [];
+  const currentScreen = window.innerWidth;
 
-        if (value <= 557) {
-            return {
-                width: '99%',
-                marginBottom: '10px',
-            }
-        }
-
-        return {
-            width: defautWidth,
-        }
+  const fetchDataDebounced = _debounce((cepString) => {
+    if (cepString.length > 8) {
+      getAdressByPostalCode(cepString);
     }
+  }, 1000);
 
-    const setStatesAndCitiesByAdress = () => {
-        const state = ufs?.find((item: any) => item.sigla === adress?.uf);
-        const city = cities?.find((item: any) => item.nome === adress?.localidade);
-        setStateSelected(state?.id);
-        setCitiesSelected(city?.id);
-        setBairro(adress?.bairro);
-        setLogradouro(adress?.logradouro);
+  const changeWidthInput = (value: number, defaultWidth: string) => {
+    const widthMap = {
+      '49%': value < 1024 && value > 557,
+      '99%': value <= 557,
+      [defaultWidth]: true,
+    };
+
+    const width = Object.keys(widthMap).find((key) => widthMap[key]) || defaultWidth;
+
+    return {
+      width,
+      marginBottom: '10px',
+    };
+  };
+
+
+  const setStatesAndCitiesByAdress = () => {
+    const state = ufs?.find((item) => item.sigla === adress?.uf);
+    const city = cities?.find((item) => item.nome === adress?.localidade);
+    setFormData(prevData => ({
+      ...prevData,
+      stateSelected: state?.id || 0,
+      citiesSelected: city?.id || 0,
+      bairro: adress?.bairro || '',
+      logradouro: adress?.logradouro || '',
+    }));
+  };
+
+  useEffect(() => {
+    productsById(JSON.parse(decoderProductId)?.productId as string);
+    getAllStates();
+  }, [productId, getAllStates, productsById]);
+
+  useEffect(() => {
+    if (adress?.uf) {
+      setStatesAndCitiesByAdress();
     }
-        
+  }, [adress, cities]);
 
-    
-    useEffect(() => {
-        productsById(productId);
-        getAllStates();
-    }, []);
+  useEffect(() => {
+    if (formData.cep.length < 8) {
+      const cepString = formData.cep.replace(/\D/g, '');
+      fetchDataDebounced(cepString);
+    }
+  }, [fetchDataDebounced]);
 
-    useEffect(() => {
-        if (adress?.uf) {
-            setStatesAndCitiesByAdress();
-        }
-    }, [cities]);
 
-    useEffect(() => {
-        if (cep.length < 8) {
-            setStateSelected(0);
-            setCitiesSelected(0);
-            setBairro('');
-            setLogradouro('');
-            getAllStates();
-        }
-    }, [cep]);
 
   return (
     <div className={styles.container}>
-        <div className={styles.content}>
-            <div className={styles.headerDetails}>
-              <h1>
-                  Plano<p>NPAC</p>
-              </h1>
-            </div>
-            <div className={styles.containerDetails}>
-              <div className={styles.contentImages}>
-                  <img 
-                      className={styles.imgProduct}
-                      src={imgProduct[nextIndex]} 
-                      alt="Product" 
-                  />
-                      {imgProduct.map((img, index) => {
-                          return (
-                              <img
-                                  className={styles.imgProductMini}
-                                  style={index === nextIndex ? { padding: '2px' } : {}}
-                                  onClick={() => setNextIndex(index)}
-                                  src={img}
-                                  alt="Product"
-                              />
-                          )
-                      })}
-              </div>
-              <div className={styles.contentDetails}>
-                  <div className={styles.titleProduct}>
-                      <h1>{productFiltered?.name}</h1>
-                      <div>
-                          <span>
-                              Preço:
-                          </span>
-                          <p>{Filters.convertMoneyTextMask(productFiltered?.price)}</p>
-                      </div>
-                  </div>
-                  <div className={styles.contentDescription}>
-                      <h1>
-                          Descrição do produto
-                      </h1>
-                      <p>
-                          {productFiltered?.description}
-                      </p>
-                  </div>
-                  <Divider />
-                  <div className={styles.contentForm}>
-                      <h1>Formulário de Compra</h1>
-                      <div className={styles.boxInputs}>
-                          <h3>Dados de identificação</h3>
-                          <div className={styles.formLine1}>
-                              <InputTextSimple 
-                                  name="name"
-                                  value={name}
-                                  placeholder="Nome completo"
-                                  onChange={(e) => setName(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                              <InputTextSimple 
-                                  name="cpf"
-                                  value={Filters.inputMaskCPFCNPJ(cpf)}
-                                  placeholder="insira seu CPF"
-                                  onChange={(e) => setCpf(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                          </div>
-                          <div className={styles.formLine2}>
-                              <InputTextSimple 
-                                  name="phoneNumber"
-                                  value={Filters.inputMaskTELWithDDD(phone)}
-                                  placeholder="insira seu telefone"
-                                  onChange={(e) => setPhone(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                              <InputTextSimple 
-                                  name="email"
-                                  value={email}
-                                  placeholder="insira seu email"
-                                  onChange={(e) => setEmail(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                          </div>
-                      </div>
-                      <div className={styles.boxInputs}>
-                          <h3>Endereço de Entrega</h3>
-                          <div className={styles.formLine1}>
-                              <InputTextSimple 
-                                  name="cep"
-                                  value={Filters.inputMaskCEP(cep)}
-                                  placeholder="Insira seu CEP"
-                                  onChange={(e) => {
-                                      setCep(e.target.value)
-                                      if (e.target.value.length === 8) {
-                                          const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
-                                          getAdressByPostalCode(cepString);
-                                      }
-                                  }}
-                                  style={ changeWidthInput(currentScreen, '32%') }
-                              />
-                              <InputSimpleSelect 
-                                  optionZero="Selecione seu estado"
-                                  data={ufs}
-                                  style={ changeWidthInput(currentScreen, '32%') }
-                                  onChange={(e) => {
-                                      setStateSelected(e.target.value);
-                                      getCitiesByUf(e.target.value);
-                                  }}
-                                  value={stateSelected}
-                              />
-                              <InputSimpleSelect 
-                                  optionZero="Selecione sua cidade"
-                                  data={cities}
-                                  style={ changeWidthInput(currentScreen, '32%') }
-                                  onChange={(e) => {
-                                      setCitiesSelected(e.target.value);
-                                  }}
-                                  value={citiesSelected}
-                              />
-                          </div>
-                          <div className={styles.formLine2}>
-                              <InputTextSimple 
-                                  name="logradouro"
-                                  value={logradouro}
-                                  placeholder="Logradouro"
-                                  onChange={(e) => setLogradouro(e.target.value)}
-                                  style={ changeWidthInput(currentScreen, '49%') }
-                              />
-                              <InputTextSimple 
-                                  name="number"
-                                  value={numero}
-                                  placeholder="Número"	
-                                  onChange={(e) => setNumero(e.target.value)}
-                                  style={ changeWidthInput(currentScreen, '14%') }
-                              />
-                              <InputTextSimple 
-                                  name="bairro"
-                                  value={bairro}
-                                  placeholder="Bairro"
-                                  onChange={(e) => setBairro(e.target.value)}
-                                  style={ changeWidthInput(currentScreen, '35%') }
-                              />
-                          </div>
-                          <div className={styles.formLine2}>
-                              <InputTextSimple 
-                                  name="complemento"
-                                  value={complemento}
-                                  placeholder="Complemento"	
-                                  onChange={(e) => setComplemento(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                              <InputTextSimple 
-                                  name="referencia"
-                                  value={referencia}
-                                  placeholder="Ponto de referência"	
-                                  onChange={(e) => setReferencia(e.target.value)}
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              />
-                          </div>
-                      </div>
-                      <div className={styles.boxInputs}>
-                          <h3>Preço Final e Forma de Pagamento</h3>
-                          <div className={styles.boxFinalPrice}>
-                              <p>Preço Final:</p>
-                              <span>R$ 138,00</span>
-                              <span>Preço do produto {Filters.convertMoneyTextMask(productFiltered?.price)} + Preço da entrega: R$ 48,00</span>
-                          </div>
-                          <div className={styles.formLine2}>
-                              <InputSimpleSelect 
-                                optionZero="Selecione a forma de pagamento"
-                                data={['1', '2', '3']}
-                                style={changeWidthInput(currentScreen, '49%')}
-                              />
-                              <CustomButton
-                                  style={changeWidthInput(currentScreen, '49%')}
-                              >
-                                  Prosseguir Para o Pagamento
-                              </CustomButton>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-            </div>
-        </div>
+      <ProductDetailsHeader title="Plano NPAC" />
+      <div className={styles.containerDetails}>
+        <ProductImageGallery
+          imgProduct={imgProduct}
+          nextIndex={nextIndex}
+          setNextIndex={setNextIndex}
+        />
+        <ProductDetailsContent
+          product={productFiltered}
+          formData={formData}
+          currentScreen={currentScreen}
+          changeWidthInput={changeWidthInput}
+          onOptionsUpdate={(data) => setFormData((prevData) => ({ ...prevData, ...data, citiesSelected: Number(data?.citiesSelected) }))}
+          getAdressByPostalCode={getAdressByPostalCode}
+          ufs={ufs}
+          getCitiesByUf={getCitiesByUf}
+          cities={cities}
+          onProceed={startTransaction}
+          saleIdentification={productId ?? ''}
+        />
+      </div>
     </div>
   );
-}
+};
+
+export { PageProductsDetails };
+
+
