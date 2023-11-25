@@ -126,7 +126,7 @@ interface Faq {
   position: number;
 }
 export interface User {
-  expiresIn: string;
+  expiresIn?: string;
   _id?: string;
   name: string;
   cpf: string;
