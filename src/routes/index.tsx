@@ -13,8 +13,10 @@ import { StructurePage } from "../pages/Structures/structurePage";
 import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
-import { Financial } from "../pages/Financial";
 import { Invitation } from "../pages/Invitation";
+import { Financial } from "../pages/Financial"; 
+import {Help} from '../pages/Help'
+import AgentProfile from "../pages/AgentProfile";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -25,9 +27,11 @@ const RootRoutes: React.FC = () => {
           <Route path="structure" element={<StructurePage />} />
           <Route path="career" element={<Career />} />
           <Route path="financial" element={<Financial />} />
-          <Route path="documents" element={<></>} />
-          <Route path="help" element={<></>} />
           <Route path="products" element={<PageProducts />} /> 
+            <Route path="agent-profile" element={<AgentProfile />} />
+            <Route path="documents" element={<></>} />
+          <Route path="help" element={<Help />} />
+          <Route path="products" element={<PageProducts />} />
         </Route>
         <Route element={<AdminWrapper />}>
           <Route path="/admin/" element={<AdminLayout />}>

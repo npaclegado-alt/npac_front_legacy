@@ -32,6 +32,53 @@ import {
 import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
+import { getFaq } from "../services/requests/faq";
+
+import {
+  FormDataTransaction,
+  formatDataForApi,
+} from "../pages/ProductsDetails/domain/Formatters";
+import {
+  getTransactionsByUserId,
+  submitTransaction,
+} from "../services/requests/transactions";
+import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
+
+import { profileAgent } from "../services/requests/profileAgent";
+import { getCommissionsByUserId } from "../services/requests/commissions";
+
+interface BaseCrudProduct {
+  name: string;
+  description: string;
+  price: number;
+  auff: number;
+  createUser: boolean;
+  commissionDistributionSpheres?: number[];
+  commissionDistributionGroup?: number[];
+  commissionDistributionCarrer: number[];
+  commissionType: string;
+  shippingValues?: {
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+  };
+  isCommissionable: boolean;
+  directCommissionValue?: number;
+  digitalProduct: boolean;
+  freeShipping: boolean;
+  recurrence: string;
+}
+
+export interface AddCrudProduct extends BaseCrudProduct {
+  files: File[];
+}
+
+export interface EditCrudProduct extends BaseCrudProduct {
+  id: string;
+  newFiles: File[];
+  removedFiles: IFile[];
+}
 
 interface IFile {
   _id: string;
@@ -76,19 +123,47 @@ interface Career {
   user: string;
 }
 
-interface User {
-  expiresIn: string;
+interface Faq {
+  _id: string;
+  question: string;
+  answer: string;
+  position: number;
+}
+export interface User {
+  expiresIn?: string;
   _id: string;
   name: string;
   cpf: string;
   email: string;
   role: string;
   password: string;
+  graduation: string;
+  commision: number;
+  balance: number;
   phone: string;
-  createdAt: string;
-  __v: number;
-  avatar: string;
-  token: string;
+  createdAt?: string;
+  __v?: number;
+  avatar?: string;
+  referencia?: string;
+  bairro?: string;
+  dataNascimento?: string;
+  token?: string;
+  address?: {
+    street: string;
+    number: string;
+    complement: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
+  banckAccount?: {
+    name: string;
+    cpf: string;
+    ag: number;
+    cc: number;
+    dv: string;
+    pix: string;
+  };
 }
 
 interface IContextApi {
@@ -96,64 +171,35 @@ interface IContextApi {
   loginRequest: (email: string, password: string) => void;
   logoutRequest: () => void;
   user?: User | null;
+  profileEditAgent: (id: string, data: User) => void;
+  editAgentProfile: boolean;
+  setEditAgentProfile: (
+    action: boolean | ((action: boolean) => boolean)
+  ) => void;
   dimensions: {
     width: number;
     height: number;
   };
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  getAllTransactionsByUserId: (userId: string) => void;
+  transactions: any[];
+  getAllCommissionsByUserId: (userId: string) => void;
+  commissions: any;
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
-  addProductRequest: (
-    name: string,
-    description: string,
-    price: number,
-    auff: number,
-    files: File[],
-    createUser: boolean,
-    commissionDistributionSpheres: number[],
-    commissionDistributionGroup: number[],
-    commissionDistributionCarrer: number[],
-    commissionType: string,
-    shippingValues: {
-      width: number;
-      height: number;
-      length: number;
-      weight: number;
-    },
-    isCommissionable: boolean,
-    directCommissionValue?: number
-  ) => void;
-  editProductRequest: (
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    auff: number,
-    createUser: boolean,
-    commissionDistributionSpheres: number[],
-    commissionDistributionGroup: number[],
-    commissionDistributionCarrer: number[],
-    commissionType: string,
-    shippingValues: {
-      width: number;
-      height: number;
-      length: number;
-      weight: number;
-    },
-    newFiles: File[],
-    removedFiles: IFile[],
-    isCommissionable: boolean,
-    directCommissionValue?: number
-  ) => void;
+  addProductRequest: (product: AddCrudProduct) => void;
+  editProductRequest: (product: EditCrudProduct) => void;
   deleteProductRequest: (id: string) => void;
   getAdressByPostalCode: (postalCode: string) => void;
   getAllStates: (idUf?: string) => void;
   getCitiesByUf: (ufId: string) => void;
   getSpheresByUser: (userId: string) => void;
   getAllCareer: () => void;
+  getAllFaq: () => void;
   career?: Career;
+  allFaq: Faq[];
   ufs: [
     {
       id: number;
@@ -178,15 +224,18 @@ interface IContextApi {
       directCommissionValue?: number;
       commissionType: string;
       createUser: boolean;
-      commissionDistributionSpheres: number[];
-      commissionDistributionGroup: number[];
+      commissionDistributionSpheres?: number[];
+      commissionDistributionGroup?: number[];
       commissionDistributionCarrer: number[];
-      shippingValues: {
+      shippingValues?: {
         width: number;
         height: number;
         length: number;
         weight: number;
       };
+      digitalProduct: boolean;
+      freeShipping: boolean;
+      recurrence: string;
     }
   ];
   productsById: (id: string) => void;
@@ -201,15 +250,18 @@ interface IContextApi {
     directCommissionValue?: number;
     commissionType: string;
     createUser: boolean;
-    commissionDistributionSpheres: number[];
-    commissionDistributionGroup: number[];
+    commissionDistributionSpheres?: number[];
+    commissionDistributionGroup?: number[];
     commissionDistributionCarrer: number[];
-    shippingValues: {
+    shippingValues?: {
       width: number;
       height: number;
       length: number;
       weight: number;
     };
+    digitalProduct: boolean;
+    freeShipping: boolean;
+    recurrence: string;
   };
   productImages: IFile[];
   adress: {
@@ -256,6 +308,10 @@ interface IContextApi {
     children: any[];
     avatar: string;
   };
+  startTransaction: (
+    formData: FormDataTransaction,
+    startTransaction: ProductDetailsContentProps["saleIdentification"]
+  ) => Promise<void>;
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -267,6 +323,13 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
+  getAllTransactionsByUserId: (userId: string) => {},
+  transactions: [],
+  getAllCommissionsByUserId: (userId: string) => {},
+  commissions: undefined,
+  profileEditAgent: (id: string, data: User) => {},
+  editAgentProfile: false,
+  setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
   getAllProducts: () => {},
   getAllProductImages: (id: string) => {},
   productImages: [],
@@ -281,7 +344,9 @@ export const ContextApi = createContext<IContextApi>({
   getCitiesByUf: (ufId: string) => {},
   getSpheresByUser: (userId: string) => {},
   getAllCareer: () => {},
+  getAllFaq: () => {},
   career: undefined,
+  allFaq: [] as Faq[],
   ufs: [
     {
       id: 0,
@@ -309,12 +374,10 @@ export const ContextApi = createContext<IContextApi>({
       commissionDistributionSpheres: [],
       commissionDistributionGroup: [],
       commissionDistributionCarrer: [],
-      shippingValues: {
-        width: 0,
-        height: 0,
-        length: 0,
-        weight: 0,
-      },
+      shippingValues: undefined,
+      digitalProduct: false,
+      freeShipping: false,
+      recurrence: "",
     },
   ],
   productsById: () => {},
@@ -332,12 +395,10 @@ export const ContextApi = createContext<IContextApi>({
     commissionDistributionSpheres: [],
     commissionDistributionGroup: [],
     commissionDistributionCarrer: [],
-    shippingValues: {
-      width: 0,
-      height: 0,
-      length: 0,
-      weight: 0,
-    },
+    shippingValues: undefined,
+    digitalProduct: false,
+    freeShipping: false,
+    recurrence: "",
   },
   adress: {
     cep: "",
@@ -383,6 +444,10 @@ export const ContextApi = createContext<IContextApi>({
     children: [],
     avatar: "",
   },
+  startTransaction: async (
+    formData: FormDataTransaction,
+    startTransaction: ProductDetailsContentProps["saleIdentification"]
+  ) => {},
 });
 
 interface Props {
@@ -397,6 +462,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     storedUser ? JSON.parse(storedUser) : undefined
   );
   const [products, setProducts] = useState<any>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [commissions, setCommissions] = useState<any[]>();
   const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
   const [adress, setAdress] = useState<any>();
@@ -409,6 +476,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [allFaq, setAllFaq] = useState<Faq[]>([]);
+  const [editAgentProfile, setEditAgentProfile] = useState(false);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -461,6 +530,81 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       });
     },
     [navigate]
+  );
+
+  const getAllTransactionsByUserId = useCallback((userId: string) => {
+    const request = getTransactionsByUserId(userId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setTransactions(data?.data);
+          return "Transações carregadas com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar transações!";
+        },
+      },
+    });
+  }, []);
+
+  const getAllCommissionsByUserId = useCallback((userId: string) => {
+    const request = getCommissionsByUserId(userId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setCommissions(data?.data);
+          return "Comissões carregadas com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar comissões!";
+        },
+      },
+    });
+  }, []);
+
+  const startTransaction = useCallback(
+    async (
+      formData: FormDataTransaction,
+      saleIdentification: ProductDetailsContentProps["saleIdentification"]
+    ) => {
+      try {
+        const payload = formatDataForApi(formData, productFiltered, adress);
+
+        if (!payload) {
+          toast.error(
+            "Esta faltando uma informacao, por favor check o formulario e tente novamente"
+          );
+          return;
+        }
+
+        const { checkouts } = await submitTransaction(
+          payload,
+          saleIdentification
+        );
+        window.location.href = checkouts[0].payment_url;
+      } catch (error: any) {
+        toast.error("Erro ao procesar a compra", error);
+      }
+    },
+    [productFiltered, adress]
   );
 
   const getAllProductImages = useCallback((id: string) => {
@@ -530,45 +674,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   }, []);
 
   const addProductRequest = useCallback(
-    async (
-      name: string,
-      description: string,
-      price: number,
-      auff: number,
-      files: File[],
-      createUser: boolean,
-      commissionDistributionSpheres: number[],
-      commissionDistributionGroup: number[],
-      commissionDistributionCarrer: number[],
-      commissionType: string,
-      shippingValues: {
-        width: number;
-        height: number;
-        length: number;
-        weight: number;
-      },
-      isCommissionable: boolean,
-      directCommissionValue?: number
-    ) => {
+    async (product: AddCrudProduct) => {
       const toastId = toast.loading("Carregando...");
-      addProduct(
-        name,
-        description,
-        price,
-        auff,
-        createUser,
-        commissionDistributionSpheres,
-        commissionDistributionGroup,
-        commissionDistributionCarrer,
-        commissionType,
-        shippingValues,
-        isCommissionable,
-        directCommissionValue
-      )
+      addProduct(product)
         .then((data: any) => {
           const id = data.data._id;
 
-          uploadProductImage(id, files)
+          uploadProductImage(id, product.files)
             .then(() => {
               toast.update(toastId, {
                 render: "Produto cadastrado com sucesso!",
@@ -608,51 +720,16 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
   const editProductRequest = useCallback(
-    async (
-      id: string,
-      name: string,
-      description: string,
-      price: number,
-      auff: number,
-      createUser: boolean,
-      commissionDistributionSpheres: number[],
-      commissionDistributionGroup: number[],
-      commissionDistributionCarrer: number[],
-      commissionType: string,
-      shippingValues: {
-        width: number;
-        height: number;
-        length: number;
-        weight: number;
-      },
-      newFiles: File[],
-      removedFiles: IFile[],
-      isCommissionable: boolean,
-      directCommissionValue?: number
-    ) => {
+    async (product: EditCrudProduct) => {
       const toastId = toast.loading("Carregando...");
 
-      removedFiles.forEach(async (file) => {
+      product.removedFiles.forEach(async (file) => {
         deleteFile(file.originalName);
       });
 
-      if (newFiles.length > 0) {
-        uploadProductImage(id, newFiles).then(() => {
-          editProduct(
-            id,
-            name,
-            description,
-            price,
-            auff,
-            createUser,
-            commissionDistributionSpheres,
-            commissionDistributionGroup,
-            commissionDistributionCarrer,
-            commissionType,
-            shippingValues,
-            isCommissionable,
-            directCommissionValue
-          )
+      if (product.newFiles.length > 0) {
+        uploadProductImage(product.id, product.newFiles).then(() => {
+          editProduct(product)
             .then(() => {
               toast.update(toastId, {
                 render: "Produto editado com sucesso!",
@@ -676,21 +753,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
             });
         });
       } else {
-        editProduct(
-          id,
-          name,
-          description,
-          price,
-          auff,
-          createUser,
-          commissionDistributionSpheres,
-          commissionDistributionGroup,
-          commissionDistributionCarrer,
-          commissionType,
-          shippingValues,
-          isCommissionable,
-          directCommissionValue
-        )
+        editProduct(product)
           .then(() => {
             toast.update(toastId, {
               render: "Produto editado com sucesso!",
@@ -876,6 +939,63 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const getAllFaq = useCallback(() => {
+    const request = getFaq();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setAllFaq(data?.data);
+          return "";
+        },
+
+        style: {
+          display: "none",
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar perguntas!";
+        },
+      },
+    });
+  }, []);
+
+  const profileEditAgent = useCallback((id: string, data: User) => {
+    const request = profileAgent(id, data);
+    toast.promise(request, {
+      pending: {
+        render() {
+          setEditAgentProfile(true);
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          const token = user?.token;
+          const dataUser = { ...data.data, token: token };
+          setUser(dataUser);
+          localStorage.setItem("user", JSON.stringify(dataUser));
+          setEditAgentProfile(false);
+          return "Perfil atualizado com  com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          setEditAgentProfile(true);
+          return "Falha ao atualizar o perfil!";
+        },
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <ContextApi.Provider
       value={{
@@ -906,6 +1026,16 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         dimensions,
         getAllProductImages,
         productImages,
+        getAllFaq,
+        startTransaction,
+        allFaq,
+        getAllTransactionsByUserId,
+        transactions,
+        getAllCommissionsByUserId,
+        commissions,
+        profileEditAgent,
+        editAgentProfile,
+        setEditAgentProfile,
       }}
     >
       {children}

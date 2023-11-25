@@ -1,23 +1,37 @@
-import React from "react";
-import styles from './dashboard.module.scss'
-import { Progress } from 'antd';
-import { Gift } from "lucide-react";  
-
-
-
+import React, { useContext, useEffect } from "react";
+import styles from "./dashboard.module.scss";
+import { Progress } from "antd";
+import { Gift } from "lucide-react";
+import { ContextApi } from "../../contexts";
+import Filters from "../../libs/Filters";
 
 const Dashboard: React.FC = () => {
+  const { user, commissions, getAllCommissionsByUserId } =
+    useContext(ContextApi);
+
+  useEffect(() => {
+    if (user) {
+      getAllCommissionsByUserId(user._id);
+    }
+  }, [user, getAllCommissionsByUserId]);
   return (
     <section className={styles.deshBoardPage}>
       <div className={styles.deshBoardPageAuff}>
         <h2>Auffs Gerados</h2>
 
         <div className={styles.deshBoardPageAuffProgress}>
-          <span>0</span>
-          <Progress percent={70} showInfo={false} trailColor="#F2F2F2" strokeColor="#F04E23" size={['100%', 12]} className={styles.progress} />
+          <span>{commissions?.balance?.virtualCurrency}</span>
+          <Progress
+            percent={70}
+            showInfo={false}
+            trailColor="#F2F2F2"
+            strokeColor="#F04E23"
+            size={["100%", 12]}
+            className={styles.progress}
+          />
           <div className={styles.deshBoardPageAuffGift}>
             <span>1000</span>
-            <Gift size={'2rem'} color="#F04E23" />
+            <Gift size={"2rem"} color="#F04E23" />
           </div>
         </div>
 
@@ -29,7 +43,7 @@ const Dashboard: React.FC = () => {
               <span>Agente Comum</span>
             </div>
           </div>
-  
+
           <div className={styles.deshBoardPageAuffLevelContainer}>
             <h3>Próximo Nível</h3>
             <div className={styles.deshBoardPageAuffPointsContainer}>
@@ -37,12 +51,9 @@ const Dashboard: React.FC = () => {
               <span>Agente Premium</span>
             </div>
           </div>
-
         </div>
-
       </div>
       <div className={styles.deshBoardPageTotals}>
-
         <div className={styles.deshBoardPageTotalsInfomation}>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Disponível</h4>
@@ -52,7 +63,7 @@ const Dashboard: React.FC = () => {
             <h4>Lucro Total</h4>
             <span>R$ 999,99</span>
           </div>
-        </div> 
+        </div>
 
         <div className={styles.borderCenterTotals} />
 
@@ -68,9 +79,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.deshBoardPageImage}>
-        <button type="button" onClick={() => window.alert("####")}/>
-      </div>
+      <div className={styles.deshBoardPageImage} />
     </section>
   );
 };

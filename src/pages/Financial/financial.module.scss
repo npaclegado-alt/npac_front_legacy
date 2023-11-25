@@ -220,6 +220,11 @@
         font-size: 0.8rem;
       }
 
+      .canceled {
+        color: red;
+        font-size: 0.8rem;
+      }
+
       .concluded {
         color: #2fd270;
         font-size: 0.8rem;
@@ -294,23 +299,6 @@
         padding-left: 1rem;
       }
     }
-
-    button {
-      position: absolute;
-      right: 15px;
-      bottom: 20px;
-      height: 55px;
-      width: 55px;
-      background-color: #f04e23;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      border-radius: 50%;
-      background-image: url("../../assets/imgs/chatboxes.png");
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
     ul {
       width: 100%;
       list-style: none;

@@ -2,10 +2,13 @@ import {LogOut, Menu, Settings, UserPlus } from "lucide-react";
 import styles from "./styleNavbar.module.scss";
 import { ContextApi } from "../../../../contexts";
 import { useContext, useState } from "react";
-import CopyToClipboard from "react-copy-to-clipboard";
+import CopyToClipboard from "react-copy-to-clipboard"; 
+import {useNavigate} from 'react-router-dom'
 
 export default function Navbar() {
   const { logoutRequest, drawerOpen, setDrawerOpen, user } = useContext(ContextApi);
+   
+  const navigate = useNavigate()
 
   const link = btoa(user?._id as string)
   const location = window.location.href.split('/');
@@ -46,7 +49,10 @@ export default function Navbar() {
             </CopyToClipboard>
 
           <div className={styles.divider} />
-          <Settings className={styles.icon} />
+          <Settings
+            className={styles.icon}
+            onClick={() => navigate("/agent-profile")}
+          />
           <div className={styles.divider} />
           <LogOut onClick={logoutRequest} className={styles.icon} />
         </div>

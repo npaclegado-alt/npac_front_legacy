@@ -1,0 +1,609 @@
+.AgentProfilePage {
+  display: grid;
+  gap: 15px 15px;
+  grid-template: "PersonalData StreetData" 400px "PersonalData ProofData" 400px;
+
+  .PersonalData {
+    grid-area: PersonalData;
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 1.5rem;
+    text-align: center;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      outline: none;
+      color: #f04e23;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      max-width: 250px;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 2rem;
+
+      span {
+        margin-left: 1rem;
+      }
+    }
+
+    .PersonalDataImg {
+      height: 16em;
+      width: 16rem;
+      border: solid 10px #f6f6f6;
+      border-radius: 8px;
+      padding: 0.4rem;
+
+      img {
+        height: 100%;
+        width: 100%;
+        border-radius: 8px;
+      }
+
+      margin-bottom: 2rem;
+    }
+
+    .PersonalDataNameData {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      border-bottom: solid 2px #f2f2f2;
+      padding: 2rem;
+
+      .PersonalDataBorder {
+        border: solid 1px #f2f2f2;
+        height: 100%;
+      }
+
+      .PersonalDataNameDataItem {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        padding: 2rem;
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        span {
+          color: #8b8b8b;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .PersonalDataPhoneEmail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 2rem;
+
+      .PersonalDataBorder {
+        border: solid 1px #f2f2f2;
+        height: 100%;
+      }
+
+      .PersonalDataPhoneEmailItem {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        padding: 2rem;
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        span {
+          color: #8b8b8b;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .StreetData {
+    grid-area: StreetData;
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+
+    .StreetDataZipState {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      border-bottom: solid 2px #f2f2f2;
+      padding: 2rem;
+
+      .PersonalDataBorder {
+        border: solid 1px #f2f2f2;
+        height: 100%;
+      }
+
+      .StreetDataZipStateItem {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        padding: 2rem;
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        span {
+          color: #8b8b8b;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .StreetDataCityAddress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 2rem;
+
+      .PersonalDataBorder {
+        border: solid 1px #f2f2f2;
+        height: 100%;
+      }
+
+      .StreetDataCityAddressItem {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        padding: 2rem;
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.8rem;
+        }
+
+        span {
+          color: #8b8b8b;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .ProofData {
+    grid-area: ProofData;
+    background-color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    padding: 2rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    position: relative;
+
+    div:nth-child(1) {
+      border-bottom: solid 2px #f2f2f2;
+      width: 100%;
+    }
+
+    .ProofDataItem {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: #f04e23;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        height: 50px;
+        width: 100%;
+        justify-content: center;
+        font-size: 0.9rem;
+
+        span {
+          margin-right: 1rem;
+        }
+      }
+    }
+  }
+
+  .buttonChat {
+    height: 64px;
+    width: 64px;
+    background-color: #f04e23;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 50%;
+    background-image: url("../../assets/imgs/chatboxes.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+  }
+}
+
+.modalFormEditAgent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  padding-left: 2rem;
+  padding-right: 2rem;
+
+  h2 {
+    font-size: 1.7rem;
+    margin-bottom: 2rem;
+  }
+
+  button {
+    background-color: transparent;
+    height: 50px;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background-color: #f04e23;
+    width: 100%;
+    font-weight: 600;
+    margin-top: 2rem;
+    border-radius: 12px;
+  }
+
+  .modalFormEditData {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding-bottom: 2rem;
+
+    h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+
+    border-bottom: solid #f2f2f2 2px;
+
+    .modalFormEditIdentification {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding-right: 2.5rem;
+      padding-bottom: 2rem;
+      padding-top: 2rem;
+
+      input {
+        height: 50px;
+        margin-bottom: 1rem;
+        outline: none;
+      }
+
+      button {
+        background-color: transparent;
+        height: 40px;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #f04e23;
+        cursor: pointer;
+        outline: none;
+        border: none;
+
+        span {
+          margin-right: 12px;
+        }
+      }
+
+      .modalFormEditSeePassword {
+        display: flex;
+        width: 100%;
+        position: relative;
+
+        input {
+          position: relative;
+          padding-right: 80px;
+        }
+
+        button {
+          background-color: transparent;
+          width: 50px;
+          position: absolute;
+          right: 0;
+          top: 5px;
+          padding: 0;
+          margin-top: 0;
+          border-radius: 0;
+          right: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .modalFormEditAddress {
+      padding-left: 2.5rem;
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding-bottom: 2rem;
+      padding-top: 2rem;
+
+      input {
+        outline: none;
+        height: 50px;
+        margin-bottom: 1rem;
+        outline: none;
+      }
+
+      select {
+        outline: none;
+        height: 50px;
+        outline: none;
+      }
+
+      button {
+        background-color: transparent;
+        height: 40px;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #f04e23;
+        cursor: pointer;
+        outline: none;
+        border: none;
+
+        span {
+          margin-right: 12px;
+        }
+      }
+
+      .modalFormEditGroupAddress {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+
+        input {
+          width: 40%;
+          outline: none;
+        }
+
+        select {
+          width: 57%;
+          outline: none;
+        }
+      }
+
+      .modalFormEditGroupOneAddress {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+
+        input:nth-child(1) {
+          width: 40%;
+        }
+
+        input:nth-child(2) {
+          width: 57%;
+        }
+      }
+    }
+
+    .modalFormEditBorder {
+      border: solid #f2f2f2 1px;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .AgentProfilePage {
+    grid-template:
+      "PersonalData PersonalData"
+      "StreetData StreetData"
+      "ProofData ProofData";
+
+    .PersonalData {
+      .PersonalDataNameData {
+        padding: 0 !important;
+        flex-direction: column;
+
+        border-bottom: none !important;
+
+        .PersonalDataBorder {
+          display: none !important;
+        }
+
+        .PersonalDataNameDataItem {
+          width: 100% !important;
+          border-bottom: solid 2px #f2f2f2;
+        }
+      }
+
+      .PersonalDataPhoneEmail {
+        padding: 0 !important;
+        flex-direction: column;
+
+        div:nth-child(3) {
+          border: none !important;
+        }
+
+        .PersonalDataPhoneEmailItem {
+          width: 100% !important;
+          border-bottom: solid 2px #f2f2f2;
+        }
+
+        .PersonalDataBorder {
+          display: none !important;
+        }
+      }
+    }
+
+    .StreetData {
+      .StreetDataZipState {
+        padding: 0 !important;
+        flex-direction: column;
+
+        border-bottom: none !important;
+
+        .StreetDataZipStateItem {
+          width: 100% !important;
+          border-bottom: solid 2px #f2f2f2;
+        }
+
+        .PersonalDataBorder {
+          display: none !important;
+        }
+      }
+
+      .StreetDataCityAddress {
+        padding: 0 !important;
+        flex-direction: column;
+
+        div:nth-child(3) {
+          border: none !important;
+        }
+
+        .StreetDataCityAddressItem {
+          width: 100% !important;
+          border-bottom: solid 2px #f2f2f2;
+        }
+
+        .PersonalDataBorder {
+          display: none !important;
+        }
+      }
+    }
+
+    .ProofData {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+
+      .ProofDataItem {
+        padding: 2rem;
+      }
+
+      .buttonChat {
+        right: 10px !important;
+        bottom: 10px !important;
+        height: 45px !important;
+        width: 45px !important;
+      }
+    }
+  }
+
+  .modalFormEditAgent {
+    text-align: center;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+
+    .modalFormEditData {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .modalFormEditIdentification {
+      width: 100% !important;
+      padding-right: 0 !important;
+    }
+
+    .modalFormEditAddress {
+      width: 100% !important;
+
+      padding-left: 0 !important;
+    }
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1500px) {
+  .PersonalData {
+    padding: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    justify-content: center !important;
+
+    .PersonalDataNameData {
+      padding: 1rem !important;
+    }
+
+    .PersonalDataPhoneEmail {
+      padding: 1rem !important;
+
+      div:nth-child(3) {
+        span {
+          word-wrap: break-word;
+          max-width: 200px;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .StreetData {
+    padding: 0 !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+
+    .StreetDataZipState {
+      padding: 1rem !important;
+    }
+
+    .StreetDataCityAddress {
+      padding: 1rem !important;
+    }
+  }
+}

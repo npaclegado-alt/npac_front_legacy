@@ -14,7 +14,7 @@ export function InputTextSimple(props: InputTextSimpleProps): JSX.Element {
       <input 
         className={styles.container}
         type="text" 
-        id={name} 
+        id={name}  
         {...rest} 
       />
     </>

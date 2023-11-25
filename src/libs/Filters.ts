@@ -6,6 +6,11 @@
 
 const clearStringOnlyNumbers = (value: any) => String(value).replace(/\D/g, "");
 
+const clearStringOnlyNumbersWithDots = (value: any) =>
+  String(value)
+    .replace(/[^0-9.]+/g, "")
+    .replace(/(\..*)\./g, "$1");
+
 const convertMoneyTextMask = (value: any) => {
   if (value) {
     const stringOnlyNumbers = `${Number(value).toFixed(2)}`.replace(/\D/g, "");
@@ -148,4 +153,5 @@ export default {
   inputMaskCPFCNPJ,
   inputMaskCEP,
   inputMaskTELWithDDD,
+  clearStringOnlyNumbersWithDots,
 };
