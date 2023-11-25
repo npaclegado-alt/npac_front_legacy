@@ -38,10 +38,14 @@ import {
   FormDataTransaction,
   formatDataForApi,
 } from "../pages/ProductsDetails/domain/Formatters";
-import { submitTransaction } from "../services/requests/transactions";
+import {
+  getTransactionsByUserId,
+  submitTransaction,
+} from "../services/requests/transactions";
 import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
 import { profileAgent } from "../services/requests/profileAgent";
+import { getCommissionsByUserId } from "../services/requests/commissions";
 
 interface BaseCrudProduct {
   name: string;
@@ -127,7 +131,7 @@ interface Faq {
 }
 export interface User {
   expiresIn?: string;
-  _id?: string;
+  _id: string;
   name: string;
   cpf: string;
   email: string;
@@ -178,6 +182,10 @@ interface IContextApi {
   };
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  getAllTransactionsByUserId: (userId: string) => void;
+  transactions: any[];
+  getAllCommissionsByUserId: (userId: string) => void;
+  commissions: any[];
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
@@ -315,6 +323,10 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
+  getAllTransactionsByUserId: (userId: string) => {},
+  transactions: [],
+  getAllCommissionsByUserId: (userId: string) => {},
+  commissions: [],
   profileEditAgent: (id: string, data: User) => {},
   editAgentProfile: false,
   setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
@@ -450,6 +462,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     storedUser ? JSON.parse(storedUser) : undefined
   );
   const [products, setProducts] = useState<any>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [commissions, setCommissions] = useState<any[]>([]);
   const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
   const [adress, setAdress] = useState<any>();
@@ -517,6 +531,54 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     },
     [navigate]
   );
+
+  const getAllTransactionsByUserId = useCallback((userId: string) => {
+    const request = getTransactionsByUserId(userId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setTransactions(data?.data);
+          return "Transações carregadas com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar transações!";
+        },
+      },
+    });
+  }, []);
+
+  const getAllCommissionsByUserId = useCallback((userId: string) => {
+    const request = getCommissionsByUserId(userId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setTransactions(data?.data);
+          return "Comissões carregadas com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar comissões!";
+        },
+      },
+    });
+  }, []);
 
   const startTransaction = useCallback(
     async (
@@ -967,7 +1029,10 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         getAllFaq,
         startTransaction,
         allFaq,
-
+        getAllTransactionsByUserId,
+        transactions,
+        getAllCommissionsByUserId,
+        commissions,
         profileEditAgent,
         editAgentProfile,
         setEditAgentProfile,
