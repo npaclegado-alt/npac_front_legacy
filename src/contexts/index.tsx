@@ -133,6 +133,9 @@ export interface User {
   email: string;
   role: string;
   password: string;
+  graduation: string;
+  commision: number;
+  balance: number;
   phone: string;
   createdAt?: string;
   __v?: number;
@@ -148,6 +151,14 @@ export interface User {
     city: string;
     state: string;
     postalCode: string;
+  };
+  banckAccount?: {
+    name: string;
+    cpf: string;
+    ag: number;
+    cc: number;
+    dv: string;
+    pix: string;
   };
 }
 
