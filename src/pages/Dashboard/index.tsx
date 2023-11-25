@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
         <h2>Auffs Gerados</h2>
 
         <div className={styles.deshBoardPageAuffProgress}>
-          <span>{commissions.balance.virtualCurrency}</span>
+          <span>{commissions?.balance?.virtualCurrency}</span>
           <Progress
             percent={70}
             showInfo={false}
