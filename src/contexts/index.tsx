@@ -32,6 +32,8 @@ import {
 import { X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
+import {getFaq} from '../services/requests/faq'
+
 interface BaseCrudProduct {
   name: string;
   description: string;
@@ -108,6 +110,15 @@ interface Career {
   user: string;
 }
 
+
+interface Faq {
+  _id: string;
+  question: string;
+  answer: string
+  position: number,
+
+}
+
 interface User {
   expiresIn: string;
   _id: string;
@@ -145,7 +156,9 @@ interface IContextApi {
   getCitiesByUf: (ufId: string) => void;
   getSpheresByUser: (userId: string) => void;
   getAllCareer: () => void;
+  getAllFaq: () => void;
   career?: Career;
+  allFaq: Faq[],
   ufs: [
     {
       id: number;
@@ -279,7 +292,9 @@ export const ContextApi = createContext<IContextApi>({
   getCitiesByUf: (ufId: string) => {},
   getSpheresByUser: (userId: string) => {},
   getAllCareer: () => {},
+  getAllFaq: () => {},
   career: undefined,
+  allFaq: [] as Faq[],
   ufs: [
     {
       id: 0,
@@ -403,6 +418,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [allFaq, setAllFaq] = useState<Faq[]>([])
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -789,6 +805,34 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const getAllFaq = useCallback(() => {
+    const request = getFaq();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setAllFaq(data?.data);
+          return ''
+        },
+
+        style: {
+          display: 'none'
+        }
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar perguntas!";
+        },
+      },
+    });
+  }, []);
+
   return (
     <ContextApi.Provider
       value={{
@@ -819,6 +863,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         dimensions,
         getAllProductImages,
         productImages,
+        getAllFaq,
+        allFaq
       }}
     >
       {children}
