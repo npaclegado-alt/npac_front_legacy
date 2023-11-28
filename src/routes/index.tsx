@@ -19,6 +19,7 @@ import AddDocuments from "../pages/Admin/Documents/add";
 import { Financial } from "../pages/Financial";
 import { Help } from "../pages/Help";
 import AgentProfile from "../pages/AgentProfile";
+import { PageDocuments } from "../pages/Documents/pageDocuments";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -31,9 +32,8 @@ const RootRoutes: React.FC = () => {
           <Route path="financial" element={<Financial />} />
           <Route path="products" element={<PageProducts />} />
           <Route path="agent-profile" element={<AgentProfile />} />
-          <Route path="documents" element={<></>} />
           <Route path="help" element={<Help />} />
-          <Route path="products" element={<PageProducts />} />
+          <Route path="documents" element={<PageDocuments />} />
         </Route>
         <Route element={<AdminWrapper />}>
           <Route path="/admin/" element={<AdminLayout />}>
