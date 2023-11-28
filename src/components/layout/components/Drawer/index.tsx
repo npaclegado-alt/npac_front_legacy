@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Drawer as AntdDrawer } from "antd";
 import { ContextApi } from "../../../../contexts";
 import styles from "./styleDrawer.module.scss";
@@ -19,6 +19,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { ROLES } from "../../../../constants/roles";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 interface Path {
   name: string;
@@ -32,6 +33,12 @@ export default function Drawer() {
     useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const link = btoa(user?._id as string);
+  const url = window.location.href.split("/");
+  const redirectUrlInavtion = url[0] + "//" + url[2] + "/invitation/" + link;
+
+  const [copied, setCopied] = useState<boolean>(false);
 
   const navItems: Path[] = useMemo(() => {
     const paths = [
@@ -74,13 +81,13 @@ export default function Drawer() {
     const fullPaths =
       user?.role === ROLES.admin
         ? [
-          {
-            name: "Acesso Admin",
-            path: "/admin",
-            icon: Lock,
-          },
-          ...paths,
-        ]
+            {
+              name: "Acesso Admin",
+              path: "/admin",
+              icon: Lock,
+            },
+            ...paths,
+          ]
         : paths;
     return fullPaths.map((path) => {
       return { ...path, active: location.pathname === path.path };
@@ -123,11 +130,31 @@ export default function Drawer() {
             <div className={styles.userStatus}>Ativo</div>
           </div>
           <div className={styles.rowButtons}>
-            <Link to={"https://leonardomarcondes.com.br/destrava11sp/"} target="_blank" className={styles.orangeButton}>Destrava</Link>
+            <Link
+              to={"https://leonardomarcondes.com.br/destrava11sp/"}
+              target="_blank"
+              className={styles.orangeButton}
+            >
+              Destrava
+            </Link>
             <div className={styles.orangeButton}>Escola NPAC</div>
           </div>
           <div className={styles.rowButtons}>
-            <UserPlus className={styles.icon} />
+            <CopyToClipboard
+              text={redirectUrlInavtion}
+              onCopy={(copy) => {
+                setCopied(true);
+                setTimeout(() => {
+                  setCopied(false);
+                }, 2000);
+              }}
+            >
+              <UserPlus
+                color={copied ? "#00ff00" : "#8B8B8B"}
+                className={styles.icon}
+              />
+            </CopyToClipboard>
+
             <div className={styles.divider} />
             <Settings
               onClick={() => handleNavigate("/agent-profile")}

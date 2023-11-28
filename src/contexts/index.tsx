@@ -215,7 +215,7 @@ interface IContextApi {
   products: [
     {
       _id: string;
-      name: string; 
+      name: string;
       active: boolean;
       description: string;
       price: number;
@@ -619,17 +619,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       });
   }, []);
 
-  const getAllProducts = useCallback(() => {    
-    
-
-    //TODO: Tive que fazer isso para lista o produto na pagina de convite kk  
-    //Se remover essa condição ele não consegue ver o token no cabeçalho
-    if(window.location.hostname.split("invitation").length > 0){
-      const token = user?.token;
-      api.defaults.headers.Authorization = `Bearer ${token}`;
-    }
-    
-
+  const getAllProducts = useCallback(() => {
     const request = getProducts();
     toast.promise(request, {
       pending: {

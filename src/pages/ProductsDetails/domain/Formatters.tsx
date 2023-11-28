@@ -82,21 +82,27 @@ export interface FormDataTransaction {
   phone: string;
   cep: string;
   logradouro: string;
-  numero: string; 
-  password?: string; 
-  code?: string 
+  numero: string;
+  password?: string;
 }
 const formatDataForApi = (
   formData: FormDataTransaction,
   product: Product,
   adress: Adress
 ): FormattedData => {
-
-  const mandatoryFields: (keyof FormDataTransaction)[] = ['name', 'cpf', 'email', 'phone', 'cep', 'logradouro', 'numero','password', 'code'];
+  const mandatoryFields: (keyof FormDataTransaction)[] = [
+    "name",
+    "cpf",
+    "email",
+    "phone",
+    "cep",
+    "logradouro",
+    "numero",
+  ];
 
   for (const field of mandatoryFields) {
     if (!formData[field]) {
-      toast.error(`Campo(s) obrigatorio(s): ${field}`)
+      toast.error(`Campo(s) obrigatorio(s): ${field}`);
 
       throw new Error(`Missing mandatory field: ${field}`);
     }
@@ -123,9 +129,9 @@ const formatDataForApi = (
       name: formData.name,
       type: "individual",
       email: formData.email,
-      code: formData.code || "",
+      code: "",
       document: formData.cpf.replace(/\D/g, ""),
-      document_type: "CPF", 
+      document_type: "CPF",
       password: formData.password || "",
     },
     shipping: {
@@ -168,6 +174,4 @@ const formatDataForApi = (
   return formattedData;
 };
 
-export { formatDataForApi }
-
-
+export { formatDataForApi };
