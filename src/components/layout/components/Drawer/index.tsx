@@ -137,7 +137,15 @@ export default function Drawer() {
             >
               Destrava
             </Link>
-            <div className={styles.orangeButton}>Escola NPAC</div>
+            <Link
+              to={
+                "https://escola.npac.com.br/auth/login?redirect=/office/minha_cademi/aparencia"
+              }
+              target="_blank"
+              className={styles.orangeButton}
+            >
+              Escola NPAC
+            </Link>
           </div>
           <div className={styles.rowButtons}>
             <CopyToClipboard

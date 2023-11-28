@@ -3,13 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./styleDocuments.module.scss";
 import { ContextApi } from "../../../contexts";
 import { CustomButton } from "../../../components/buttons/customButton";
-import {
-  ArrowLeft,
-  CheckCheck,
-  HelpCircleIcon,
-  Trash,
-  UploadIcon,
-} from "lucide-react";
+import { ArrowLeft, CheckCheck, Trash, UploadIcon } from "lucide-react";
 import { InputTextSimple } from "../../../components/inputs/simpleText/inputSimpleText";
 import { Upload, UploadFile, UploadProps } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
@@ -150,17 +144,16 @@ const AddDocuments: React.FC = () => {
               <Upload
                 listType="picture"
                 onChange={handleChange}
-                maxCount={10}
+                maxCount={1}
                 showUploadList={{
                   removeIcon: <Trash size={14} className={styles.icon} />,
                 }}
-                multiple
                 fileList={fileList}
                 customRequest={(e) => {
                   if (e.onSuccess) e.onSuccess(e);
                 }}
               >
-                {fileList.length < 10 && (
+                {fileList.length < 1 && (
                   <CustomButton>
                     <div className={styles.button}>
                       Upload <UploadIcon />

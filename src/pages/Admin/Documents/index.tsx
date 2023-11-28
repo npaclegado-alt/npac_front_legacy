@@ -23,10 +23,10 @@ const Documents: React.FC = () => {
   } = useContext(ContextApi);
 
   const documents: DataType[] = useMemo(() => {
-    return rawDocuments.map((doc) => {
+    return rawDocuments.map((doc: any) => {
       return {
         name: doc.name,
-        description: doc.fieldName,
+        description: doc.description,
       };
     });
   }, [rawDocuments]);

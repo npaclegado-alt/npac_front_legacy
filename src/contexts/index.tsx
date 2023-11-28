@@ -679,7 +679,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       },
       success: {
         render({ data }: any) {
-          setProducts(data?.data);
+          setDocuments(data?.data);
           return "Documentos carregados com sucesso!";
         },
       },

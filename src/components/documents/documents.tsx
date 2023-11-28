@@ -15,22 +15,22 @@ export function Documents({ document }: DocumentProps): JSX.Element {
   return (
     <div className={styles.contentDocument}>
       <div className={styles.boxHeaderDocument}>
-        <h4>{document.title}</h4>
+        <h4>{document.name}</h4>
         <div className={styles.boxValue}>
           <p>{document.description}</p>
         </div>
       </div>
       <Divider />
       <div className={styles.actions}>
-        <div
-          onClick={() => navigateToLink(document.url)}
+        {/* <div
+          onClick={() => navigateToLink(document.fileUrl)}
           className={styles.boxValueAction}
         >
           <Maximize />
           <p>Visualizar Documento</p>
-        </div>
+        </div> */}
         <div
-          onClick={() => navigateToLink(document.url)}
+          onClick={() => navigateToLink(document.fileUrl)}
           className={styles.boxValueAction}
         >
           <Download />

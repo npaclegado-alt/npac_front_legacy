@@ -122,7 +122,7 @@ export const Financial = () => {
           <ul onClick={() => setSeeInvestment(false)}>
             {transactions.map((transaction) => {
               const status = getStatus(transaction?.status);
-              const date = moment(transaction?.updatedAt);
+              const date = moment(transaction?.updatedAt).format("DD/MM/YYYY");
               const amount = Filters.convertMoneyTextMask(
                 transaction?.amount / 100
               );
@@ -141,9 +141,7 @@ export const Financial = () => {
 
                   <div className={styles.information}>
                     <span className={status.style}>{status.label}</span>
-                    <p>{`${String(date.day()).padStart(2, "0")}/${String(
-                      date.month()
-                    ).padStart(2, "0")}/${date.year()}`}</p>
+                    <p>{date}</p>
                   </div>
                 </li>
               );
@@ -168,7 +166,8 @@ export const Financial = () => {
               const status = getStatus(commission?.status);
               const date = moment(
                 commission?.updatedAt ?? commission?.createdAt
-              );
+              ).format("DD/MM/YYYY");
+
               const amount = Filters.convertMoneyTextMask(commission?.amount);
               const name = commission?.productName;
 
@@ -181,9 +180,7 @@ export const Financial = () => {
 
                   <div className={styles.information}>
                     <span className={status.style}>{status.label}</span>
-                    <p>{`${String(date.day()).padStart(2, "0")}/${String(
-                      date.month()
-                    ).padStart(2, "0")}/${date.year()}`}</p>
+                    <p>{date}</p>
                   </div>
                 </li>
               );
