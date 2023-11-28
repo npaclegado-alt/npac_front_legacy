@@ -14,8 +14,6 @@ import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
 import { Invitation } from "../pages/Invitation";
-import { Financial } from "../pages/Financial";
-import {Help} from '../pages/Help'
 import AdminDocuments from "../pages/Admin/Documents";
 import AddDocuments from "../pages/Admin/Documents/add";
 import { Financial } from "../pages/Financial";
@@ -32,8 +30,6 @@ const RootRoutes: React.FC = () => {
           <Route path="career" element={<Career />} />
           <Route path="financial" element={<Financial />} />
           <Route path="products" element={<PageProducts />} />
-            <Route path="agent-profile" element={<AgentProfile />} />
-            <Route path="documents" element={<></>} />
           <Route path="agent-profile" element={<AgentProfile />} />
           <Route path="documents" element={<></>} />
           <Route path="help" element={<Help />} />
