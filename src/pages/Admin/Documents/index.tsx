@@ -27,7 +27,7 @@ const Documents: React.FC = () => {
       return {
         name: doc.name,
         description: doc.description,
-        fileUrl: doc.fileUrl,
+        key: doc.key,
       };
     });
   }, [rawDocuments]);
@@ -57,11 +57,7 @@ const Documents: React.FC = () => {
               title={
                 <div className={styles.tooltip}>
                   Realmente deseja excluir este documento?
-                  <CustomButton
-                    onClick={() =>
-                      deleteDocument(data.fileUrl.split("npac-stage/")[1])
-                    }
-                  >
+                  <CustomButton onClick={() => deleteDocument(data.key)}>
                     Sim
                   </CustomButton>
                 </div>
