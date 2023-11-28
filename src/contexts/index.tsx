@@ -25,6 +25,7 @@ import {
 
 import { getSpheres } from "../services/requests/spheres";
 import {
+  addDocument,
   deleteFile,
   getDocumentById,
   getDocuments,
@@ -198,6 +199,12 @@ interface IContextApi {
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
   addProductRequest: (product: AddCrudProduct) => void;
+  addDocumentRequest: (
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => void;
   editProductRequest: (product: EditCrudProduct) => void;
   deleteProductRequest: (id: string) => void;
   getAdressByPostalCode: (postalCode: string) => void;
@@ -335,6 +342,12 @@ export const ContextApi = createContext<IContextApi>({
   getAllTransactionsByUserId: (userId: string) => {},
   transactions: [],
   getAllCommissionsByUserId: (userId: string) => {},
+  addDocumentRequest: (
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => {},
   commissions: undefined,
   profileEditAgent: (id: string, data: User) => {},
   editAgentProfile: false,
@@ -883,6 +896,31 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     [products]
   );
 
+  const addDocumentRequest = useCallback(
+    (name: string, description: string, file: File, uploadedBy: string) => {
+      const request = addDocument(name, description, file, uploadedBy);
+      toast.promise(request, {
+        pending: {
+          render() {
+            return "Carregando...";
+          },
+        },
+        success: {
+          render({ data }: any) {
+            navigate("/admin/documents");
+            return "Documento adicionado com sucesso!";
+          },
+        },
+        error: {
+          render({ data }: any) {
+            return "Falha ao adicionar documento!";
+          },
+        },
+      });
+    },
+    [navigate]
+  );
+
   const deleteDocument = useCallback(
     (originalName: string) => {
       const request = deleteFile(originalName);
@@ -1147,6 +1185,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         clearDocumentFiltered,
         documentById,
         documentFiltered,
+        addDocumentRequest,
       }}
     >
       {children}

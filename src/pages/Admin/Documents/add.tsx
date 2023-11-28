@@ -16,6 +16,8 @@ const AddDocuments: React.FC = () => {
     documentById,
     documentFiltered: initialData,
     clearDocumentFiltered,
+    addDocumentRequest,
+    user,
   } = useContext(ContextApi);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -94,10 +96,18 @@ const AddDocuments: React.FC = () => {
       if (documentId) {
         console.log(name, description, files, documentId);
       } else {
-        console.log(name, description, files);
+        addDocumentRequest(name, description, files[0], user?._id as string);
       }
     }
-  }, [description, fileList, name, documentId, validateFields]);
+  }, [
+    validateFields,
+    fileList,
+    documentId,
+    name,
+    description,
+    addDocumentRequest,
+    user,
+  ]);
 
   return (
     <div className={styles.container}>

@@ -69,3 +69,27 @@ export async function getDocumentById(documentId: string) {
       });
   });
 }
+
+export async function addDocument(
+  name: string,
+  description: string,
+  file: File,
+  uploadedBy: string
+) {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("document", file);
+
+    api
+      .post(
+        `files/upload/document?documentType=GENERAL&name=${name}&description=${description}&uploadedBy=${uploadedBy}`,
+        form
+      )
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}

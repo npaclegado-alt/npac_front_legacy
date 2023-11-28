@@ -27,6 +27,7 @@ const Documents: React.FC = () => {
       return {
         name: doc.name,
         description: doc.description,
+        fileUrl: doc.fileUrl,
       };
     });
   }, [rawDocuments]);
@@ -47,17 +48,19 @@ const Documents: React.FC = () => {
       render: (data) => {
         return (
           <Space size="middle">
-            <Edit
+            {/* <Edit
               onClick={() => navigate(`add/${data._id}`)}
               className={styles.icon}
-            />
+            /> */}
             <Tooltip
               placement="top"
               title={
                 <div className={styles.tooltip}>
                   Realmente deseja excluir este documento?
                   <CustomButton
-                    onClick={() => deleteDocument(data.originalName)}
+                    onClick={() =>
+                      deleteDocument(data.fileUrl.split("npac-stage/")[1])
+                    }
                   >
                     Sim
                   </CustomButton>
