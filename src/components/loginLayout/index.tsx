@@ -17,13 +17,13 @@ export const LoginLayout = ({ children }: loginLayoutProps) => {
 
                 <ul className={styles.pageLoginNavegationListMenu}>
                     <li>
-                        <Link to="#">O que é</Link>
+                        <Link to="https://leonardomarcondes.com.br/plano-npac/" target="_blank">O que é</Link>
                     </li>
                     <li>
-                        <Link to="#">Que plano</Link>
+                        <Link to="https://leonardomarcondes.com.br/plano-npac/" target="_blank">Que plano</Link>
                     </li>
                     <li>
-                        <Link to="#">
+                        <Link to="https://leonardomarcondes.com.br/plano-npac/" target="_blank">
                             Quem somos
                         </Link>
                     </li>

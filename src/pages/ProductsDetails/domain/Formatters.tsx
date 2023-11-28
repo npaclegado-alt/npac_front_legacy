@@ -82,7 +82,9 @@ export interface FormDataTransaction {
   phone: string;
   cep: string;
   logradouro: string;
-  numero: string;
+  numero: string; 
+  password?: string; 
+  code?: string 
 }
 const formatDataForApi = (
   formData: FormDataTransaction,
@@ -90,7 +92,7 @@ const formatDataForApi = (
   adress: Adress
 ): FormattedData => {
 
-  const mandatoryFields: (keyof FormDataTransaction)[] = ['name', 'cpf', 'email', 'phone', 'cep', 'logradouro', 'numero'];
+  const mandatoryFields: (keyof FormDataTransaction)[] = ['name', 'cpf', 'email', 'phone', 'cep', 'logradouro', 'numero','password', 'code'];
 
   for (const field of mandatoryFields) {
     if (!formData[field]) {
@@ -121,9 +123,10 @@ const formatDataForApi = (
       name: formData.name,
       type: "individual",
       email: formData.email,
-      code: "",
+      code: formData.code || "",
       document: formData.cpf.replace(/\D/g, ""),
-      document_type: "CPF",
+      document_type: "CPF", 
+      password: formData.password || "",
     },
     shipping: {
       amount: 1,

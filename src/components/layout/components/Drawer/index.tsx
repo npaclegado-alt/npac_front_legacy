@@ -3,7 +3,7 @@ import { Drawer as AntdDrawer } from "antd";
 import { ContextApi } from "../../../../contexts";
 import styles from "./styleDrawer.module.scss";
 import { Divider } from "../../../divider";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Briefcase,
   File,
@@ -74,13 +74,13 @@ export default function Drawer() {
     const fullPaths =
       user?.role === ROLES.admin
         ? [
-            {
-              name: "Acesso Admin",
-              path: "/admin",
-              icon: Lock,
-            },
-            ...paths,
-          ]
+          {
+            name: "Acesso Admin",
+            path: "/admin",
+            icon: Lock,
+          },
+          ...paths,
+        ]
         : paths;
     return fullPaths.map((path) => {
       return { ...path, active: location.pathname === path.path };
@@ -123,8 +123,8 @@ export default function Drawer() {
             <div className={styles.userStatus}>Ativo</div>
           </div>
           <div className={styles.rowButtons}>
-            <div className={styles.orangeButton}>Destrava</div>
-            <div className={styles.grayButton}>Escola NPAC</div>
+            <Link to={"https://leonardomarcondes.com.br/destrava11sp/"} target="_blank" className={styles.orangeButton}>Destrava</Link>
+            <div className={styles.orangeButton}>Escola NPAC</div>
           </div>
           <div className={styles.rowButtons}>
             <UserPlus className={styles.icon} />

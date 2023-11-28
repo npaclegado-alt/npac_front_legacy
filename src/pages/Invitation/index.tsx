@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useContext } from "react"
+import { useState, ChangeEvent, useContext, useEffect } from "react"
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput"
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText"
 import { LoginLayout } from "../../components/loginLayout"
@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom"
 import { ContextApi } from "../../contexts"
 export const Invitation = () => {
 
-  const { getAdressByPostalCode, ufs, getCitiesByUf, cities } = useContext(ContextApi)
+  const { getAdressByPostalCode, ufs, getCitiesByUf, cities, getAllProducts, products, startTransaction } = useContext(ContextApi)
 
   const [invationUser, setInvationUser] = useState({
     nome: '',
@@ -18,10 +18,15 @@ export const Invitation = () => {
     senha: '',
     confirmaSenha: '',
     confirmaEmail: '',
-    npac: '',
+    code: '',
     postalCode: '',
     state: '',
     city: '',
+    bairro: '',
+    numero: '',
+    logradouro: '',
+    referencia: '',
+    complement: ''
   })
 
   const [termsServices, setTermsService] = useState(false)
@@ -29,10 +34,25 @@ export const Invitation = () => {
   const { userId } = useParams<{ userId: string }>()
 
   const idInvationUser = atob(userId as string)
-
   console.log(idInvationUser)
 
+  const currentScreen = window.innerWidth;
 
+  const changeWidthInput = (value: number, defaultWidth: string) => {
+    const widthMap = {
+      "49%": value < 1024 && value > 557,
+      "99%": value <= 557,
+      [defaultWidth]: true,
+    };
+
+    const width =
+      Object.keys(widthMap).find((key) => widthMap[key]) || defaultWidth;
+
+    return {
+      width,
+      marginBottom: "10px",
+    };
+  };
 
   const handleChangeInvitation = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setInvationUser({ ...invationUser, [e.target.id]: e.target.value })
@@ -40,7 +60,30 @@ export const Invitation = () => {
 
   const handleSubmitInvitation = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
+  
+    startTransaction(
+      {
+        numero: invationUser.numero,
+        logradouro: invationUser.logradouro,
+        cep: invationUser.postalCode,
+        name: invationUser.nome,
+        email: invationUser.email,
+        phone: invationUser.tefefone,
+        cpf: invationUser.cpf,
+        code: invationUser.code,
+        password: invationUser.senha
+      },
+      idInvationUser
+    )
   }
+
+
+  useEffect(() => {
+    getAllProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
 
   return (
     <LoginLayout>
@@ -49,24 +92,98 @@ export const Invitation = () => {
           <h2>Convite Comum</h2>
 
           <div className={styles.registerUserInvatation}>
-            <div>
-              <InputTextSimple name="nome" placeholder="Nome Completo" onChange={handleChangeInvitation} value={invationUser.nome.replace(/\d/g, '')} />
-              <InputTextSimple name="cpf" placeholder="CPF" onChange={handleChangeInvitation} value={Filters.inputMaskCPFCNPJ(invationUser.cpf)} />
-              <InputTextSimple name="tefefone" placeholder="Telefone" onChange={handleChangeInvitation} value={Filters.inputMaskTELWithDDD(invationUser.tefefone)} />
-              <InputTextSimple name='email' placeholder="Confirmar Email" onChange={handleChangeInvitation} value={invationUser.email} type="email" />
-              <InputTextSimple name='senha' placeholder="Senha" onChange={handleChangeInvitation} value={invationUser.senha} />
+
+            <h3>Dados de identificação</h3>
+
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple name="nome" placeholder="Nome Completo"
+                onChange={handleChangeInvitation}
+                value={invationUser.nome.replace(/\d/g, '')}
+                style={changeWidthInput(currentScreen, '32.3%')}
+
+              />
+              <InputTextSimple
+                name="cpf" placeholder="CPF"
+                onChange={handleChangeInvitation}
+                value={Filters.inputMaskCPFCNPJ(invationUser.cpf)}
+                style={changeWidthInput(currentScreen, '32.3%')}
+              />
+
+              <InputTextSimple name="tefefone"
+                placeholder="Telefone"
+                onChange={handleChangeInvitation}
+                value={Filters.inputMaskTELWithDDD(invationUser.tefefone)}
+                style={changeWidthInput(currentScreen, '32.3%')}
+
+              />
             </div>
 
-            <div>
-            <InputTextSimple name='confirmaSenha' placeholder="Confirmar Senha" onChange={handleChangeInvitation} value={invationUser.confirmaSenha} />
-            <InputSimpleSelect optionZero="Escola NPAC + Box" data={[]} id="npac" onChange={handleChangeInvitation} value={invationUser.npac} />
-              <InputTextSimple name="postalCode" placeholder='89221-170' value={Filters.inputMaskCEP(invationUser.postalCode)} onChange={(e) => {
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple name='confirmaEmail'
+                placeholder="Email"
+                onChange={handleChangeInvitation}
+                value={invationUser.email}
+                type="email"
+                style={changeWidthInput(currentScreen, '49.2%')}
+
+              />
+
+              <InputTextSimple name='email'
+                placeholder="Confirmar Email"
+                onChange={handleChangeInvitation}
+                value={invationUser.email}
+                type="email"
+                style={changeWidthInput(currentScreen, '49.2%')}
+
+              />
+            </div>
+
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple
+                name='senha'
+                placeholder="Senha"
+                onChange={handleChangeInvitation}
+                value={invationUser.senha}
+                style={changeWidthInput(currentScreen, '49.2%')
+                }
+              />
+              <InputTextSimple
+                name='confirmaSenha'
+                placeholder="Confirmar Senha"
+                onChange={handleChangeInvitation}
+                value={invationUser.confirmaSenha}
+                style={changeWidthInput(currentScreen, '49.2%')}
+              />
+            </div>
+
+            <InputSimpleSelect optionZero="Selecione um produto"
+              data={
+                products/* ?.filter((produto) => produto.active === true)? */?.map((produtoItem) => {
+                  return {
+                    nome: produtoItem.name,
+                    id: produtoItem._id
+                  }
+                })
+              }
+              id="code"
+              onChange={handleChangeInvitation}
+              value={invationUser.code}
+              style={changeWidthInput(currentScreen, '100%')}
+            />
+
+            <h3>Endereço de Entrega</h3>
+
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple name="postalCode" placeholder='Insira seu CEP' value={Filters.inputMaskCEP(invationUser.postalCode)} onChange={(e) => {
                 handleChangeInvitation(e)
                 const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
                 if (cepString.length === 8) {
                   getAdressByPostalCode(cepString)
                 }
-              }} />
+              }}
+                style={changeWidthInput(currentScreen, '32.3%')}
+
+              />
               <InputSimpleSelect data={ufs}
                 id='state'
                 optionZero="Selecione seu estado"
@@ -75,6 +192,7 @@ export const Invitation = () => {
                   handleChangeInvitation(e)
                   getCitiesByUf(e.target.value)
                 }}
+                style={changeWidthInput(currentScreen, '32.3%')}
               />
 
               <InputSimpleSelect
@@ -83,20 +201,75 @@ export const Invitation = () => {
                 id='city'
                 value={invationUser.city}
                 onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '32.3%')}
+
               />
             </div>
 
-          </div>
 
-          <div className={styles.termsServices}>
-            <InputTextSimple type="checkbox" name="termos"
-              checked={termsServices} onChange={(e: ChangeEvent<HTMLInputElement>) => setTermsService(e.target.checked)} />
-            <span>Li e Concordo com os Termos de Serviço.</span>
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple
+                name="logradouro"
+                value={invationUser.logradouro}
+                placeholder="Logradouro"
+                onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '46%')}
+              />
+
+              <InputTextSimple
+                placeholder="Bairro"
+                name="bairro"
+                value={invationUser.bairro?.replace(/\d/g, "")}
+                onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '21%')}
+
+              />
+
+              <InputTextSimple
+                name="numero"
+                placeholder="200"
+                value={Filters.clearStringOnlyNumbers(invationUser.numero)}
+                onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '30%')}
+
+              />
+            </div>
+
+
+
+            <div className={styles.registerUserInvatationGroup}>
+              <InputTextSimple
+                name="complement"
+                placeholder="Complemento"
+                value={invationUser.complement?.replace(/\d/g, "")}
+                onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '49.2%')}
+
+              />
+
+              <InputTextSimple
+                name="referencia"
+                placeholder="Ponto de referência"
+                value={invationUser.referencia?.replace(/\d/g, "")}
+                onChange={handleChangeInvitation}
+                style={changeWidthInput(currentScreen, '49.2%')}
+              />
+
+            </div>
+
+
+            <div className={styles.termsServices}>
+              <InputTextSimple type="checkbox" name="termos"
+                checked={termsServices} onChange={(e: ChangeEvent<HTMLInputElement>) => setTermsService(e.target.checked)} />
+              <span>Li e Concordo com os Termos de Serviço.</span>
+            </div>
+
+            <button type="submit">Ir Para o Checkout</button>
+
           </div>
-          <button type="submit">Ir Para o Checkout</button>
         </form>
-      </div>
-    </LoginLayout>
+      </div >
+    </LoginLayout >
   )
 
 }

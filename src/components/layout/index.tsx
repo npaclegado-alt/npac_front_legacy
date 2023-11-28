@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import styles from "./styleLayout.module.scss";
 import Drawer from "./components/Drawer";
 import { ContextApi } from "../../contexts";
@@ -42,7 +42,9 @@ const Layout = () => {
         </div>
         <main className={styles.content}>
           <Outlet />
-          {displayButtonChat && <button className={styles.buttonChat} />}
+          {displayButtonChat && <Link to={"https://escola.npac.com.br/auth/login?redirect=/office/minha_cademi/aparencia"} target="_blank">
+            <button className={styles.buttonChat} />
+          </Link>}
         </main>
       </div>
     </React.Fragment>

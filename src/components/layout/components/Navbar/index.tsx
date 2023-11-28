@@ -3,7 +3,7 @@ import styles from "./styleNavbar.module.scss";
 import { ContextApi } from "../../../../contexts";
 import { useContext, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard"; 
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 export default function Navbar() {
   const { logoutRequest, drawerOpen, setDrawerOpen, user } = useContext(ContextApi);
@@ -33,8 +33,8 @@ export default function Navbar() {
           </div>
         </div>
         <div className={styles.actions}>
-          <div className={styles.orangeButton}>Destrava</div>
-          <div className={styles.grayButton}>Escola NPAC</div>
+        <Link to={"https://leonardomarcondes.com.br/destrava11sp/"} target="_blank" className={styles.orangeButton}>Destrava</Link>
+          <div className={styles.orangeButton}>Escola NPAC</div>
             
             <CopyToClipboard
               text={redirectUrlInavtion}
