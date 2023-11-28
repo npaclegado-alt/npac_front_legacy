@@ -5,6 +5,7 @@ import styles from "./styleDrawer.module.scss";
 import { Divider } from "../../../divider";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  File,
   Lock,
   LogOut,
   LucideIcon,
@@ -37,6 +38,11 @@ export default function Drawer() {
         name: "Produtos",
         path: "/admin/products",
         icon: ShoppingCart,
+      },
+      {
+        name: "Documentos",
+        path: "/admin/documents",
+        icon: File,
       },
     ];
 
