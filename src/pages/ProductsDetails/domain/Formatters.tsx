@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 import Filters from "../../../libs/Filters";
+import Decimal from "decimal.js";
 
 interface Address {
   country: string;
@@ -37,6 +38,23 @@ interface Shipping {
   address: Address;
 }
 
+interface metadataShipping {
+  id: number;
+  name: string;
+  price: number;
+  company: {
+    id: number;
+    name: string;
+    picture: string;
+  };
+  shippingValues: {
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+  }
+}
+
 interface Checkout {
   expires_in: number;
   billing_address_editable: boolean;
@@ -69,6 +87,7 @@ interface Product {
   price: number;
   description: string;
   _id: string;
+  freeShipping?: boolean;
 }
 
 interface Adress {
@@ -83,6 +102,7 @@ export interface FormDataTransaction {
   cep: string;
   logradouro: string;
   numero: string;
+  metadataShipping?: metadataShipping | undefined | null;
 }
 const formatDataForApi = (
   formData: FormDataTransaction,
@@ -101,7 +121,8 @@ const formatDataForApi = (
   }
 
   const phoneNumberOnlyNumbers = Filters.clearStringOnlyNumbers(formData.phone);
-  const formattedData = {
+  const amountShipping = !product?.freeShipping ? new Decimal(Number(formData?.metadataShipping?.price) * 100) : 0;
+  let formattedData = {
     customer: {
       address: {
         country: "BR",
@@ -121,15 +142,15 @@ const formatDataForApi = (
       name: formData.name,
       type: "individual",
       email: formData.email,
-      code: "",
+      code: "0",
       document: formData.cpf.replace(/\D/g, ""),
       document_type: "CPF",
     },
     shipping: {
-      amount: 1,
-      description: product.description.slice(0, 50),
+      amount: amountShipping ? amountShipping?.d[0] : 1,
+      description: formData?.metadataShipping?.id?.toString() + ' - ' + formData?.metadataShipping?.name ?? null,
       recipient_name: formData.name,
-      recipient_phone: formData.phone,
+      recipient_phone: phoneNumberOnlyNumbers,
       address: {
         country: "BR",
         state: adress.uf.toString(),
@@ -141,7 +162,7 @@ const formatDataForApi = (
     },
     payments: [
       {
-        amount: product.price * 100,
+        amount: amountShipping ? (product.price * 100) + amountShipping?.d[0] : product.price * 100,
         payment_method: "checkout",
         checkout: {
           expires_in: 120,
@@ -162,6 +183,15 @@ const formatDataForApi = (
     ],
   };
 
+  if (!product?.freeShipping) {
+    formattedData = {
+      ...formattedData, 
+      // @ts-ignore     
+      shippingSelected: formData?.metadataShipping,
+    };
+  }
+
+  // @ts-ignore
   return formattedData;
 };
 

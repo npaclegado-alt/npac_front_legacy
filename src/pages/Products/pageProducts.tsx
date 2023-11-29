@@ -7,8 +7,7 @@ import { ContextApi } from "../../contexts";
 export function PageProducts(): JSX.Element {
   const {
     getAllProducts,
-    products,
-    user
+    products
   } = useContext(ContextApi);
 
   useEffect(() => {

@@ -348,3 +348,14 @@
     align-items: flex-start;
   }
 }
+
+.labelShipping {
+  p {
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--black-700) !important;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}

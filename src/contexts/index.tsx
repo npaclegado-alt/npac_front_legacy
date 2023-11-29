@@ -29,7 +29,7 @@ import {
   getProductImages,
   uploadProductImage,
 } from "../services/requests/files";
-import { X } from "lucide-react";
+import { Ship, X } from "lucide-react";
 
 import { getCareer } from "../services/requests/career";
 import { getFaq } from "../services/requests/faq";
@@ -42,6 +42,8 @@ import { submitTransaction } from "../services/requests/transactions";
 import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
 import { profileAgent } from "../services/requests/profileAgent";
+import { calculateShipping } from "../services/requests/shippingServices";
+import { shippingCostResponseProps } from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -190,6 +192,8 @@ interface IContextApi {
   getSpheresByUser: (userId: string) => void;
   getAllCareer: () => void;
   getAllFaq: () => void;
+  getShippingCost: (payload: any) => void;
+  shippingCostResponse: shippingCostResponseProps[];
   career?: Career;
   allFaq: Faq[];
   ufs: [
@@ -333,6 +337,7 @@ export const ContextApi = createContext<IContextApi>({
   getSpheresByUser: (userId: string) => {},
   getAllCareer: () => {},
   getAllFaq: () => {},
+  getShippingCost: (payload: any) => {},
   career: undefined,
   allFaq: [] as Faq[],
   ufs: [
@@ -436,6 +441,7 @@ export const ContextApi = createContext<IContextApi>({
     formData: FormDataTransaction,
     startTransaction: ProductDetailsContentProps["saleIdentification"]
   ) => {},
+  shippingCostResponse: []
 });
 
 interface Props {
@@ -464,6 +470,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   });
   const [allFaq, setAllFaq] = useState<Faq[]>([]);
   const [editAgentProfile, setEditAgentProfile] = useState(false);
+  const [shippingCostResponse, setShippingCostResponse] = useState<shippingCostResponseProps[]>([]);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -523,9 +530,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       formData: FormDataTransaction,
       saleIdentification: ProductDetailsContentProps["saleIdentification"]
     ) => {
+
       try {
         const payload = formatDataForApi(formData, productFiltered, adress);
-
         if (!payload) {
           toast.error(
             "Esta faltando uma informacao, por favor check o formulario e tente novamente"
@@ -539,6 +546,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         );
         window.location.href = checkouts[0].payment_url;
       } catch (error: any) {
+        console.log('errorContext ===>', error);
         toast.error("Erro ao procesar a compra", error);
       }
     },
@@ -934,6 +942,30 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getShippingCost = useCallback((payload: any) => {
+    const request = calculateShipping(payload);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setShippingCostResponse(data?.data);
+          return "Frete calculado com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao calcular frete!";
+        },
+      },
+    });
+  }, []);
+
+
+
   return (
     <ContextApi.Provider
       value={{
@@ -967,10 +999,11 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         getAllFaq,
         startTransaction,
         allFaq,
-
+        getShippingCost,
         profileEditAgent,
         editAgentProfile,
         setEditAgentProfile,
+        shippingCostResponse
       }}
     >
       {children}

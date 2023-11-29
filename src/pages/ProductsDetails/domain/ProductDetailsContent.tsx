@@ -1,7 +1,7 @@
 
 
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from '../stylesProdDetails.module.scss';
 import { Divider } from 'antd';
 import { CustomButton } from '../../../components/buttons/customButton';
@@ -10,6 +10,8 @@ import { InputTextSimple } from '../../../components/inputs/simpleText/inputSimp
 import Filters from '../../../libs/Filters';
 import { FormDataTransaction } from './Formatters';
 import { JsTyping } from 'typescript';
+import { shippingCostResponseProps } from '../../../contexts/interfaces';
+import { Color } from '@rc-component/color-picker';
 
 interface Uf {
     id: number;
@@ -27,12 +29,19 @@ export interface ProductDetailsContentProps {
     cities: City[];
     ufs: Uf[];
     product: {
+        [x: string]: any;
         _id: string;
         name: string;
         description: string;
         price: number;
         auff: number;
         imageUrls: string[];
+        shippingValues?: {
+            width: number;
+            height: number;
+            length: number;
+            weight: number;
+        }
     };
     formData: {
         name: string;
@@ -45,6 +54,8 @@ export interface ProductDetailsContentProps {
         bairro: string;
         complemento: string;
         referencia: string;
+        shippingSelected: number;
+        metadataShipping?: any;
         stateSelected: number;
         citiesSelected: string | number;
     };
@@ -55,6 +66,8 @@ export interface ProductDetailsContentProps {
     currentScreen: number;
     onOptionsUpdate: (data?: Partial<ProductDetailsContentProps['formData']>) => void;
     onProceed: (formData: FormDataTransaction, startTransaction: ProductDetailsContentProps['saleIdentification']) => void;
+    calcShipping: (cepString: string) => void;
+    shipingCost: shippingCostResponseProps[];
 }
 
 
@@ -67,11 +80,38 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
     currentScreen,
     onOptionsUpdate,
     getAdressByPostalCode,
+    calcShipping,
     getCitiesByUf,
+    shipingCost,
     onProceed,
     saleIdentification
 }) => {
 
+    const filterShipping = () => {
+        let frete;
+        frete = shipingCost.find(active => active.id === formData.shippingSelected)
+        return frete;
+    };
+
+    const calculateTotalPrice = () => {
+        const shippingPrice: any = filterShipping();
+        if (!shippingPrice) {
+            return product?.price;
+        } else {
+            return (Number(product?.price) + Number(shippingPrice?.price));
+        }
+    }
+
+    const shippingPrice: any = filterShipping();
+    useEffect(() => {
+        onOptionsUpdate({ ...formData, metadataShipping: {
+            id: shippingPrice?.id,
+            name: shippingPrice?.name,
+            price: shippingPrice?.price,
+            company: shippingPrice?.company,
+            shippingValues: product?.shippingValues
+        } });
+    }, [shippingPrice]);
 
     return (
         <div className={styles.contentDetails}>
@@ -136,6 +176,9 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                                 if (e.target.value.length === 8) {
                                     const cepString = Filters.clearStringOnlyNumbers(e.target.value).toString();
                                     getAdressByPostalCode(cepString);
+                                    if (!product?.freeShipping) {
+                                        calcShipping(cepString);
+                                    }
                                 }
                             }}
                             style={changeWidthInput(currentScreen, '32%')}
@@ -199,13 +242,38 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                             style={changeWidthInput(currentScreen, '49%')}
                         />
                     </div>
+                   {!product?.freeShipping && <div className={styles.formLine2}>
+                        <InputSimpleSelect
+                            optionZero="Selecione a forma de entrega"
+                            data={shipingCost.filter(active => !active.error).map((item) => {
+                                return {
+                                    id: item.id,
+                                    nome: item.name + ' - ' + Filters.convertMoneyTextMask(item.price) + ' - ' + 'Prazo: ' + item.delivery_range.min + ' a ' + item.custom_delivery_range.max + ' dias úteis',
+                                }
+                            })}
+                            optionStyle={{
+                                color: '#000',
+                                fontWeight: 'bold',
+                            }}
+                            value={formData.shippingSelected}
+                            onChange={(e) => {
+                                onOptionsUpdate({ 
+                                    ...formData, 
+                                    shippingSelected: Number(e.target.value)
+                                });
+                                }
+                            }
+                            disabled={false}
+                            style={changeWidthInput(currentScreen, '100%')}
+                        />
+                    </div>}
                 </div>
                 <div className={styles.boxInputs}>
                     <h3>Preço Final e Forma de Pagamento</h3>
                     <div className={styles.boxFinalPrice}>
                         <p>Preço Final:</p>
-                        <span>R$ 138,00</span>
-                        <span>Preço do produto {Filters.convertMoneyTextMask(product?.price)} + Preço da entrega: R$ 48,00</span>
+                        <span>{Filters.convertMoneyTextMask(calculateTotalPrice())}</span>
+                        <span>Preço do produto {Filters.convertMoneyTextMask(product?.price)} + Preço da entrega: {Filters.convertMoneyTextMask(shippingPrice?.price ?? 0)} </span>
                     </div>
                     <div className={styles.formLine2}>
                         <InputSimpleSelect

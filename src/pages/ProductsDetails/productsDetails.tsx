@@ -18,8 +18,10 @@ const initialState = {
   bairro: "",
   complemento: "",
   referencia: "",
+  shippingSelected: 0,
   stateSelected: 0,
   citiesSelected: 0,
+  metadataShipping: {},
 };
 
 const PageProductsDetails = () => {
@@ -33,6 +35,8 @@ const PageProductsDetails = () => {
     getCitiesByUf,
     cities,
     startTransaction,
+    getShippingCost,
+    shippingCostResponse
   } = useContext(ContextApi);
 
   const { productId } = useParams();
@@ -43,9 +47,42 @@ const PageProductsDetails = () => {
   const imgProduct = productFiltered?.imageUrls ?? [];
   const currentScreen = window.innerWidth;
 
+  const calcShipping = (cepString: string) => {
+    getShippingCost({
+      sCepOrigem: '88330528',
+      sCepDestino: cepString,
+      products: [
+        {
+          id: productFiltered?._id,
+          width: productFiltered?.shippingValues?.width,
+          height: productFiltered?.shippingValues?.height,
+          length: productFiltered?.shippingValues?.length,
+          weight: productFiltered?.shippingValues?.weight,
+          insurance_value: 0,
+          quantity: 1
+        }
+      ]
+    });
+  };
+
   const fetchDataDebounced = _debounce((cepString) => {
     if (cepString.length > 8) {
       getAdressByPostalCode(cepString);
+      getShippingCost({
+        sCepOrigem: '88330528',
+        sCepDestino: cepString,
+        products: [
+          {
+            id: productFiltered?._id,
+            width: productFiltered?.shippingValues?.width,
+            height: productFiltered?.shippingValues?.height,
+            length: productFiltered?.shippingValues?.length,
+            weight: productFiltered?.shippingValues?.weight,
+            insurance_value: 0,
+            quantity: 1
+          }
+        ]
+      });
     }
   }, 1000);
 
@@ -118,6 +155,8 @@ const PageProductsDetails = () => {
               }))
             }
             getAdressByPostalCode={getAdressByPostalCode}
+            calcShipping={calcShipping}
+            shipingCost={shippingCostResponse}
             ufs={ufs}
             getCitiesByUf={getCitiesByUf}
             cities={cities}
