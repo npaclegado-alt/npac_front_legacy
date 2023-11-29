@@ -13,9 +13,13 @@ import { StructurePage } from "../pages/Structures/structurePage";
 import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
-import { Financial } from "../pages/Financial"; 
-import {Help} from '../pages/Help'
+import { Invitation } from "../pages/Invitation";
+import AdminDocuments from "../pages/Admin/Documents";
+import AddDocuments from "../pages/Admin/Documents/add";
+import { Financial } from "../pages/Financial";
+import { Help } from "../pages/Help";
 import AgentProfile from "../pages/AgentProfile";
+import { PageDocuments } from "../pages/Documents/pageDocuments";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -26,10 +30,10 @@ const RootRoutes: React.FC = () => {
           <Route path="structure" element={<StructurePage />} />
           <Route path="career" element={<Career />} />
           <Route path="financial" element={<Financial />} />
-            <Route path="agent-profile" element={<AgentProfile />} />
-            <Route path="documents" element={<></>} />
-          <Route path="help" element={<Help />} />
           <Route path="products" element={<PageProducts />} />
+          <Route path="agent-profile" element={<AgentProfile />} />
+          <Route path="help" element={<Help />} />
+          <Route path="documents" element={<PageDocuments />} />
         </Route>
         <Route element={<AdminWrapper />}>
           <Route path="/admin/" element={<AdminLayout />}>
@@ -38,10 +42,16 @@ const RootRoutes: React.FC = () => {
               <Route path="add" element={<AddProducts />} />
               <Route path="add/:productId" element={<AddProducts />} />
             </Route>
+            <Route path="documents">
+              <Route index element={<AdminDocuments />} />
+              <Route path="add" element={<AddDocuments />} />
+              <Route path="add/:documentId" element={<AddProducts />} />
+            </Route>
           </Route>
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
+      <Route path="/invitation/:userId" element={<Invitation />} />
       <Route path="/unauthorized" element={<></>} />
       <Route path="/*" element={<NotFound />} />
       <Route

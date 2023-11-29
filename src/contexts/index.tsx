@@ -25,7 +25,10 @@ import {
 
 import { getSpheres } from "../services/requests/spheres";
 import {
+  addDocument,
   deleteFile,
+  getDocumentById,
+  getDocuments,
   getProductImages,
   uploadProductImage,
 } from "../services/requests/files";
@@ -182,6 +185,12 @@ interface IContextApi {
   };
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  getAllDocuments: () => void;
+  documentById: (documentId: string) => void;
+  clearDocumentFiltered: () => void;
+  documentFiltered: IFile;
+  deleteDocument: (originalName: string) => void;
+  documents: IFile[];
   getAllTransactionsByUserId: (userId: string) => void;
   transactions: any[];
   getAllCommissionsByUserId: (userId: string) => void;
@@ -190,6 +199,12 @@ interface IContextApi {
   getAllProductImages: (id: string) => void;
   clearProductFiltered: () => void;
   addProductRequest: (product: AddCrudProduct) => void;
+  addDocumentRequest: (
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => void;
   editProductRequest: (product: EditCrudProduct) => void;
   deleteProductRequest: (id: string) => void;
   getAdressByPostalCode: (postalCode: string) => void;
@@ -216,6 +231,7 @@ interface IContextApi {
     {
       _id: string;
       name: string;
+      active: boolean;
       description: string;
       price: number;
       auff: number;
@@ -326,11 +342,33 @@ export const ContextApi = createContext<IContextApi>({
   getAllTransactionsByUserId: (userId: string) => {},
   transactions: [],
   getAllCommissionsByUserId: (userId: string) => {},
+  addDocumentRequest: (
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => {},
   commissions: undefined,
   profileEditAgent: (id: string, data: User) => {},
   editAgentProfile: false,
   setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
   getAllProducts: () => {},
+  getAllDocuments: () => {},
+  deleteDocument: (originalName: string) => {},
+  documentById: (documentId: string) => {},
+  documentFiltered: {
+    _id: "",
+    createdAt: "",
+    fieldId: "",
+    fieldName: "",
+    name: "",
+    originalName: "",
+    path: "",
+    size: 0,
+    type: "",
+  },
+  clearDocumentFiltered: () => {},
+  documents: [],
   getAllProductImages: (id: string) => {},
   productImages: [],
   addProductRequest: () => {},
@@ -364,6 +402,7 @@ export const ContextApi = createContext<IContextApi>({
       _id: "",
       name: "",
       description: "",
+      active: false,
       price: 0,
       auff: 0,
       imageUrls: [""],
@@ -466,12 +505,14 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [commissions, setCommissions] = useState<any[]>();
   const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
+  const [documentFiltered, setDocumentFiltered] = useState<any>();
   const [adress, setAdress] = useState<any>();
   const [ufs, setUfs] = useState<any>([]);
   const [cities, setCities] = useState<any>([]);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [spheresResp, setSpheresResp] = useState<any>([]);
   const [career, setCareer] = useState<Career>();
+  const [documents, setDocuments] = useState<IFile[]>([]);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -641,6 +682,32 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const getAllDocuments = useCallback(() => {
+    const request = getDocuments();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setDocuments(data?.data);
+          return "Documentos carregados com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao carregar documentos!";
+        },
+      },
+    });
+  }, []);
+
+  const clearDocumentFiltered = useCallback(() => {
+    setDocumentFiltered(null);
+  }, []);
+
   const clearProductFiltered = useCallback(() => {
     setProductFiltered(null);
     setProductImages([]);
@@ -668,6 +735,30 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         render({ data }: any) {
           //TODO
           return "Falha ao carregar produtos!";
+        },
+      },
+    });
+  }, []);
+
+  const documentById = useCallback((documentId: string) => {
+    const request = getDocumentById(documentId);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setDocumentFiltered(data?.data);
+          return "Documento carregado com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar documento!";
         },
       },
     });
@@ -803,6 +894,58 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       });
     },
     [products]
+  );
+
+  const addDocumentRequest = useCallback(
+    (name: string, description: string, file: File, uploadedBy: string) => {
+      const request = addDocument(name, description, file, uploadedBy);
+      toast.promise(request, {
+        pending: {
+          render() {
+            return "Carregando...";
+          },
+        },
+        success: {
+          render({ data }: any) {
+            navigate("/admin/documents");
+            return "Documento adicionado com sucesso!";
+          },
+        },
+        error: {
+          render({ data }: any) {
+            return "Falha ao adicionar documento!";
+          },
+        },
+      });
+    },
+    [navigate]
+  );
+
+  const deleteDocument = useCallback(
+    (originalName: string) => {
+      const request = deleteFile(originalName);
+      toast.promise(request, {
+        pending: {
+          render() {
+            return "Carregando...";
+          },
+        },
+        success: {
+          render({ data }: any) {
+            setDocuments(
+              documents.filter((doc: any) => doc.key !== originalName)
+            );
+            return "Documento removido com sucesso!";
+          },
+        },
+        error: {
+          render({ data }: any) {
+            return "Falha ao remover documento!";
+          },
+        },
+      });
+    },
+    [documents]
   );
 
   const getAdressByPostalCode = useCallback((postalCode: string) => {
@@ -1036,6 +1179,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         profileEditAgent,
         editAgentProfile,
         setEditAgentProfile,
+        getAllDocuments,
+        documents,
+        deleteDocument,
+        clearDocumentFiltered,
+        documentById,
+        documentFiltered,
+        addDocumentRequest,
       }}
     >
       {children}

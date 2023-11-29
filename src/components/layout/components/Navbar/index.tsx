@@ -1,12 +1,23 @@
 import { LogOut, Menu, Settings, UserPlus } from "lucide-react";
 import styles from "./styleNavbar.module.scss";
 import { ContextApi } from "../../../../contexts";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const { logoutRequest, drawerOpen, setDrawerOpen } = useContext(ContextApi);
+  const { logoutRequest, drawerOpen, setDrawerOpen, user } =
+    useContext(ContextApi);
+
   const navigate = useNavigate();
+
+  const link = btoa(user?._id as string);
+  const location = window.location.href.split("/");
+  const redirectUrlInavtion =
+    location[0] + "//" + location[2] + "/invitation/" + link;
+
+  const [copied, setCopied] = useState<boolean>(false);
+
   return (
     <div className={styles.background}>
       <div className={styles.navbar}>
@@ -24,9 +35,38 @@ export default function Navbar() {
           </div>
         </div>
         <div className={styles.actions}>
-          <div className={styles.orangeButton}>Destrava</div>
-          <div className={styles.grayButton}>Escola NPAC</div>
-          <UserPlus className={styles.icon} />
+          <Link
+            to={"https://leonardomarcondes.com.br/destrava11sp/"}
+            target="_blank"
+            className={styles.orangeButton}
+          >
+            Destrava
+          </Link>
+          <Link
+            to={
+              "https://escola.npac.com.br/auth/login?redirect=/office/minha_cademi/aparencia"
+            }
+            target="_blank"
+            className={styles.orangeButton}
+          >
+            Escola NPAC
+          </Link>
+
+          <CopyToClipboard
+            text={redirectUrlInavtion}
+            onCopy={(copy) => {
+              setCopied(true);
+              setTimeout(() => {
+                setCopied(false);
+              }, 2000);
+            }}
+          >
+            <UserPlus
+              className={styles.icon}
+              color={copied ? "#00ff00" : "#8B8B8B"}
+            />
+          </CopyToClipboard>
+
           <div className={styles.divider} />
           <Settings
             className={styles.icon}

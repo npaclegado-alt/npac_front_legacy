@@ -1,4 +1,4 @@
-import { Lock, LucideIcon, ShoppingCart } from "lucide-react";
+import { File, Lock, LucideIcon, ShoppingCart } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
 import { useCallback, useContext, useMemo } from "react";
@@ -28,6 +28,11 @@ export default function Sidebar() {
         name: "Produtos",
         path: "/admin/products",
         icon: ShoppingCart,
+      },
+      {
+        name: "Documentos",
+        path: "/admin/documents",
+        icon: File,
       },
     ];
 

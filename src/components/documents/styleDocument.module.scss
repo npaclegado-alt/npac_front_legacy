@@ -1,0 +1,64 @@
+.contentDocument {
+  background-color: var(--white);
+  width: 15rem;
+  height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1.5rem;
+  border-radius: 0.35rem;
+  word-break: break-all;
+  text-align: center;
+  gap: 1rem;
+}
+
+.boxHeaderDocument {
+  display: flex;
+  gap: 0.25rem;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  h4 {
+    font-style: "Montserrat";
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+}
+
+.boxValue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  p {
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--gray-300);
+  }
+}
+
+.boxValueAction {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--gray-300);
+  cursor: pointer;
+  &:hover {
+    color: var(--orange-700);
+  }
+  p {
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
