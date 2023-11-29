@@ -42,9 +42,9 @@ const convertMoneyTextMask = (value: any) => {
       }
     }
 
-    return value >= 0 ? `R$ ${moneyMask}` : `R$ -${moneyMask}`;
+    return value >= 0 ? ` ${moneyMask}` : ` -${moneyMask}`;
   }
-  return "R$ 0,00";
+  return " 0,00";
 };
 
 const convertMoneyInputMask = (value: any) => {
@@ -62,7 +62,7 @@ const convertMoneyInputMask = (value: any) => {
       mask = mask.replace(/(\d+)(\d{3})([.,\d]+)$/, "$1.$2$3");
     }
 
-    mask = `R$ ${mask}`;
+    mask = `${mask}`;
     return mask;
   }
 

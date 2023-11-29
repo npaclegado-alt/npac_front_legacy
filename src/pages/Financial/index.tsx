@@ -7,8 +7,9 @@ import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleT
 import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import moment from "moment";
-
+import "moment/locale/pt-br";
 export const Financial = () => {
+  moment.locale("pt-br");
   const {
     user,
     transactions,
@@ -122,7 +123,7 @@ export const Financial = () => {
           <ul onClick={() => setSeeInvestment(false)}>
             {transactions.map((transaction) => {
               const status = getStatus(transaction?.status);
-              const date = moment(transaction?.updatedAt).format("DD/MM/YYYY");
+              const date = moment(transaction?.updatedAt).format("LLL");
               const amount = Filters.convertMoneyTextMask(
                 transaction?.amount / 100
               );
@@ -135,7 +136,7 @@ export const Financial = () => {
               return (
                 <li>
                   <div className={styles.values}>
-                    <h6>{amount}</h6>
+                    <h6>R$: {amount}</h6>
                     <p>{name}</p>
                   </div>
 
@@ -166,15 +167,21 @@ export const Financial = () => {
               const status = getStatus(commission?.status);
               const date = moment(
                 commission?.updatedAt ?? commission?.createdAt
-              ).format("DD/MM/YYYY");
+              ).format("LLL");
 
-              const amount = Filters.convertMoneyTextMask(commission?.amount);
-              const name = commission?.productName;
+              const totalAmount =
+                commission.amount > 0 ? commission.amount : commission.auff;
+              const simbol = commission.amount > 0 ? "R$: " : "Auff";
+              const amount = Filters.convertMoneyTextMask(totalAmount);
+
+              const name = commission?.description;
 
               return (
                 <li>
                   <div className={styles.values}>
-                    <h6>{amount}</h6>
+                    <h6>{`${simbol} ${
+                      commission.amount > 0 ? amount : amount.split(",")[0]
+                    }`}</h6>
                     <p>{name}</p>
                   </div>
 
