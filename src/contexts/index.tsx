@@ -933,7 +933,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         success: {
           render({ data }: any) {
             setDocuments(
-              documents.filter((doc) => doc.originalName !== originalName)
+              documents.filter((doc: any) => doc.key !== originalName)
             );
             return "Documento removido com sucesso!";
           },
