@@ -49,6 +49,7 @@ import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/Prod
 
 import { profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
+import { mainScreemDetails } from "../services/requests/main";
 
 interface BaseCrudProduct {
   name: string;
@@ -194,6 +195,7 @@ interface IContextApi {
   getAllTransactionsByUserId: (userId: string) => void;
   transactions: any[];
   getAllCommissionsByUserId: (userId: string) => void;
+  mainScreemDetails: (id: string) => void;
   commissions: any;
   getAllProducts: () => void;
   getAllProductImages: (id: string) => void;
@@ -378,6 +380,7 @@ export const ContextApi = createContext<IContextApi>({
   drawerOpen: false,
   setDrawerOpen: () => {},
   getAdressByPostalCode: (postalCode: string) => {},
+  mainScreemDetails: (id: string) => {},
   getAllStates: (idUf?: string) => {},
   getCitiesByUf: (ufId: string) => {},
   getSpheresByUser: (userId: string) => {},
@@ -1186,6 +1189,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         documentById,
         documentFiltered,
         addDocumentRequest,
+        mainScreemDetails,
       }}
     >
       {children}
