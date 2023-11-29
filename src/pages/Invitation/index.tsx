@@ -199,7 +199,8 @@ export const Invitation = () => {
 
             <InputSimpleSelect
               optionZero="Selecione um produto"
-              data={products /* ?.filter((produto) => produto.active === true)? */
+              data={products
+                ?.filter((produto) => produto.createUser)
                 ?.map((produtoItem) => {
                   return {
                     nome: produtoItem.name,
