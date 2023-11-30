@@ -191,7 +191,7 @@ const AddProducts: React.FC = () => {
       hasError = true;
       messages.push(<li>Auffs</li>);
     }
-    if (recurrence.length === 0 || recurrence === "0") {
+    if (recurrence?.length === 0 || recurrence === "0") {
       hasError = true;
       messages.push(<li>Tipo de recorrencia</li>);
     }
@@ -337,7 +337,7 @@ const AddProducts: React.FC = () => {
             ? Filters.removeMoneyMask(directCommissionValue)
             : undefined,
           digitalProduct,
-          freeShipping,
+          freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
         });
       } else {
@@ -375,7 +375,7 @@ const AddProducts: React.FC = () => {
             ? Filters.removeMoneyMask(directCommissionValue)
             : undefined,
           digitalProduct,
-          freeShipping,
+          freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
         });
       }
