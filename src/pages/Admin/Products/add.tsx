@@ -337,7 +337,7 @@ const AddProducts: React.FC = () => {
             ? Filters.removeMoneyMask(directCommissionValue)
             : undefined,
           digitalProduct,
-          freeShipping,
+          freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
         });
       } else {
@@ -375,7 +375,7 @@ const AddProducts: React.FC = () => {
             ? Filters.removeMoneyMask(directCommissionValue)
             : undefined,
           digitalProduct,
-          freeShipping,
+          freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
         });
       }
