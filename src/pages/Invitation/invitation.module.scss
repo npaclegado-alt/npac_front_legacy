@@ -105,6 +105,12 @@
         outline: none;
         color: var(--white);
         font-weight: 600; 
+
+        &[disabled] {
+          background-color: var(--gray-200);
+          color: var(--gray-100);
+          cursor: not-allowed;
+        }
       }      
     }
   } 
