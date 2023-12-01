@@ -38,7 +38,7 @@ interface Shipping {
   address: Address;
 }
 
-interface metadataShipping {
+export interface metadataShipping {
   id: number;
   name: string;
   price: number;
@@ -119,7 +119,7 @@ const formatDataForApi = (
     "logradouro",
     "numero",
   ];
-
+  console.log("formData", formData, "product", product, "adress", adress);
   for (const field of mandatoryFields) {
     if (!formData[field]) {
       toast.error(`Campo(s) obrigatorio(s): ${field}`);
