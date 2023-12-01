@@ -7,6 +7,8 @@ import Filters from "../../libs/Filters";
 import { useParams } from "react-router-dom";
 import { ContextApi } from "../../contexts";
 import { toast } from "react-toastify";
+import { is } from "@babel/types";
+import { metadataShipping } from "../ProductsDetails/domain/Formatters";
 export const Invitation = () => {
   const {
     getAdressByPostalCode,
@@ -18,6 +20,8 @@ export const Invitation = () => {
     startTransaction,
     productsById,
     adress,
+    getShippingCost,
+    shippingCostResponse
   } = useContext(ContextApi);
 
   const [invationUser, setInvationUser] = useState({
@@ -37,9 +41,12 @@ export const Invitation = () => {
     logradouro: "",
     referencia: "",
     complement: "",
+    freeShipping: false,
+    shippingSelected: 0
   });
 
   const [termsServices, setTermsService] = useState(false);
+  const [verifyFreeShipping, setVerifyFreeShipping] = useState(false);
 
   const { userId } = useParams<{ userId: string }>();
 
@@ -85,10 +92,10 @@ export const Invitation = () => {
   ) => {
     setInvationUser({ ...invationUser, [e.target.id]: e.target.value });
   };
-
+  
+  let metadataShipping: metadataShipping;
   const handleSubmitInvitation = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (invationUser.email !== invationUser.confirmaEmail) {
       toast.error("Os e-mails não coincidem");
       return;
@@ -106,6 +113,26 @@ export const Invitation = () => {
 
     const criptoIdentify = btoa(JSON.stringify(salesIdentify));
 
+    if (invationUser?.shippingSelected !== 0) {
+      const shipping: any = shippingCostResponse?.find((item) => item.id === Number(invationUser?.shippingSelected));
+      metadataShipping = {
+        id: shipping?.id,
+        name: shipping?.name,
+        price: shipping?.price,
+        company: {
+          id: shipping?.company?.id,
+          name: shipping?.company?.name,
+          picture: shipping?.company?.picture,
+        },
+        shippingValues: {
+          width: shipping?.shippingValues?.width,
+          height: shipping?.shippingValues?.height,
+          length: shipping?.shippingValues?.length,
+          weight: shipping?.shippingValues?.weight,
+        }
+      }
+    }
+
     startTransaction(
       {
         numero: invationUser.numero,
@@ -116,15 +143,49 @@ export const Invitation = () => {
         phone: invationUser.tefefone,
         cpf: invationUser.cpf,
         password: invationUser.senha,
+        metadataShipping,
       },
       criptoIdentify
     );
   };
+  
+  const isFreeShipping = () => {
+    const product = products?.find((item) => item._id === invationUser.code);
+    if (product) {
+      return setVerifyFreeShipping(product.freeShipping);
+    }
+    return setVerifyFreeShipping(false);
+  }
+
+  const calcShippingCost = (cepString: string) => {
+    const product = products?.find((item) => item._id === invationUser.code);
+    if (cepString.length >= 8) {
+      getShippingCost({
+        sCepOrigem: '88338140',
+        sCepDestino: cepString,
+        products: [
+          {
+            id: product?._id,
+            width: product?.shippingValues?.width,
+            height: product?.shippingValues?.height,
+            length: product?.shippingValues?.length,
+            weight: product?.shippingValues?.weight,
+            insurance_value: Number(product?.price),
+            quantity: 1
+          }
+        ]
+      });
+    }
+  }
 
   useEffect(() => {
     getAllProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    isFreeShipping();
+  }, [invationUser.code]);
 
   return (
     <LoginLayout>
@@ -200,11 +261,11 @@ export const Invitation = () => {
             <InputSimpleSelect
               optionZero="Selecione um produto"
               data={products
-                ?.filter((produto) => produto.createUser)
-                ?.map((produtoItem) => {
+                ?.filter((item) => item.createUser )
+                ?.map((product) => {
                   return {
-                    nome: produtoItem.name,
-                    id: produtoItem._id,
+                    nome: product.name,
+                    id: product._id,
                   };
                 })}
               id="code"
@@ -217,10 +278,12 @@ export const Invitation = () => {
             />
 
             <h3>Endereço de Entrega</h3>
+            {(!invationUser.code || invationUser.code === "0") && <span>* Selecione o produto antes de preencher o endereço</span>}
 
             <div className={styles.registerUserInvatationGroup}>
-              <InputTextSimple
+              <InputTextSimple        
                 name="postalCode"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 placeholder="Insira seu CEP"
                 value={Filters.inputMaskCEP(invationUser.postalCode)}
                 onChange={(e) => {
@@ -230,12 +293,16 @@ export const Invitation = () => {
                   ).toString();
                   if (cepString.length === 8) {
                     getAdressByPostalCode(cepString);
+                    setTimeout(() => {
+                      calcShippingCost(cepString);                      
+                    }, 500);
                   }
                 }}
                 style={changeWidthInput(currentScreen, "32.3%")}
               />
               <InputSimpleSelect
                 data={ufs}
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 id="state"
                 optionZero="Selecione seu estado"
                 value={invationUser.state}
@@ -248,6 +315,7 @@ export const Invitation = () => {
 
               <InputSimpleSelect
                 optionZero="Selecione sua cidade"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 data={cities}
                 id="city"
                 value={invationUser.city}
@@ -259,6 +327,7 @@ export const Invitation = () => {
             <div className={styles.registerUserInvatationGroup}>
               <InputTextSimple
                 name="logradouro"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 value={invationUser.logradouro}
                 placeholder="Logradouro"
                 onChange={handleChangeInvitation}
@@ -267,6 +336,7 @@ export const Invitation = () => {
 
               <InputTextSimple
                 placeholder="Bairro"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 name="bairro"
                 value={invationUser.bairro?.replace(/\d/g, "")}
                 onChange={handleChangeInvitation}
@@ -275,7 +345,8 @@ export const Invitation = () => {
 
               <InputTextSimple
                 name="numero"
-                placeholder="200"
+                disabled={(!invationUser.code || invationUser.code === "0")}
+                placeholder="00"
                 value={Filters.clearStringOnlyNumbers(invationUser.numero)}
                 onChange={handleChangeInvitation}
                 style={changeWidthInput(currentScreen, "30%")}
@@ -285,6 +356,7 @@ export const Invitation = () => {
             <div className={styles.registerUserInvatationGroup}>
               <InputTextSimple
                 name="complement"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 placeholder="Complemento"
                 value={invationUser.complement?.replace(/\d/g, "")}
                 onChange={handleChangeInvitation}
@@ -293,12 +365,32 @@ export const Invitation = () => {
 
               <InputTextSimple
                 name="referencia"
+                disabled={(!invationUser.code || invationUser.code === "0")}
                 placeholder="Ponto de referência"
                 value={invationUser.referencia?.replace(/\d/g, "")}
                 onChange={handleChangeInvitation}
                 style={changeWidthInput(currentScreen, "49.2%")}
               />
             </div>
+
+            {!verifyFreeShipping && 
+            <InputSimpleSelect
+              optionZero="Selecione a forma de envio"
+              disabled={(!invationUser.code || invationUser.code === "0")}
+              data={shippingCostResponse
+                ?.map((shipping) => {
+                  return {
+                    id: shipping.id,
+                    nome: shipping?.name + ' - ' + Filters.convertMoneyTextMask(shipping?.price) + ' - ' + 'Prazo: ' + shipping?.delivery_range?.min + ' a ' + shipping?.custom_delivery_range?.max + ' dias úteis',
+                  };
+                })}
+              id="shippingSelected"
+              onChange={(e) => {
+                handleChangeInvitation(e);
+              }}
+              value={invationUser.shippingSelected}
+              style={changeWidthInput(currentScreen, "100%")}
+            />}
 
             <div className={styles.termsServices}>
               <InputTextSimple
@@ -312,7 +404,7 @@ export const Invitation = () => {
               <span>Li e Concordo com os Termos de Serviço.</span>
             </div>
 
-            <button type="submit">Ir Para o Checkout</button>
+            <button disabled={!termsServices} type="submit">Ir Para o Checkout</button>
           </div>
         </form>
       </div>
