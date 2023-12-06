@@ -42,7 +42,7 @@ const convertMoneyTextMask = (value: any) => {
       }
     }
 
-    return value >= 0 ? ` ${moneyMask}` : ` -${moneyMask}`;
+    return value >= 0 ? ` R$ ${moneyMask}` : ` -${moneyMask}`;
   }
   return " 0,00";
 };

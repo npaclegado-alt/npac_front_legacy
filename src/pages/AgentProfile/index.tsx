@@ -1,18 +1,19 @@
 import { useContext, ChangeEvent, useEffect } from "react";
 import styles from "./agent-profile.module.scss";
-import { Download, Eye, EyeOff, PenSquare, Upload } from "lucide-react";
-import agent from "../../assets/imgs/download.jpg";
+import { Download, PenSquare } from "lucide-react";
 import { useState } from "react";
 import { Modal } from "antd";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
+import DragUploader from "../../components/uploaders/dragCircle";
+import UploadButtonWithPreview from "../../components/uploaders/buttonWithPrevew";
 
 type UserType = {
   name: string;
   cpf: string;
-  password: string;
+  password?: string | undefined;
   phone: string;
   email: string;
   role: string;
@@ -30,7 +31,6 @@ type UserType = {
 export default function AgentProfile() {
   const {
     user,
-    profileEditAgent,
     editAgentProfile,
     setEditAgentProfile,
     ufs,
@@ -38,12 +38,17 @@ export default function AgentProfile() {
     cities,
     getCitiesByUf,
     getAdressByPostalCode,
+    getFiles,
+    files,
+    adress,
+    profileEditAgent,
+    getAllDocuments,
+    documents
   } = useContext(ContextApi);
 
   const [userData, setUserData] = useState<UserType>({
     name: "",
     cpf: "",
-    password: "",
     phone: "",
     email: "",
     role: "",
@@ -59,6 +64,7 @@ export default function AgentProfile() {
   });
 
   const [seePasswordAgent, setSeePasswordAgent] = useState(false);
+  const [editAvatar, setEditAvatar] = useState(false);
 
   const ufStorage = ufs.find((uf) => uf.nome === user?.address?.state)
     ?.id as number;
@@ -72,6 +78,8 @@ export default function AgentProfile() {
       state: ufStorage?.toString(),
       city: cityStorage?.toString(),
     } as UserType);
+    getFiles('avatar', user?._id ?? '');
+    getAllDocuments('PERSONAL');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, ufStorage, cityStorage]);
 
@@ -86,6 +94,24 @@ export default function AgentProfile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ufStorage]);
+
+  useEffect(() => {
+    if (adress) {
+      setUserData({
+        ...userData,
+        street: adress?.logradouro,
+        bairro: adress?.bairro,
+        city: adress?.ibge,
+        state: adress?.ibge.slice(0, 2),
+        postalCode: adress?.cep,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adress]);
+
+  const changeEditAvatar = () => {
+    setEditAvatar(!editAvatar);
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -112,20 +138,28 @@ export default function AgentProfile() {
     const identificationData = {
       name: userData.name,
       cpf: userData.cpf,
-      password: userData.password,
       phone: Filters.clearStringOnlyNumbers(userData.phone),
       email: userData.email,
       role: userData.role,
     };
-    if (user)
-      await profileEditAgent(user._id as string, {
-        ...user,
-        ...identificationData,
-        address: addressData,
-      });
+
+    if (user) {
+      let { password, ...rest } = user;
+        await profileEditAgent(user._id as string, {
+          ...rest,
+          ...identificationData,
+          address: addressData,
+        });
+      }
   };
 
-  console.log(user);
+  const avatar = files.find(avatar => avatar.fieldName === 'avatar') ?? null;
+
+  const urlDownload = (fieldName: string) => {
+    let url;
+    url = documents.find(document => document.description === fieldName)?.fileUrl ?? ''
+    return url;
+  };
 
   return (
     <section className={styles.AgentProfilePage}>
@@ -136,9 +170,20 @@ export default function AgentProfile() {
           <span>Editar Dados Pessoais</span>
         </button>
 
-        <div className={styles.PersonalDataImg}>
-          {user?.avatar && <img src={user.avatar} alt={agent} />}
+        <div 
+          className={styles.PersonalDataImg}
+          onClick={changeEditAvatar}
+        >
+          { avatar && <img src={avatar?.path} alt={'Foto / avatar do usuario'} />}
+          {!avatar && <img src={require('../../assets/images/user.png')} alt={"Avatar"} />}
         </div>
+
+        {editAvatar &&
+        <div>
+          <DragUploader 
+            avatar={avatar}
+          />
+        </div>}
 
         <div className={styles.PersonalDataNameData}>
           <div className={styles.PersonalDataNameDataItem}>
@@ -150,7 +195,7 @@ export default function AgentProfile() {
 
           <div className={styles.PersonalDataNameDataItem}>
             <h3>Data de Nascimento</h3>
-            <span>20/02/1990</span>
+            <span>DD/MM/AAAA</span>
           </div>
         </div>
 
@@ -172,48 +217,56 @@ export default function AgentProfile() {
         <div className={styles.StreetDataZipState}>
           <div className={styles.StreetDataZipStateItem}>
             <h3>CEP</h3>
-            <span>{user?.address?.postalCode}</span>
+            <span>{user?.address?.postalCode ?? 'Atualize seu endereço'}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataZipStateItem}>
             <h3>Estado</h3>
-            <span>{user?.address?.state}</span>
+            <span>{user?.address?.state ?? 'Atualize seu endereço'}</span>
           </div>
         </div>
 
         <div className={styles.StreetDataCityAddress}>
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Cidade</h3>
-            <span>{user?.address?.city}</span>
+            <span>{user?.address?.city ?? 'Atualize seu endereço'}</span>
           </div>
 
           <div className={styles.PersonalDataBorder} />
 
           <div className={styles.StreetDataCityAddressItem}>
             <h3>Endereço</h3>
-            <span>{user?.address?.street}</span>
+            <span>{user?.address?.street ?? 'Atualize seu endereço'}</span>
           </div>
         </div>
       </div>
       <div className={styles.ProofData}>
         <div className={styles.ProofDataItem}>
           <h3>Comprovante de Identidade</h3>
-          <button>
-            <span>Baixar Comprovante de Identidade</span>
-            <Download />
-          </button>
+          <a 
+            href={urlDownload('comprovanteIdentidade')}
+            target="_blank"  
+          >
+            <button>
+              <span>Baixar Comprovante de Identidade</span>
+              <Download />
+            </button>
+          </a>
         </div>
         <div className={styles.ProofDataItem}>
           <h3>Comprovante de Endereço</h3>
-          <button>
-            <span>Baixar Comprovante de Endereço</span>
-            <Download />
-          </button>
+          <a 
+            href={urlDownload('comprovanteEndereco')}
+            target="_blank"
+          >
+            <button>
+              <span>Baixar Comprovante de Endereço</span>
+              <Download />
+            </button>
+          </a>
         </div>
-
-        <button className={styles.buttonChat} />
       </div>
 
       <Modal
@@ -244,31 +297,32 @@ export default function AgentProfile() {
               <h3>Dados de Identificação</h3>
               <InputTextSimple
                 name="name"
-                placeholder="Davi Carlos Rodrigues"
+                placeholder="Nome Completo"
                 value={userData.name}
                 onChange={handleChange}
               />
               <InputTextSimple
                 name="dataNascimento"
-                placeholder="20/02/1990"
+                placeholder="Data de Nascimento"
                 type="date"
+                disabled={!userData.dataNascimento}
                 value={userData.dataNascimento}
                 onChange={handleChange}
               />
               <InputTextSimple
                 name="phone"
-                placeholder="(00) 9999-9999"
+                placeholder="Celular com DDD"
                 value={Filters.inputMaskTELWithDDD(userData.phone)}
                 onChange={handleChange}
               />
               <InputTextSimple
                 name="email"
-                placeholder="Email@email.com.br"
+                placeholder="Email"
                 value={userData.email}
                 onChange={handleChange}
               />
 
-              <div className={styles.modalFormEditSeePassword}>
+              {/*<div className={styles.modalFormEditSeePassword}>
                 <InputTextSimple
                   type={seePasswordAgent ? "text" : "password"}
                   name="password"
@@ -285,12 +339,14 @@ export default function AgentProfile() {
                     <Eye size={25} color="#AEAEAE" />
                   )}
                 </button>
-              </div>
+              </div>*/}
 
-              <button type="button">
-                <span>Adicionar Comprovante de Identidade</span>
-                <Upload />
-              </button>
+              <UploadButtonWithPreview 
+                titleButton="Adicionar Comprovante de Identidade"
+                name="comprovanteIdentidade"
+                type="PERSONAL"
+                documents={documents}
+              />
             </div>
 
             <div className={styles.modalFormEditBorder} />
@@ -300,7 +356,7 @@ export default function AgentProfile() {
               <div className={styles.modalFormEditGroupAddress}>
                 <InputTextSimple
                   name="postalCode"
-                  placeholder="89221-170"
+                  placeholder="CEP"
                   value={Filters.inputMaskCEP(userData.postalCode)}
                   onChange={(e) => {
                     handleChange(e);
@@ -332,7 +388,7 @@ export default function AgentProfile() {
                   onChange={handleChange}
                 />
                 <InputTextSimple
-                  placeholder="Saguaçu"
+                  placeholder="Bairro"
                   name="bairro"
                   value={userData.bairro?.replace(/\d/g, "")}
                   onChange={handleChange}
@@ -341,7 +397,7 @@ export default function AgentProfile() {
 
               <InputTextSimple
                 name="street"
-                placeholder="street Guaramirim"
+                placeholder="Logradouro"
                 value={userData.street}
                 onChange={handleChange}
               />
@@ -349,13 +405,13 @@ export default function AgentProfile() {
               <div className={styles.modalFormEditGroupOneAddress}>
                 <InputTextSimple
                   name="number"
-                  placeholder="200"
+                  placeholder="Número"
                   value={Filters.clearStringOnlyNumbers(userData.number)}
                   onChange={handleChange}
                 />
                 <InputTextSimple
                   name="complement"
-                  placeholder="complement"
+                  placeholder="complemento"
                   value={userData.complement?.replace(/\d/g, "")}
                   onChange={handleChange}
                 />
@@ -368,10 +424,12 @@ export default function AgentProfile() {
                 onChange={handleChange}
               />
 
-              <button type="button">
-                <span>Adicionar Comprovante de Endereço</span>
-                <Upload />
-              </button>
+              <UploadButtonWithPreview 
+                titleButton="Adicionar Comprovante de Endereço"
+                name="comprovanteEndereco"
+                type="PERSONAL"
+                documents={documents}
+              />
             </div>
           </div>
           <button type="submit">Salvar Alterações de Dados Pessoais</button>

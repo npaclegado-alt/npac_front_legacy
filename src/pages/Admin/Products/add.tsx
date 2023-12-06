@@ -85,7 +85,6 @@ const AddProducts: React.FC = () => {
       setCommissionDistributionCarrer(
         initialData.commissionDistributionCarrer.map((item) => String(item))
       );
-      console.log(initialData.directCommissionValue);
       setDirectCommissionValue(
         initialData.directCommissionValue
           ? Filters.convertMoneyTextMask(initialData.directCommissionValue)

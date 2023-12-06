@@ -4,7 +4,7 @@ import { Modal } from "antd";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
-import { ContextApi } from "../../contexts";
+import { ContextApi } from "../../contexts";  
 import Filters from "../../libs/Filters";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -47,9 +47,6 @@ export const Financial = () => {
     }
     return { label: "", style: styles.processing };
   };
-
-  console.log(commissions);
-  console.log(transactions);
 
   return (
     <section className={styles.financialPage}>
@@ -121,12 +118,10 @@ export const Financial = () => {
         <h3>Investimentos</h3>
         {seeInvestment ? (
           <ul onClick={() => setSeeInvestment(false)}>
-            {transactions.map((transaction) => {
+            {transactions?.map((transaction) => {
               const status = getStatus(transaction?.status);
               const date = moment(transaction?.updatedAt).format("LLL");
-              const amount = Filters.convertMoneyTextMask(
-                transaction?.amount / 100
-              );
+              const amount = transaction?.amount / 100
               const name = transaction?.items
                 .map(
                   (item: any) =>
@@ -136,7 +131,7 @@ export const Financial = () => {
               return (
                 <li>
                   <div className={styles.values}>
-                    <h6>R$: {amount}</h6>
+                    <h6>{Filters.convertMoneyTextMask(amount)}</h6>
                     <p>{name}</p>
                   </div>
 
@@ -171,7 +166,7 @@ export const Financial = () => {
 
               const totalAmount =
                 commission.amount > 0 ? commission.amount : commission.auff;
-              const simbol = commission.amount > 0 ? "R$: " : "Auff";
+              const simbol = commission.amount > 0 ? "R$ " : "Auff";
               const amount = Filters.convertMoneyTextMask(totalAmount);
 
               const name = commission?.description;
@@ -179,7 +174,7 @@ export const Financial = () => {
               return (
                 <li>
                   <div className={styles.values}>
-                    <h6>{`${simbol} ${
+                    <h6>{` ${
                       commission.amount > 0 ? amount : amount.split(",")[0]
                     }`}</h6>
                     <p>{name}</p>

@@ -5,6 +5,8 @@ import { Gift } from "lucide-react";
 import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import { mainScreemDetails } from "../../services/requests/main";
+import { useExtractChildren } from "../../hooks/useExtractChildren";
+import moment from "moment";
 type MainScreemData = {
   userBalance: {
     _id: string;
@@ -31,18 +33,25 @@ type MainScreemData = {
 };
 
 const Dashboard: React.FC = () => {
-  const { user, getAllCommissionsByUserId } = useContext(ContextApi);
+  const { 
+    user, 
+    spheresResp,
+    getAllCommissionsByUserId,
+    getSpheresByUser,
+  } = useContext(ContextApi);
+  const children = useExtractChildren(spheresResp);
   const [apiData, setApiData] = useState<MainScreemData | null>(null);
+
   useEffect(() => {
     if (user) {
       mainScreemDetails(user._id)
         .then((response: any) => {
-          console.log(response.data);
           return setApiData(response.data as any);
         })
         .catch((error) => {
           console.error("Erro ao buscar dados", error);
         });
+        getSpheresByUser(user._id);
     }
   }, [user, getAllCommissionsByUserId]);
 
@@ -55,6 +64,28 @@ const Dashboard: React.FC = () => {
     }
     return 0;
   };
+
+
+  function formatCountdown() {
+    const now = moment();
+    const targetDate = now.clone().date(8).hour(23).minute(0).second(0);
+  
+    if (now.date() >= 8 && now.hour() >= 23) {
+      targetDate.add(1, 'month');
+    }
+  
+    const diff = targetDate.diff(now);
+    const duration = moment.duration(diff);
+  
+    const days = Math.floor(duration.asDays());
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+  
+    return `${days} Dias, ${hours}H e ${minutes}M`;
+  }
+  
+  const formattedCountdown = formatCountdown();
+
   return (
     <section className={styles.deshBoardPage}>
       <div className={styles.deshBoardPageAuff}>
@@ -101,7 +132,7 @@ const Dashboard: React.FC = () => {
         <div className={styles.deshBoardPageTotalsInfomation}>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Disponível</h4>
-            <span>R$ {apiData?.userBalance.money}</span>
+            <span>{Filters.convertMoneyTextMask(apiData?.userBalance.money)}</span>
           </div>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Total</h4>
@@ -114,11 +145,11 @@ const Dashboard: React.FC = () => {
         <div className={styles.deshBoardPageTotalsInfomation}>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Grupo</h4>
-            <span>R$ 0</span>
+            <span>{children?.length} Pessoas</span>
           </div>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Fim do Mês</h4>
-            <span>R$ {apiData?.month}</span>
+            <span>{formattedCountdown}</span>
           </div>
         </div>
       </div>

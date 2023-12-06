@@ -52,3 +52,17 @@ export interface shippingCostResponseProps {
     company: Company;
     error?: string;
 }[];
+
+export interface IFilesResponse {
+    _id: string;
+    name: string;
+    originalName: string;
+    fieldName: string;
+    fieldId: string;
+    path: string;
+    key: string;
+    size: number;
+    type: string;
+    createdAt: string;
+    __v: number;
+}
