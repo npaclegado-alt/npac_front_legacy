@@ -3,10 +3,12 @@ import { FileText } from 'lucide-react';
 import styles from './styleHeader.module.scss';
 
 interface HeaderReportsProps {
-    onChangeModal: () => void;
+    onChangeModal: (depth: number) => void;
+    reports?: any[];
 }
 export function HeaderReports({
-    onChangeModal
+    onChangeModal,
+    reports
 }: HeaderReportsProps): JSX.Element {
     return (
         <div className={styles.containerHeader}>
@@ -18,10 +20,10 @@ export function HeaderReports({
                     Parceiros (as)
                 </p>
                 <div
-                    onClick={() => { onChangeModal() }}
+                    onClick={() => { onChangeModal(1) }}
                 >
                     <span>
-                        30
+                        {reports?.filter((report) => report.depth === 1).length}
                     </span>
                     <FileText />
                 </div>
@@ -33,9 +35,11 @@ export function HeaderReports({
                 <p>
                     Parceiros (as)
                 </p>
-                <div>
+                <div
+                    onClick={() => { onChangeModal(2) }}
+                >
                     <span>
-                        20
+                        {reports?.filter((report) => report.depth === 2).length}
                     </span>
                     <FileText />
                 </div>
@@ -47,9 +51,11 @@ export function HeaderReports({
                 <p>
                     Parceiros (as)
                 </p>
-                <div>
+                <div
+                    onClick={() => { onChangeModal(3) }}
+                >
                     <span>
-                        20
+                        {reports?.filter((report) => report.depth === 3).length}
                     </span>
                     <FileText />
                 </div>

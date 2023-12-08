@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./dashboard.module.scss";
 import { Progress } from "antd";
-import { Gift } from "lucide-react";
+import { Filter, Gift } from "lucide-react";
 import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import { mainScreemDetails } from "../../services/requests/main";
@@ -65,6 +65,7 @@ const Dashboard: React.FC = () => {
     return 0;
   };
 
+  console.log('apiData ==>', apiData);
 
   function formatCountdown() {
     const now = moment();
@@ -80,6 +81,7 @@ const Dashboard: React.FC = () => {
     const days = Math.floor(duration.asDays());
     const hours = duration.hours();
     const minutes = duration.minutes();
+    const seconds = duration.seconds();
   
     return `${days} Dias, ${hours}H e ${minutes}M`;
   }
@@ -89,7 +91,7 @@ const Dashboard: React.FC = () => {
   return (
     <section className={styles.deshBoardPage}>
       <div className={styles.deshBoardPageAuff}>
-        <h2>Auffs Gerados</h2>
+        <h2>AUFFS Gerados</h2>
 
         <div className={styles.deshBoardPageAuffProgress}>
           <span>{apiData?.userBalance.virtualCurrency}</span>
@@ -136,7 +138,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Total</h4>
-            <span>R$ 0</span>
+            <span>{Filters.convertMoneyTextMask(apiData?.total)}</span>
           </div>
         </div>
 

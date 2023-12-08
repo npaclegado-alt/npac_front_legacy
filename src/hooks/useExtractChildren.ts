@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+let sephereDepth: number = 0;
 interface Child {
   userId: string;
   name: string;
@@ -7,6 +8,8 @@ interface Child {
   role: string;
   children: any[];
   avatar?: string;
+  depth?: number;
+  address?: [];
 }
 
 export function useExtractChildren(data: Child) {
@@ -14,11 +17,14 @@ export function useExtractChildren(data: Child) {
   
   useEffect(() => {
     function extractChildrenRecursive(data: Child) {
-        setChildrenArray((prevChildren) => [...prevChildren, data]);
+        const newData = {...data, depth: sephereDepth};
+        setChildrenArray((prevChildren) => [...prevChildren, newData]);
         if (data?.children?.length > 0) {
+            sephereDepth++;
             for (const child of data?.children) {
-                extractChildrenRecursive(child);         
+                extractChildrenRecursive({ ...child});         
             }
+            sephereDepth--;
         }
     }
       setChildrenArray([]);

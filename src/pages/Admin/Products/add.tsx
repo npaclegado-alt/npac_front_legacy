@@ -188,7 +188,7 @@ const AddProducts: React.FC = () => {
     }
     if (auff.length === 0) {
       hasError = true;
-      messages.push(<li>Auffs</li>);
+      messages.push(<li>AUFFS</li>);
     }
     if (recurrence?.length === 0 || recurrence === "0") {
       hasError = true;
@@ -459,7 +459,7 @@ const AddProducts: React.FC = () => {
                 />
               </div>
               <div className={styles.formGroup}>
-                <div className={styles.label}>Auffs</div>
+                <div className={styles.label}>AUFFS</div>
                 <InputTextSimple
                   name="auff"
                   value={auff}

@@ -66,3 +66,18 @@ export interface IFilesResponse {
     createdAt: string;
     __v: number;
 }
+
+export interface IDocsResponse {
+    _id: string;
+    description?: string;
+    documentType: string;
+    fileUrl: string;
+    key: string;
+    name: string;
+    originalName: string;
+    size: number;
+    type: string;
+    uploadDate: string;
+    uploadedBy: string;
+    __v: number;
+  }

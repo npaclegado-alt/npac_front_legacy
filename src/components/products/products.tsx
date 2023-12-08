@@ -58,7 +58,7 @@ export function Products({
                     <h4>{name}</h4>
                     <div className={styles.boxValue}>
                         <p>{Filters.convertMoneyTextMask(value)}</p>
-                        <p>{auffs} Auffs</p>
+                        <p>{auffs} AUFFS</p>
                     </div>
                 </div>
                 <div className={styles.boxImage}>

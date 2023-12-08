@@ -54,7 +54,7 @@ import { profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
 import { mainScreemDetails } from "../services/requests/main";
 import { calculateShipping } from "../services/requests/shippingServices";
-import { IFilesResponse, shippingCostResponseProps } from "./interfaces";
+import { IDocsResponse, IFilesResponse, shippingCostResponseProps } from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -198,7 +198,7 @@ interface IContextApi {
   clearDocumentFiltered: () => void;
   documentFiltered: IFile;
   deleteDocument: (originalName: string) => void;
-  documents: IFile[];
+  documents: IDocsResponse[];
   getAllTransactionsByUserId: (userId: string) => void;
   transactions: any[];
   getAllCommissionsByUserId: (userId: string) => void;
@@ -536,7 +536,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [spheresResp, setSpheresResp] = useState<any>([]);
   const [career, setCareer] = useState<Career>();
-  const [documents, setDocuments] = useState<IFile[]>([]);
+  const [documents, setDocuments] = useState<IDocsResponse[]>([]);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,

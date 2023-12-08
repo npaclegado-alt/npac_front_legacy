@@ -10,6 +10,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 
 import styles from './styles.module.scss';
 import { ContextApi, IFile } from '../../contexts';
+import { IDocsResponse } from '../../contexts/interfaces';
 
 type IType = 'PERSONAL' | 'GENERAL';
 type IName = 'comprovanteIdentidade' | 'comprovanteEndereco';
@@ -18,7 +19,7 @@ interface IUploadButtonWithPreviewProps {
     titleButton: string;
     name: IName;
     type: IType;
-    documents: IFile[] | null;
+    documents: IDocsResponse[] | null;
 }
 
 

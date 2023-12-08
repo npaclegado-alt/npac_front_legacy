@@ -128,7 +128,6 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
             </div>
             <Divider />
             <div className={styles.contentForm}>
-                <h1>Formulário de Compra</h1>
                 <div className={styles.boxInputs}>
                     <h3>Dados de identificação</h3>
                     <div className={styles.formLine1}>
@@ -165,7 +164,7 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                     </div>
                 </div>
                 <div className={styles.boxInputs}>
-                    <h3>Endereço de Entrega</h3>
+                    <h3>Endereço de entrega</h3>
                     <div className={styles.formLine1}>
                         <InputTextSimple
                             name="cep"
@@ -269,14 +268,13 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                     </div>}
                 </div>
                 <div className={styles.boxInputs}>
-                    <h3>Preço Final e Forma de Pagamento</h3>
                     <div className={styles.boxFinalPrice}>
                         <p>Preço Final:</p>
                         <span>{Filters.convertMoneyTextMask(calculateTotalPrice())}</span>
                         <span>Preço do produto {Filters.convertMoneyTextMask(product?.price)} + Preço da entrega: {Filters.convertMoneyTextMask(shippingPrice?.price ?? 0)} </span>
                     </div>
                     <div className={styles.formLine2}>
-                        <InputSimpleSelect
+                        {/*<InputSimpleSelect
                             optionZero="Selecione a forma de pagamento"
                             data={[{
                                 id: 1,
@@ -285,7 +283,7 @@ const ProductDetailsContent: React.FC<ProductDetailsContentProps> = ({
                             value={1}
                             disabled={true}
                             style={changeWidthInput(currentScreen, '49%')}
-                        />
+                        />*/}
                         <CustomButton
                             onClick={() => onProceed(formData, saleIdentification)}
                             style={changeWidthInput(currentScreen, '49%')}>Prosseguir para o pagamento</CustomButton>

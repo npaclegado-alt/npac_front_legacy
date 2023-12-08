@@ -154,10 +154,10 @@ export default function AgentProfile() {
   };
 
   const avatar = files.find(avatar => avatar.fieldName === 'avatar') ?? null;
-
+  const documentsByUser = documents.filter(document => document?.uploadedBy === user?._id);
   const urlDownload = (fieldName: string) => {
     let url;
-    url = documents.find(document => document.description === fieldName)?.fileUrl ?? ''
+    url = documentsByUser.find(document => document.description === fieldName)?.fileUrl ?? ''
     return url;
   };
 
@@ -345,7 +345,7 @@ export default function AgentProfile() {
                 titleButton="Adicionar Comprovante de Identidade"
                 name="comprovanteIdentidade"
                 type="PERSONAL"
-                documents={documents}
+                documents={documentsByUser}
               />
             </div>
 
@@ -428,7 +428,7 @@ export default function AgentProfile() {
                 titleButton="Adicionar Comprovante de Endereço"
                 name="comprovanteEndereco"
                 type="PERSONAL"
-                documents={documents}
+                documents={documentsByUser}
               />
             </div>
           </div>

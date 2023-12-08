@@ -57,13 +57,13 @@ const Career = () => {
             <div className={styles.careerPageAgentInformation}>
               <AuffText
                 title="AG"
-                text="Auffs Gerados"
+                text="AUFFS Gerados"
                 auff={career.generatedAuffs}
               />
               <div className={styles.careerPageAgentfrontBorder} />
               <AuffText
                 title="AA"
-                text="Auffs Aproveitados"
+                text="AUFFS Aproveitados"
                 auff={career.utilizedAuffs}
               />
             </div>
@@ -87,12 +87,12 @@ const Career = () => {
           </div>
           <div className={styles.careerPageAufssPersonal}>
             <h4>
-              Auffs Pessoais <span>5.000,00</span>
+              AUFFS Pessoais <span>5.000,00</span>
             </h4>
           </div>
           <div className={styles.careerPageAufssTotal}>
             <h4>
-              Total de Auffs <span>5.000,00</span>
+              Total de AUFFS <span>5.000,00</span>
             </h4>
             <button type="button" />
           </div>
