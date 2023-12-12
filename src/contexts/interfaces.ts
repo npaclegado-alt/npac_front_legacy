@@ -1,3 +1,4 @@
+import { is } from '@babel/types';
 interface DeliveryRange {
     min: number;
     max: number;
@@ -81,3 +82,24 @@ export interface IDocsResponse {
     uploadedBy: string;
     __v: number;
   }
+export interface IBankAccount {
+    name: string;
+    bank: string;
+    number: number;
+    ispb: string;
+    cpf: string;
+    ag: number;
+    cc: number;
+    dv?: string;
+    pix?: {
+        key: string;
+        type: string;
+    }[];
+}
+
+export interface IListBankResponse {
+    ispb: string;
+    name: string;
+    code: number;
+    fullName: string;
+}

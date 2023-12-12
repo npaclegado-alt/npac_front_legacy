@@ -63,7 +63,6 @@ export function StructurePage(): JSX.Element {
     }, []);
 
     const spheres = useExtractChildren(spheresResp);
-    console.log('spheresResp ==>', spheres);
     return (
         <div style={{
             width: '100%',

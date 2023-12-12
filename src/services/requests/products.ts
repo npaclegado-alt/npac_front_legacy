@@ -41,6 +41,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function addProduct(product: AddCrudProduct) {
+  console.log('addProduct', product);
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -58,6 +59,8 @@ export async function addProduct(product: AddCrudProduct) {
       digitalProduct,
       freeShipping,
       recurrence,
+      isCademi,
+      cademiKey
     } = product;
     api
       .post("products", {
@@ -76,6 +79,8 @@ export async function addProduct(product: AddCrudProduct) {
         digitalProduct,
         freeShipping,
         recurrence,
+        isCademi,
+        cademiKey
       })
       .then((response) => {
         resolve(response);
@@ -87,6 +92,7 @@ export async function addProduct(product: AddCrudProduct) {
 }
 
 export async function editProduct(product: EditCrudProduct) {
+  console.log(product);
   return new Promise((resolve, reject) => {
     const {
       id,
@@ -105,6 +111,8 @@ export async function editProduct(product: EditCrudProduct) {
       digitalProduct,
       freeShipping,
       recurrence,
+      isCademi,
+      cademiKey
     } = product;
     api
       .put(`products/${id}`, {
@@ -123,6 +131,8 @@ export async function editProduct(product: EditCrudProduct) {
         digitalProduct,
         freeShipping,
         recurrence,
+        isCademi,
+        cademiKey
       })
       .then((response) => {
         resolve(response);

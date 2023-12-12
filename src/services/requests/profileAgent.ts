@@ -22,6 +22,7 @@ const profileAgent = async (id: string, data: User) => {
               postalCode: data.address.postalCode,
             }
           : undefined,
+        bankAccount: data?.bankAccount ? data?.bankAccount : undefined,
       })
       .then((response) => {
         resolve(response);
@@ -32,4 +33,17 @@ const profileAgent = async (id: string, data: User) => {
   });
 };
 
-export { profileAgent };
+const listBanks = async () => {
+  return new Promise((resolve, reject) => {
+    api
+      .get("/lists/banks")
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+export { profileAgent, listBanks };

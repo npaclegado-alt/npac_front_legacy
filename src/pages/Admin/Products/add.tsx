@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { InputTextSimple } from "../../../components/inputs/simpleText/inputSimpleText";
 import Filters from "../../../libs/Filters";
-import { Tooltip, Upload, UploadFile, UploadProps } from "antd";
+import { Checkbox, Tooltip, Upload, UploadFile, UploadProps } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputSimpleSelect } from "../../../components/inputs/simpleSelect/simpleSelectInput";
 import { toast } from "react-toastify";
@@ -51,6 +51,8 @@ const AddProducts: React.FC = () => {
   const [digitalProduct, setDigitalProduct] = useState(false);
   const [freeShipping, setFreeShipping] = useState(false);
   const [recurrence, setRecurrence] = useState("");
+  const [isCademi, setIsCademi] = useState(false);
+  const [entregaCademi, setEntregaCademi] = useState("");
 
   useEffect(() => () => clearProductFiltered(), [clearProductFiltered]);
 
@@ -95,6 +97,8 @@ const AddProducts: React.FC = () => {
       setHeight(String(initialData.shippingValues?.height ?? ""));
       setLength(String(initialData.shippingValues?.length ?? ""));
       setRecurrence(initialData.recurrence);
+      setIsCademi(initialData?.isCademi ?? false);
+      setEntregaCademi(initialData?.cademiKey ?? "");
       setFreeShipping(initialData.freeShipping);
       setDigitalProduct(initialData.digitalProduct);
     }
@@ -194,6 +198,11 @@ const AddProducts: React.FC = () => {
       hasError = true;
       messages.push(<li>Tipo de recorrencia</li>);
     }
+
+    if (entregaCademi.length === 0) {
+      hasError = true;
+      messages.push(<li>Entrega CADEMI</li>);
+    }
     if (commissionType.length === 0 || commissionType === "0") {
       hasError = true;
       messages.push(<li>Tipo de comissão</li>);
@@ -283,9 +292,11 @@ const AddProducts: React.FC = () => {
     commissionType,
     digitalProduct,
     recurrence,
+    entregaCademi
   ]);
 
   const handleSubmit = useCallback(() => {
+    console.log("entrou", entregaCademi);
     if (validateFields()) {
       const files: File[] = fileList
         .filter((item) => !!item?.response?.file)
@@ -338,6 +349,8 @@ const AddProducts: React.FC = () => {
           digitalProduct,
           freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
+          isCademi: isCademi,
+          cademiKey: entregaCademi
         });
       } else {
         addProductRequest({
@@ -376,6 +389,8 @@ const AddProducts: React.FC = () => {
           digitalProduct,
           freeShipping: digitalProduct ? true : freeShipping,
           recurrence,
+          isCademi: isCademi,
+          cademiKey: entregaCademi
         });
       }
     }
@@ -405,6 +420,10 @@ const AddProducts: React.FC = () => {
     freeShipping,
     recurrence,
   ]);
+
+  const changeCademi = useCallback(() => {
+    setIsCademi(!isCademi);
+  }, [isCademi]);
 
   return (
     <div className={styles.container}>
@@ -1030,6 +1049,26 @@ const AddProducts: React.FC = () => {
                   </div>
                 </div>
               </div>
+            )}
+
+            <div className={styles.boxCademi}>
+              <span className={styles.label}>CADEMI</span>
+              <Checkbox
+                onChange={changeCademi}
+                checked={isCademi}
+                className={styles.checkbox}
+              >Entrega CADEMI</Checkbox>
+            </div>
+            {isCademi && (
+              <InputTextSimple 
+                name="cademi"
+                onChange={(e) => setEntregaCademi(e.target.value.replace(' ', ''))}
+                value={entregaCademi.replace(' ', '')}
+                placeholder="Entrega CADEMI"
+                style={{
+                  width: '30%'
+                }}
+              />
             )}
 
             <div className={styles.formGroup}>

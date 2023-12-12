@@ -1,6 +1,6 @@
-import { Eye, PenSquare, Plus } from "lucide-react";
+import { Eye, PenSquare, Plus, Trash } from "lucide-react";
 import styles from "./financial.module.scss";
-import { Modal } from "antd";
+import { Alert, Modal } from "antd";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
@@ -8,7 +8,19 @@ import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import moment from "moment";
 import "moment/locale/pt-br";
+import { IBankAccount } from "../../contexts/interfaces";
+import { set } from "lodash";
+import { SelectSearch } from "../../components/inputs/searchSelectInput/selectSearch";
+
+
 export const Financial = () => {
+  const typesKey = {
+    '1': "CPF",
+    '2': "EMAIL",
+    '3': "CELULAR",
+    '4': "ALEATORIA",
+    '5': "CNPJ",
+  };
   moment.locale("pt-br");
   const {
     user,
@@ -18,10 +30,14 @@ export const Financial = () => {
     getAllProducts,
     commissions,
     getAllCommissionsByUserId,
+    getBanks,
+    banks,
+    profileEditAgent
   } = useContext(ContextApi);
 
   useEffect(() => {
     getAllProducts();
+    getBanks();
   }, []);
 
   useEffect(() => {
@@ -34,6 +50,67 @@ export const Financial = () => {
   const [openEditBankDetails, setOpenEditBankDetails] = useState(false);
   const [seeProfits, setSeeProfits] = useState(false);
   const [seeInvestment, setSeeInvestment] = useState(false);
+  const [bankAccount, setBankAccount] = useState<IBankAccount>({
+    name: "",
+    bank: "",
+    number: 0,
+    ispb: "",
+    cpf: "",
+    ag: 0,
+    cc: 0,
+    dv: "",
+    pix: [
+      {
+        key: "",
+        type: "",
+      }
+    ]
+  });
+  const [showTooltipBank, setShowTooltipBank] = useState(false);
+  const [numberKeys, setNumberKeys] = useState(1);
+
+  const changeBankAccount = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (e.target.id === "cpf") {
+      setBankAccount({
+        ...bankAccount,
+        [e.target.id]: Filters.clearStringOnlyNumbers(e.target.value),
+      });
+      return;
+    }
+    setBankAccount({
+      ...bankAccount,
+      [e.target.id]: e.target.value,
+    });
+  }
+
+  const changeBanckSelect = (value: string) => {
+    const bank = banks?.find((bank) => bank.ispb === value);
+      if (bank) {
+        setBankAccount({
+          ...bankAccount,
+          bank: bank.name,
+          ispb: bank.ispb,
+          number: bank.code,
+        });
+      }
+  }
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!bankAccount.bank) {
+      return setShowTooltipBank(true)
+    }
+
+    if (user) {
+      let { password, ...rest } = user;
+      await profileEditAgent(user._id as string, {
+        ...rest,
+        bankAccount: bankAccount,
+      })
+    }
+
+    setOpenEditBankDetails(false);
+  };
 
   const getStatus = (status: string) => {
     if (status === "pending") {
@@ -47,6 +124,64 @@ export const Financial = () => {
     }
     return { label: "", style: styles.processing };
   };
+
+  const countKeys = useMemo(() => {
+    return bankAccount?.pix?.length || 0;
+  }, [bankAccount]);
+
+  const addKey = () => {
+    if (countKeys < 5) {
+      setNumberKeys((numberKeys) => numberKeys + 1);
+      setBankAccount({
+        ...bankAccount,
+        pix: [...(bankAccount?.pix || []), { key: "", type: "" }],
+      });
+    }
+  }
+
+  const changeKey = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const key = e.target.id.split("-")[1];
+    const keyType = e.target.id.split("-")[0];
+    let value = e.target.value;
+
+    const newPix = bankAccount?.pix?.map((pix, index) => {
+      if (index === Number(key)) {
+        return {
+          ...pix,
+          [keyType]: value,
+        };
+      }
+      return pix;
+    });
+
+    const removeMask = newPix?.map((pix, index) => {
+      let withoutMask = pix;
+      if ((pix.type === "1") || (pix.type === "5") || (pix.type === "3")) {
+        withoutMask = {
+          type: typesKey[pix.type],
+          key: pix.key.replace(/\D/g, ''),
+        }
+      }
+      return withoutMask;
+    });
+    
+    setBankAccount({
+      ...bankAccount,
+      pix: removeMask,
+    });
+  }
+
+  const maskPix = (type: string, pix: string) => {
+    switch (type) {
+      case 'CPF':
+        case 'CNPJ':
+        return Filters.inputMaskCPFCNPJ(pix);
+      case 'CELULAR':
+        return Filters.inputMaskTELWithDDD(pix);
+      default:
+        return pix;
+    }
+  }
 
   return (
     <section className={styles.financialPage}>
@@ -73,26 +208,32 @@ export const Financial = () => {
 
           <div className={styles.financialBankDataUserItem}>
             <h3>Banco</h3>
-            <span>{user?.banckAccount?.name}</span>
+            <span>{user?.bankAccount?.name}</span>
           </div>
         </div>
 
         <div className={styles.financialBankDataAccountUser}>
           <div className={styles.financialBankDataUserItem}>
             <h3>Agência</h3>
-            <span>{user?.banckAccount?.ag}</span>
+            <span>{user?.bankAccount?.ag}</span>
           </div>
           <div className={styles.financialBankDataBorder} />
 
           <div className={styles.financialBankDataUserItem}>
             <h3>Conta</h3>
-            <span>{user?.banckAccount?.cc}</span>
+            <span>{user?.bankAccount?.cc}</span>
           </div>
           <div className={styles.financialBankDataBorder} />
 
           <div className={styles.financialBankDataUserItem}>
             <h3>Chaves Pix</h3>
-            <span>{user?.banckAccount?.pix}</span>
+            {user?.bankAccount?.pix?.map((pix, index) => {
+              return (
+                <span key={index}>
+                  {pix.key} <br />
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -202,7 +343,11 @@ export const Financial = () => {
 
       <Modal
         open={openEditBankDetails}
-        onCancel={() => setOpenEditBankDetails(false)}
+        onCancel={() => {
+          setOpenEditBankDetails(false)
+          setShowTooltipBank(false)
+        }}
+        
         width="30rem"
         centered
         cancelButtonProps={{
@@ -210,6 +355,7 @@ export const Financial = () => {
             display: "none",
           },
         }}
+        afterClose={() => setShowTooltipBank(false)}
         okButtonProps={{
           style: {
             display: "none",
@@ -221,34 +367,120 @@ export const Financial = () => {
           <h3>Alterar Dados Bancários</h3>
 
           <form
-            onSubmit={(e: ChangeEvent<HTMLFormElement>) => e.preventDefault()}
+            onSubmit={handleFormSubmit}
           >
-            <InputTextSimple name="nome" placeholder="Davi Carlos Rodrigues" />
-            <InputTextSimple name="nome" placeholder="506.702.231-07" />
-
-            <InputSimpleSelect
-              data={[
-                {
-                  id: 1,
-                  nome: "Banco do Brasil (001)",
-                },
-              ]}
-              optionZero="Banco do Brasil (001)"
+            <InputTextSimple 
+              name="name" 
+              placeholder="Nome completo" 
+              onChange={changeBankAccount}  
+              required
+            />
+            <InputTextSimple 
+              name="cpf" 
+              placeholder="CPF" 
+              onChange={changeBankAccount}
+              required
+              value={Filters.inputMaskCPFCNPJ(bankAccount?.cpf || "")}
+            />
+            <SelectSearch 
+              options={
+                banks?.filter(valid => valid.code && (valid.name !== undefined))?.map((bank) => ({
+                  label: bank.code + ' - ' + bank.name,
+                  value: bank.ispb,
+                }))
+              }
+              onChangeSelect={changeBanckSelect}
             />
 
             <div className={styles.financialModalEditAccount}>
-              <InputTextSimple name="nome" placeholder="1366" />
-              <InputTextSimple name="nome" placeholder="8103-5" />
+              <InputTextSimple
+                name="ag" 
+                placeholder="Agência" 
+                onChange={changeBankAccount}
+                required
+                maxLength={4}
+              />
+              <InputTextSimple
+                name="cc" 
+                placeholder="Conta corrente" 
+                onChange={changeBankAccount}
+                required
+              />
+              <InputTextSimple
+                name="dv" 
+                placeholder="Digito verificador" 
+                onChange={changeBankAccount}
+                required
+                maxLength={2}
+              />
             </div>
 
             <div className={styles.financialModalEditKey}>
               <h4>Chaves Pix</h4>
-              <div className={styles.financialModalAddKeys}>
-                <InputTextSimple name="nome" placeholder="1366" />
-                <button type="button">
-                  <Plus />
-                </button>
-              </div>
+              {bankAccount?.pix?.map((pix, index) => {
+                return (
+                  <>
+                    <InputSimpleSelect 
+                      name="KeyType"
+                      id={`type-${index}`}
+                      data={[
+                        {
+                          id: 1,
+                          nome: "CPF",
+                        },
+                        {
+                          id: 2,
+                          nome: "EMAIL",
+                        },
+                        {
+                          id: 3,
+                          nome: "CELULAR",
+                        },
+                        {
+                          id: 4,
+                          nome: "ALEATORIA",
+                        },
+                        {
+                          id: 5,
+                          nome: "CNPJ",
+                        }
+                      ]}
+                      onChange={changeKey}
+                      optionZero="Selecionar o tipo da chave"
+                    />
+                    <div className={styles.financialModalAddKeys}>
+                      <InputTextSimple 
+                        name={`key-${index}`} 
+                        placeholder="Chave Pix"
+                        onChange={changeKey} 
+                        value={maskPix(pix.type, pix.key)}
+                      />
+                      <button 
+                        type="button"
+                        onClick={addKey}
+                      >
+                        <Plus />
+                      </button>
+                      {index > 0 &&
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            const newPix = bankAccount?.pix?.filter((pix, i) => i !== index);
+                            setBankAccount({
+                              ...bankAccount,
+                              pix: newPix,
+                            });
+                            setNumberKeys((numberKeys) => numberKeys - 1);
+                          }}
+                        >
+                          <Trash />
+                        </button>
+                      }
+                    </div>
+                  </>
+                )
+                }) 
+              }
 
               <button type="submit">Salvar Alterações</button>
             </div>

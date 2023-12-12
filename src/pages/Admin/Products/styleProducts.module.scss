@@ -81,3 +81,22 @@
   text-align: center;
   gap: 0.5rem;
 }
+
+.boxCademi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  span {
+    &:first-child {
+      font-size: 1.5rem;
+      color: var(--gray-200);
+    }
+  }
+}
+
+.checkbox {
+  margin-left: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--gray-200);
+}

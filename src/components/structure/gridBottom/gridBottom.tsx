@@ -75,7 +75,7 @@ export function GridButtom(): JSX.Element {
                 Outros Relatórios
             </h1>
             <p className={styles.description}>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam.
+                Acompanhe o volume de produtos ofertados em toda a sua estrutura e bata seus recordes, o mundo precisa de nós!
             </p>
             <div className={styles.boxOthersReports}>
                 {othersReports.map((report) => (

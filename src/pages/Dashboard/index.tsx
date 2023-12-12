@@ -99,6 +99,7 @@ const Dashboard: React.FC = () => {
 
   const formattedCountdown = formatCountdown();
 
+  console.log('calculateProgress', calculateProgress());
   return (
     <>
       {" "}

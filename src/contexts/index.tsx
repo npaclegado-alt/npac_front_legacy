@@ -50,11 +50,11 @@ import {
 } from "../services/requests/transactions";
 import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
-import { profileAgent } from "../services/requests/profileAgent";
+import { listBanks, profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
 import { mainScreemDetails } from "../services/requests/main";
 import { calculateShipping } from "../services/requests/shippingServices";
-import { IDocsResponse, IFilesResponse, shippingCostResponseProps } from "./interfaces";
+import { IBankAccount, IDocsResponse, IFilesResponse, IListBankResponse, shippingCostResponseProps } from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -77,6 +77,8 @@ interface BaseCrudProduct {
   digitalProduct: boolean;
   freeShipping: boolean;
   recurrence: string;
+  isCademi?: boolean;
+  cademiKey?: string;
 }
 
 export interface AddCrudProduct extends BaseCrudProduct {
@@ -167,14 +169,7 @@ export interface User {
     state: string;
     postalCode: string;
   };
-  banckAccount?: {
-    name: string;
-    cpf: string;
-    ag: number;
-    cc: number;
-    dv: string;
-    pix: string;
-  };
+  bankAccount?: IBankAccount;
 }
 
 interface IContextApi {
@@ -223,6 +218,7 @@ interface IContextApi {
   getAllCareer: () => void;
   getAllFaq: () => void;
   getShippingCost: (payload: any) => void;
+  getBanks: () => void;
   shippingCostResponse: shippingCostResponseProps[];
   career?: Career;
   allFaq: Faq[];
@@ -289,6 +285,8 @@ interface IContextApi {
     digitalProduct: boolean;
     freeShipping: boolean;
     recurrence: string;
+    isCademi?: boolean;
+    cademiKey?: string;
   };
   productImages: IFile[];
   adress: {
@@ -344,6 +342,7 @@ interface IContextApi {
   files: IFilesResponse[];
   removeFile: (originalName: string) => void;
   sendDocumentsRequest: (type:string, name: string, description: string, file: File, uploadedBy: string) => void;
+  banks: IListBankResponse[];
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -401,6 +400,7 @@ export const ContextApi = createContext<IContextApi>({
   getAllCareer: () => {},
   getAllFaq: () => {},
   getShippingCost: (payload: any) => {},
+  getBanks: () => {},
   career: undefined,
   allFaq: [] as Faq[],
   ufs: [
@@ -456,6 +456,8 @@ export const ContextApi = createContext<IContextApi>({
     digitalProduct: false,
     freeShipping: false,
     recurrence: "",
+    isCademi: false,
+    cademiKey: "",
   },
   adress: {
     cep: "",
@@ -511,6 +513,7 @@ export const ContextApi = createContext<IContextApi>({
   files: [],
   removeFile: (originalName: string) => { },
   sendDocumentsRequest: (type:string, name: string, description: string, file: File, uploadedBy: string) => {},
+  banks: [],
 });
 
 interface Props {
@@ -545,6 +548,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [editAgentProfile, setEditAgentProfile] = useState(false);
   const [shippingCostResponse, setShippingCostResponse] = useState<shippingCostResponseProps[]>([]);
   const [files, setFiles] = useState<IFilesResponse[]>([]);
+  const [banks, setBanks] = useState<IListBankResponse[]>([]);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -1275,6 +1279,40 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const getBanks = useCallback(() => {
+    const request = listBanks();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+        style: {
+          display: "none",
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setBanks(data?.data);
+          return "Bancos carregados com sucesso!";
+        },
+        
+        style: {
+          display: "none",
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao carregar bancos!";
+        },
+        
+        style: {
+          display: "none",
+        },
+      },
+    });
+  }
+  , []);
+
 
   return (
     <ContextApi.Provider
@@ -1330,7 +1368,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         getFiles,
         files,
         removeFile,
-        sendDocumentsRequest
+        sendDocumentsRequest,
+        getBanks,
+        banks
       }}
     >
       {children}
