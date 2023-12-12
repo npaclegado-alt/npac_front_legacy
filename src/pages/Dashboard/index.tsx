@@ -80,13 +80,9 @@ const Dashboard: React.FC = () => {
     }
     return 0;
   };
-
-  console.log("apiData ==>", apiData);
-
   function formatCountdown() {
     const now = moment();
-    let targetDate = now.clone().startOf("day").hour(23).minute(0).second(0);
-
+    let targetDate = now.clone().startOf("month").add(8, "days");
     if (now.isAfter(targetDate)) {
       targetDate.add(1, "month");
     }
@@ -94,19 +90,11 @@ const Dashboard: React.FC = () => {
     const diff = targetDate.diff(now);
     const duration = moment.duration(diff);
 
-    function formatUnit(value: number, unit: string) {
-      return `${value} ${unit}${value !== 1 ? "s" : ""}`;
-    }
+    const days = Math.floor(duration.asDays());
+    const hours = duration.hours();
+    const minutes = duration.minutes();
 
-    const days = formatUnit(Math.floor(duration.asDays()), "Dia");
-    const hours = formatUnit(duration.hours(), "Hora");
-    const minutes = formatUnit(duration.minutes(), "Minuto");
-    const seconds = formatUnit(duration.seconds(), "Segundo");
-
-    return `${days}, ${hours}, ${minutes.padStart(2, "0")} e ${seconds.padStart(
-      2,
-      "0"
-    )}`;
+    return `${days} dias, ${hours} horas e ${minutes} minutos`;
   }
 
   const formattedCountdown = formatCountdown();
