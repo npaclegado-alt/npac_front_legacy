@@ -4,7 +4,7 @@ import { Modal } from "antd";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
-import { ContextApi } from "../../contexts";  
+import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -100,7 +100,9 @@ export const Financial = () => {
         <div className={styles.financialAccountAvailableItem}>
           <h2>Disponível em Minha Conta</h2>
           <span>
-            {Filters.convertMoneyTextMask(commissions?.balance?.money)}
+            {Filters.convertMoneyTextMask(
+              commissions?.balance?.money.$numberDecimal
+            )}
           </span>
         </div>
 
@@ -121,7 +123,7 @@ export const Financial = () => {
             {transactions?.map((transaction) => {
               const status = getStatus(transaction?.status);
               const date = moment(transaction?.updatedAt).format("LLL");
-              const amount = transaction?.amount / 100
+              const amount = transaction?.amount / 100;
               const name = transaction?.items
                 .map(
                   (item: any) =>
