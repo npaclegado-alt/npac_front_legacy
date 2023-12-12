@@ -33,25 +33,29 @@ type MainScreemData = {
 };
 
 const Dashboard: React.FC = () => {
-  const { 
-    user, 
-    spheresResp,
-    getAllCommissionsByUserId,
-    getSpheresByUser,
-  } = useContext(ContextApi);
+  const { user, spheresResp, getAllCommissionsByUserId, getSpheresByUser } =
+    useContext(ContextApi);
   const children = useExtractChildren(spheresResp);
   const [apiData, setApiData] = useState<MainScreemData | null>(null);
 
   useEffect(() => {
+    const details = localStorage.getItem("mainScreemDetails");
+    if (details) {
+      setApiData(JSON.parse(details));
+    }
     if (user) {
       mainScreemDetails(user._id)
         .then((response: any) => {
+          localStorage.setItem(
+            "mainScreemDetails",
+            JSON.stringify(response.data)
+          );
           return setApiData(response.data as any);
         })
         .catch((error) => {
           console.error("Erro ao buscar dados", error);
         });
-        getSpheresByUser(user._id);
+      getSpheresByUser(user._id);
     }
   }, [user, getAllCommissionsByUserId]);
 
@@ -60,32 +64,33 @@ const Dashboard: React.FC = () => {
       const totalPoints =
         apiData.levelInfo.nextLevel.max - apiData.levelInfo.currentLevel.start;
       const currentPoints = apiData.levelInfo.nextLevel.amountToNextLevel;
+      console.log(totalPoints, currentPoints);
       return (currentPoints / totalPoints) * 100;
     }
     return 0;
   };
 
-  console.log('apiData ==>', apiData);
+  console.log("apiData ==>", apiData);
 
   function formatCountdown() {
     const now = moment();
     const targetDate = now.clone().date(8).hour(23).minute(0).second(0);
-  
+
     if (now.date() >= 8 && now.hour() >= 23) {
-      targetDate.add(1, 'month');
+      targetDate.add(1, "month");
     }
-  
+
     const diff = targetDate.diff(now);
     const duration = moment.duration(diff);
-  
+
     const days = Math.floor(duration.asDays());
     const hours = duration.hours();
     const minutes = duration.minutes();
     const seconds = duration.seconds();
-  
+
     return `${days} Dias, ${hours}H e ${minutes}M`;
   }
-  
+
   const formattedCountdown = formatCountdown();
 
   return (
@@ -134,7 +139,9 @@ const Dashboard: React.FC = () => {
         <div className={styles.deshBoardPageTotalsInfomation}>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Disponível</h4>
-            <span>{Filters.convertMoneyTextMask(apiData?.userBalance.money)}</span>
+            <span>
+              {Filters.convertMoneyTextMask(apiData?.userBalance.money)}
+            </span>
           </div>
           <div className={styles.deshBoardPageTotalsItem}>
             <h4>Lucro Total</h4>
