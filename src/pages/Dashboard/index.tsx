@@ -74,21 +74,28 @@ const Dashboard: React.FC = () => {
 
   function formatCountdown() {
     const now = moment();
-    const targetDate = now.clone().date(8).hour(23).minute(0).second(0);
+    let targetDate = now.clone().startOf("day").hour(23).minute(0).second(0);
 
-    if (now.date() >= 8 && now.hour() >= 23) {
+    if (now.isAfter(targetDate)) {
       targetDate.add(1, "month");
     }
 
     const diff = targetDate.diff(now);
     const duration = moment.duration(diff);
 
-    const days = Math.floor(duration.asDays());
-    const hours = duration.hours();
-    const minutes = duration.minutes();
-    const seconds = duration.seconds();
+    function formatUnit(value: number, unit: string) {
+      return `${value} ${unit}${value !== 1 ? "s" : ""}`;
+    }
 
-    return `${days} Dias, ${hours}H e ${minutes}M`;
+    const days = formatUnit(Math.floor(duration.asDays()), "Dia");
+    const hours = formatUnit(duration.hours(), "Hora");
+    const minutes = formatUnit(duration.minutes(), "Minuto");
+    const seconds = formatUnit(duration.seconds(), "Segundo");
+
+    return `${days}, ${hours}, ${minutes.padStart(2, "0")} e ${seconds.padStart(
+      2,
+      "0"
+    )}`;
   }
 
   const formattedCountdown = formatCountdown();
