@@ -12,14 +12,13 @@ import { IBankAccount } from "../../contexts/interfaces";
 import { set } from "lodash";
 import { SelectSearch } from "../../components/inputs/searchSelectInput/selectSearch";
 
-
 export const Financial = () => {
   const typesKey = {
-    '1': "CPF",
-    '2': "EMAIL",
-    '3': "CELULAR",
-    '4': "ALEATORIA",
-    '5': "CNPJ",
+    "1": "CPF",
+    "2": "EMAIL",
+    "3": "CELULAR",
+    "4": "ALEATORIA",
+    "5": "CNPJ",
   };
   moment.locale("pt-br");
   const {
@@ -32,7 +31,7 @@ export const Financial = () => {
     getAllCommissionsByUserId,
     getBanks,
     banks,
-    profileEditAgent
+    profileEditAgent,
   } = useContext(ContextApi);
 
   useEffect(() => {
@@ -63,13 +62,15 @@ export const Financial = () => {
       {
         key: "",
         type: "",
-      }
-    ]
+      },
+    ],
   });
   const [showTooltipBank, setShowTooltipBank] = useState(false);
   const [numberKeys, setNumberKeys] = useState(1);
 
-  const changeBankAccount = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const changeBankAccount = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     if (e.target.id === "cpf") {
       setBankAccount({
         ...bankAccount,
@@ -81,24 +82,24 @@ export const Financial = () => {
       ...bankAccount,
       [e.target.id]: e.target.value,
     });
-  }
+  };
 
   const changeBanckSelect = (value: string) => {
     const bank = banks?.find((bank) => bank.ispb === value);
-      if (bank) {
-        setBankAccount({
-          ...bankAccount,
-          bank: bank.name,
-          ispb: bank.ispb,
-          number: bank.code,
-        });
-      }
-  }
+    if (bank) {
+      setBankAccount({
+        ...bankAccount,
+        bank: bank.name,
+        ispb: bank.ispb,
+        number: bank.code,
+      });
+    }
+  };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!bankAccount.bank) {
-      return setShowTooltipBank(true)
+      return setShowTooltipBank(true);
     }
 
     if (user) {
@@ -106,7 +107,7 @@ export const Financial = () => {
       await profileEditAgent(user._id as string, {
         ...rest,
         bankAccount: bankAccount,
-      })
+      });
     }
 
     setOpenEditBankDetails(false);
@@ -137,7 +138,7 @@ export const Financial = () => {
         pix: [...(bankAccount?.pix || []), { key: "", type: "" }],
       });
     }
-  }
+  };
 
   const changeKey = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const key = e.target.id.split("-")[1];
@@ -156,32 +157,32 @@ export const Financial = () => {
 
     const removeMask = newPix?.map((pix, index) => {
       let withoutMask = pix;
-      if ((pix.type === "1") || (pix.type === "5") || (pix.type === "3")) {
+      if (pix.type === "1" || pix.type === "5" || pix.type === "3") {
         withoutMask = {
           type: typesKey[pix.type],
-          key: pix.key.replace(/\D/g, ''),
-        }
+          key: pix.key.replace(/\D/g, ""),
+        };
       }
       return withoutMask;
     });
-    
+
     setBankAccount({
       ...bankAccount,
       pix: removeMask,
     });
-  }
+  };
 
   const maskPix = (type: string, pix: string) => {
     switch (type) {
-      case 'CPF':
-        case 'CNPJ':
+      case "CPF":
+      case "CNPJ":
         return Filters.inputMaskCPFCNPJ(pix);
-      case 'CELULAR':
+      case "CELULAR":
         return Filters.inputMaskTELWithDDD(pix);
       default:
         return pix;
     }
-  }
+  };
 
   return (
     <section className={styles.financialPage}>
@@ -241,9 +242,7 @@ export const Financial = () => {
         <div className={styles.financialAccountAvailableItem}>
           <h2>Disponível para transferência</h2>
           <span>
-            {Filters.convertMoneyTextMask(
-              commissions?.balance?.money?.$numberDecimal
-            )}
+            {Filters.convertMoneyTextMask(commissions?.balance?.money)}
           </span>
         </div>
 
@@ -254,7 +253,10 @@ export const Financial = () => {
 
         <div className={styles.textDateTransfer}>
           <button>Transferir</button>
-          <p>Você pode solicitar a transferência a qualquer momento, porém o pagamento sempre é efetivado entre os dias 17 e 22 de cada mês.</p>
+          <p>
+            Você pode solicitar a transferência a qualquer momento, porém o
+            pagamento sempre é efetivado entre os dias 17 e 22 de cada mês.
+          </p>
         </div>
       </div>
       <div
@@ -347,10 +349,9 @@ export const Financial = () => {
       <Modal
         open={openEditBankDetails}
         onCancel={() => {
-          setOpenEditBankDetails(false)
-          setShowTooltipBank(false)
+          setOpenEditBankDetails(false);
+          setShowTooltipBank(false);
         }}
-        
         width="30rem"
         centered
         cancelButtonProps={{
@@ -369,49 +370,47 @@ export const Financial = () => {
         <div className={styles.financialModalEdit}>
           <h3>Alterar Dados Bancários</h3>
 
-          <form
-            onSubmit={handleFormSubmit}
-          >
-            <InputTextSimple 
-              name="name" 
-              placeholder="Nome completo" 
-              onChange={changeBankAccount}  
+          <form onSubmit={handleFormSubmit}>
+            <InputTextSimple
+              name="name"
+              placeholder="Nome completo"
+              onChange={changeBankAccount}
               required
             />
-            <InputTextSimple 
-              name="cpf" 
-              placeholder="CPF" 
+            <InputTextSimple
+              name="cpf"
+              placeholder="CPF"
               onChange={changeBankAccount}
               required
               value={Filters.inputMaskCPFCNPJ(bankAccount?.cpf || "")}
             />
-            <SelectSearch 
-              options={
-                banks?.filter(valid => valid.code && (valid.name !== undefined))?.map((bank) => ({
-                  label: bank.code + ' - ' + bank.name,
+            <SelectSearch
+              options={banks
+                ?.filter((valid) => valid.code && valid.name !== undefined)
+                ?.map((bank) => ({
+                  label: bank.code + " - " + bank.name,
                   value: bank.ispb,
-                }))
-              }
+                }))}
               onChangeSelect={changeBanckSelect}
             />
 
             <div className={styles.financialModalEditAccount}>
               <InputTextSimple
-                name="ag" 
-                placeholder="Agência" 
+                name="ag"
+                placeholder="Agência"
                 onChange={changeBankAccount}
                 required
                 maxLength={4}
               />
               <InputTextSimple
-                name="cc" 
-                placeholder="Conta corrente" 
+                name="cc"
+                placeholder="Conta corrente"
                 onChange={changeBankAccount}
                 required
               />
               <InputTextSimple
-                name="dv" 
-                placeholder="Digito verificador" 
+                name="dv"
+                placeholder="Digito verificador"
                 onChange={changeBankAccount}
                 required
                 maxLength={2}
@@ -423,7 +422,7 @@ export const Financial = () => {
               {bankAccount?.pix?.map((pix, index) => {
                 return (
                   <>
-                    <InputSimpleSelect 
+                    <InputSimpleSelect
                       name="KeyType"
                       id={`type-${index}`}
                       data={[
@@ -446,29 +445,28 @@ export const Financial = () => {
                         {
                           id: 5,
                           nome: "CNPJ",
-                        }
+                        },
                       ]}
                       onChange={changeKey}
                       optionZero="Selecionar o tipo da chave"
                     />
                     <div className={styles.financialModalAddKeys}>
-                      <InputTextSimple 
-                        name={`key-${index}`} 
+                      <InputTextSimple
+                        name={`key-${index}`}
                         placeholder="Chave Pix"
-                        onChange={changeKey} 
+                        onChange={changeKey}
                         value={maskPix(pix.type, pix.key)}
                       />
-                      <button 
-                        type="button"
-                        onClick={addKey}
-                      >
+                      <button type="button" onClick={addKey}>
                         <Plus />
                       </button>
-                      {index > 0 &&
-                        <button 
+                      {index > 0 && (
+                        <button
                           type="button"
                           onClick={() => {
-                            const newPix = bankAccount?.pix?.filter((pix, i) => i !== index);
+                            const newPix = bankAccount?.pix?.filter(
+                              (pix, i) => i !== index
+                            );
                             setBankAccount({
                               ...bankAccount,
                               pix: newPix,
@@ -478,12 +476,11 @@ export const Financial = () => {
                         >
                           <Trash />
                         </button>
-                      }
+                      )}
                     </div>
                   </>
-                )
-                }) 
-              }
+                );
+              })}
 
               <button type="submit">Salvar Alterações</button>
             </div>

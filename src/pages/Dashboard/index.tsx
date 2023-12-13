@@ -7,16 +7,13 @@ import Filters from "../../libs/Filters";
 import { mainScreemDetails } from "../../services/requests/main";
 import { useExtractChildren } from "../../hooks/useExtractChildren";
 import moment from "moment";
-type DecimalNumber = {
-  $numberDecimal: string;
-};
 
 type MainScreemData = {
   userBalance: {
     _id: string;
     userId: string;
-    money: DecimalNumber;
-    virtualCurrency: DecimalNumber;
+    money: number;
+    virtualCurrency: number;
     __v: number;
   };
   levelInfo: {
@@ -37,12 +34,8 @@ type MainScreemData = {
 };
 
 const Dashboard: React.FC = () => {
-  const { 
-    user, 
-    spheresResp, 
-    getAllCommissionsByUserId, 
-    getSpheresByUser 
-  } = useContext(ContextApi);
+  const { user, spheresResp, getAllCommissionsByUserId, getSpheresByUser } =
+    useContext(ContextApi);
   const children = useExtractChildren(spheresResp?.rootNode);
   const [apiData, setApiData] = useState<MainScreemData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,11 +73,8 @@ const Dashboard: React.FC = () => {
       const totalPoints =
         apiData.levelInfo.nextLevel.start -
         apiData.levelInfo.currentLevel.start;
-      const currentPointsString =
-        apiData?.userBalance?.virtualCurrency?.$numberDecimal;
-      const currentPoints = currentPointsString
-        ? parseFloat(currentPointsString)
-        : 0;
+      const currentPointsString = apiData?.userBalance?.virtualCurrency;
+      const currentPoints = currentPointsString ? currentPointsString : 0;
 
       return (currentPoints / totalPoints) * 100;
     }
@@ -118,9 +108,7 @@ const Dashboard: React.FC = () => {
             <h2>AUFFS Gerados</h2>
 
             <div className={styles.deshBoardPageAuffProgress}>
-              <span>
-                {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}
-              </span>
+              <span>{apiData?.userBalance?.virtualCurrency}</span>
               <Progress
                 percent={calculateProgress()}
                 showInfo={false}
@@ -140,8 +128,7 @@ const Dashboard: React.FC = () => {
                 <h3>Nível Atual</h3>
                 <div className={styles.deshBoardPageAuffPointsContainer}>
                   <span>
-                    {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}{" "}
-                    Pontos Atuais
+                    {apiData?.userBalance?.virtualCurrency} Pontos Atuais
                   </span>
                   <span>{apiData?.levelInfo.currentLevel.position}</span>
                 </div>
@@ -164,7 +151,7 @@ const Dashboard: React.FC = () => {
               <div className={styles.deshBoardPageTotalsItem}>
                 <h4>Lucro Disponível</h4>
                 <span>
-                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money?.$numberDecimal)}
+                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money)}
                 </span>
               </div>
               <div className={styles.deshBoardPageTotalsItem}>
