@@ -54,7 +54,7 @@ import { listBanks, profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
 import { mainScreemDetails } from "../services/requests/main";
 import { calculateShipping } from "../services/requests/shippingServices";
-import { IBankAccount, IDocsResponse, IFilesResponse, IListBankResponse, shippingCostResponseProps } from "./interfaces";
+import { IBankAccount, IDocsResponse, IFilesResponse, IListBankResponse, ISpheresResponse, shippingCostResponseProps } from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -325,14 +325,7 @@ interface IContextApi {
       };
     }
   ];
-  spheresResp: {
-    userId: string;
-    role: string;
-    name: string;
-    email: string;
-    children: any[];
-    avatar: string;
-  };
+  spheresResp: ISpheresResponse;
   startTransaction: (
     formData: FormDataTransaction,
     startTransaction: ProductDetailsContentProps["saleIdentification"]
@@ -496,12 +489,25 @@ export const ContextApi = createContext<IContextApi>({
     },
   ],
   spheresResp: {
-    userId: "",
-    role: "",
-    name: "",
-    email: "",
-    children: [],
-    avatar: "",
+    rootNode: {
+      active: false,
+      address: {
+        city: "",
+        number: "",
+        state: "",
+        street: "",
+        postalCode: ""
+      },
+      avatar: "",
+      children: [],
+      email: "",
+      name: "",
+      phone: "",
+      role: "",
+      salesByProduct: {},
+      userId: ""
+    },
+    totalSellsByProduct: {}
   },
   startTransaction: async (
     formData: FormDataTransaction,

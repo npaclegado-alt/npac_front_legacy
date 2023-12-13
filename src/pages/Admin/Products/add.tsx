@@ -296,7 +296,6 @@ const AddProducts: React.FC = () => {
   ]);
 
   const handleSubmit = useCallback(() => {
-    console.log("entrou", entregaCademi);
     if (validateFields()) {
       const files: File[] = fileList
         .filter((item) => !!item?.response?.file)

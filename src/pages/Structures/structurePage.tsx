@@ -62,7 +62,7 @@ export function StructurePage(): JSX.Element {
         getSpheresByUser(userId);
     }, []);
 
-    const spheres = useExtractChildren(spheresResp);
+    const spheres = useExtractChildren(spheresResp?.rootNode);
     return (
         <div style={{
             width: '100%',

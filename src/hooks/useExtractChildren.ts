@@ -1,22 +1,13 @@
 import { useState, useEffect } from 'react';
+import { ITreeNodeSphere } from '../contexts/interfaces';
 
 let sephereDepth: number = 0;
-interface Child {
-  userId: string;
-  name: string;
-  email: string;
-  role: string;
-  children: any[];
-  avatar?: string;
-  depth?: number;
-  address?: [];
-}
 
-export function useExtractChildren(data: Child) {
-  const [childrenArray, setChildrenArray] = useState<Child[]>([]);
+export function useExtractChildren(data: ITreeNodeSphere) {
+  const [childrenArray, setChildrenArray] = useState<ITreeNodeSphere[]>([]);
   
   useEffect(() => {
-    function extractChildrenRecursive(data: Child) {
+    function extractChildrenRecursive(data: ITreeNodeSphere) {
         const newData = {...data, depth: sephereDepth};
         setChildrenArray((prevChildren) => [...prevChildren, newData]);
         if (data?.children?.length > 0) {

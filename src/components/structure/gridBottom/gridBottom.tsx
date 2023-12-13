@@ -66,7 +66,7 @@ export function GridButtom(): JSX.Element {
         setFullFlow(!fullFlow);
     }
     
-    const children = useExtractChildren(spheresResp);
+    const children = useExtractChildren(spheresResp?.rootNode);
 
   return (
     <div className={styles.container}>

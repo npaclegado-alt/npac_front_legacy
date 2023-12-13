@@ -103,3 +103,30 @@ export interface IListBankResponse {
     code: number;
     fullName: string;
 }
+
+export interface IAddressSphere {
+    city: string;
+    number: string;
+    state: string;
+    street: string;
+    postalCode: string;
+}
+export interface ISalesByProduct {
+    [key: string]: number;
+}
+export interface ITreeNodeSphere {
+    active: boolean;
+    address: IAddressSphere;
+    avatar: string;
+    children: ITreeNodeSphere[];
+    email: string;
+    name: string;
+    phone: string;
+    role: string;
+    salesByProduct: ISalesByProduct;
+    userId: string;
+}
+export interface ISpheresResponse {
+    rootNode: ITreeNodeSphere;
+    totalSellsByProduct: ISalesByProduct;
+}

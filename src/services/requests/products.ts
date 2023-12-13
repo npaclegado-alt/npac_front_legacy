@@ -41,7 +41,6 @@ export async function deleteProduct(id: string) {
 }
 
 export async function addProduct(product: AddCrudProduct) {
-  console.log('addProduct', product);
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -92,7 +91,6 @@ export async function addProduct(product: AddCrudProduct) {
 }
 
 export async function editProduct(product: EditCrudProduct) {
-  console.log(product);
   return new Promise((resolve, reject) => {
     const {
       id,

@@ -37,11 +37,21 @@ type MainScreemData = {
 };
 
 const Dashboard: React.FC = () => {
-  const { user, spheresResp, getAllCommissionsByUserId, getSpheresByUser } =
-    useContext(ContextApi);
-  const children = useExtractChildren(spheresResp);
+  const { 
+    user, 
+    spheresResp, 
+    getAllCommissionsByUserId, 
+    getSpheresByUser 
+  } = useContext(ContextApi);
+  const children = useExtractChildren(spheresResp?.rootNode);
   const [apiData, setApiData] = useState<MainScreemData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      getAllCommissionsByUserId(user._id);
+    }
+  }, [user, getAllCommissionsByUserId]);
 
   useEffect(() => {
     const details = localStorage.getItem("mainScreemDetails");
@@ -71,7 +81,7 @@ const Dashboard: React.FC = () => {
         apiData.levelInfo.nextLevel.start -
         apiData.levelInfo.currentLevel.start;
       const currentPointsString =
-        apiData.userBalance.virtualCurrency.$numberDecimal;
+        apiData?.userBalance?.virtualCurrency?.$numberDecimal;
       const currentPoints = currentPointsString
         ? parseFloat(currentPointsString)
         : 0;
@@ -99,7 +109,6 @@ const Dashboard: React.FC = () => {
 
   const formattedCountdown = formatCountdown();
 
-  console.log('calculateProgress', calculateProgress());
   return (
     <>
       {" "}
@@ -110,7 +119,7 @@ const Dashboard: React.FC = () => {
 
             <div className={styles.deshBoardPageAuffProgress}>
               <span>
-                {apiData?.userBalance.virtualCurrency.$numberDecimal.toString()}
+                {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}
               </span>
               <Progress
                 percent={calculateProgress()}
@@ -131,7 +140,7 @@ const Dashboard: React.FC = () => {
                 <h3>Nível Atual</h3>
                 <div className={styles.deshBoardPageAuffPointsContainer}>
                   <span>
-                    {apiData!.userBalance.virtualCurrency.$numberDecimal.toString()}{" "}
+                    {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}{" "}
                     Pontos Atuais
                   </span>
                   <span>{apiData?.levelInfo.currentLevel.position}</span>
@@ -155,7 +164,7 @@ const Dashboard: React.FC = () => {
               <div className={styles.deshBoardPageTotalsItem}>
                 <h4>Lucro Disponível</h4>
                 <span>
-                  {Filters.convertMoneyTextMask(apiData?.userBalance.money)}
+                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money?.$numberDecimal)}
                 </span>
               </div>
               <div className={styles.deshBoardPageTotalsItem}>
