@@ -63,6 +63,7 @@ export function StructurePage(): JSX.Element {
     }, []);
 
     const spheres = useExtractChildren(spheresResp?.rootNode);
+
     return (
         <div style={{
             width: '100%',
@@ -78,7 +79,9 @@ export function StructurePage(): JSX.Element {
                 reports={spheres}
                 depth={depth}
             />
-            <GridButtom />
+            <GridButtom 
+                othersReports={spheresResp?.totalSellsByProduct}
+            />
         </div>
     )
 }

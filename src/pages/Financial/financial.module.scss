@@ -98,12 +98,13 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: space-between;
     text-align: center;
     padding: 2rem;
 
     .financialAccountAvailableTransfer {
-      padding-top: 2rem;
-      padding-bottom: 5rem;
+      padding-top: 1rem;
+      padding-bottom: 1.75rem;
     }
 
     .financialAccountAvailableItem {
@@ -118,14 +119,14 @@
     }
 
     h2 {
-      font-size: 2rem;
+      font-size: 1.85rem;
       max-width: 240px;
       width: 100%;
       margin-bottom: 1rem;
     }
 
     span {
-      font-size: 1.5rem;
+      font-size: 2rem;
       color: #f04e23;
     }
 
@@ -457,6 +458,21 @@
         }
       }
     }
+  }
+}
+
+.textDateTransfer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    color: #8b8b8b;
+    font-size: 0.9rem;
+    padding-top: 5px;
+    margin-top: 1rem;
   }
 }
 

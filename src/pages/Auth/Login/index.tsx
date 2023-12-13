@@ -50,7 +50,7 @@ function Login(): JSX.Element {
           </button>
         </div>
         <button type="submit">Fazer Login</button>
-        <p>Sou novo por aqui. <span>Encontrar parceiro para me auxiliar!</span></p>
+        <p>Sou novo por aqui. <a href="https://forms.gle/q4XMsEYztVfwDL5K8" target="_blanc"><span>Encontrar parceiro para me auxiliar!</span></a></p>
       </form>
       </div>
      

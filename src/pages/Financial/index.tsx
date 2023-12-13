@@ -239,7 +239,7 @@ export const Financial = () => {
       </div>
       <div className={styles.financialAccountAvailable}>
         <div className={styles.financialAccountAvailableItem}>
-          <h2>Disponível em Minha Conta</h2>
+          <h2>Disponível para transferência</h2>
           <span>
             {Filters.convertMoneyTextMask(
               commissions?.balance?.money?.$numberDecimal
@@ -247,12 +247,15 @@ export const Financial = () => {
           </span>
         </div>
 
-        <div className={styles.financialAccountAvailableTransfer}>
+        {/*<div className={styles.financialAccountAvailableTransfer}>
           <h3>Transferência</h3>
           <p>Transfira o valor disponível para sua conta do banco.</p>
-        </div>
+        </div>*/}
 
-        <button>Transferir</button>
+        <div className={styles.textDateTransfer}>
+          <button>Transferir</button>
+          <p>Você pode solicitar a transferência a qualquer momento, porém o pagamento sempre é efetivado entre os dias 17 e 22 de cada mês.</p>
+        </div>
       </div>
       <div
         className={styles.financialInvestments}
