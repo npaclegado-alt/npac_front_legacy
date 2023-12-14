@@ -1,0 +1,42 @@
+.dashBoardPage {
+  display: grid;
+  grid-gap: 1.25rem;
+  grid-template-rows: 350px 10rem 269px;
+
+  .processButton {
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    font-weight: bold;
+    color: #f04e23;
+    background-color: transparent;
+
+    span {
+      padding-left: 1rem;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .dashBoardPage {
+    grid-template-rows: 350px 220px 269px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .dashBoardPage {
+    grid-template-rows: 370px 220px 269px;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1300px) {
+  .dashBoardPage {
+  }
+}
+
+@media (min-width: 1300px) and (max-width: 1400px) {
+  .dashBoardPage {
+  }
+}

@@ -1,6 +1,6 @@
 import { Eye, PenSquare, Plus, Trash } from "lucide-react";
 import styles from "./financial.module.scss";
-import { Alert, Modal } from "antd";
+import { InputNumber, Modal } from "antd";
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
 import { InputSimpleSelect } from "../../components/inputs/simpleSelect/simpleSelectInput";
 import { InputTextSimple } from "../../components/inputs/simpleText/inputSimpleText";
@@ -9,8 +9,9 @@ import Filters from "../../libs/Filters";
 import moment from "moment";
 import "moment/locale/pt-br";
 import { IBankAccount } from "../../contexts/interfaces";
-import { set } from "lodash";
 import { SelectSearch } from "../../components/inputs/searchSelectInput/selectSearch";
+import { withdrawal } from "../../services/requests/withdrawal";
+import { toast } from "react-toastify";
 
 export const Financial = () => {
   const typesKey = {
@@ -48,6 +49,8 @@ export const Financial = () => {
 
   const [openEditBankDetails, setOpenEditBankDetails] = useState(false);
   const [seeProfits, setSeeProfits] = useState(false);
+  const [amount, setAmount] = useState(0);
+
   const [seeInvestment, setSeeInvestment] = useState(false);
   const [bankAccount, setBankAccount] = useState<IBankAccount>({
     name: "",
@@ -184,6 +187,21 @@ export const Financial = () => {
     }
   };
 
+  const requestWithdrawal = async () => {
+    const payload = {
+      method: "pix",
+      amount,
+    };
+    await withdrawal(payload)
+      .then(() => {
+        toast.success("Retirada solicidata com sucesso");
+      })
+      .catch(({ data }) => {
+        console.log(data);
+        toast.error("Nao foi possivel solicitar sua retirada");
+      });
+  };
+
   return (
     <section className={styles.financialPage}>
       <div className={styles.financialBankData}>
@@ -242,19 +260,24 @@ export const Financial = () => {
         <div className={styles.financialAccountAvailableItem}>
           <h2>Disponível para transferência</h2>
           <span>
-            {Filters.convertMoneyTextMask(
-              commissions?.balance?.money
-            )}
+            {Filters.convertMoneyTextMask(commissions?.balance?.money)}
           </span>
         </div>
 
-        {/*<div className={styles.financialAccountAvailableTransfer}>
-          <h3>Transferência</h3>
-          <p>Transfira o valor disponível para sua conta do banco.</p>
-        </div>*/}
-
+        <p>Insira o valor que deseja transferir:</p>
+        <div className={styles.withdrawal}>
+          <small>R$: </small>
+          <InputNumber
+            placeholder="R$: 20"
+            onChange={(e) => {
+              if (e) setAmount(e);
+            }}
+            required
+            min={0}
+          />
+        </div>
         <div className={styles.textDateTransfer}>
-          <button>Transferir</button>
+          <button onClick={requestWithdrawal}>Transferir</button>
           <p>
             Você pode solicitar a transferência a qualquer momento, porém o
             pagamento sempre é efetivado entre os dias 17 e 22 de cada mês.

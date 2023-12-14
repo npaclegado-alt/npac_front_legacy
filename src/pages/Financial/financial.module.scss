@@ -350,7 +350,15 @@
     }
   }
 }
-
+.withdrawal {
+  display: flex;
+  justify-content: space-evenly;
+  small {
+    font-size: 1.5rem;
+    color: #2b2b2b;
+    font-weight: bold;
+  }
+}
 .financialModalEdit {
   display: flex;
   align-items: center;
@@ -429,7 +437,6 @@
       align-items: flex-start;
       margin-bottom: 2rem;
 
-      
       input {
         width: 83%;
 
@@ -452,7 +459,7 @@
         cursor: pointer;
         font-weight: bold;
         color: #fff;
-        
+
         & + button {
           margin-left: 0.35rem;
         }
