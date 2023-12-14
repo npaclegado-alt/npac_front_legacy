@@ -1260,6 +1260,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         render({ data }: any) {
           return "Falha ao carregar documentos!";
         },
+        style: {
+          display: "none",
+        },
       },
     });
   }, []);

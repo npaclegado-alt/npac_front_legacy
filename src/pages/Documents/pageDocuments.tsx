@@ -5,7 +5,6 @@ import { ContextApi } from "../../contexts";
 
 export function PageDocuments(): JSX.Element {
   const { getAllDocuments, documents } = useContext(ContextApi);
-  console.log(documents);
   useEffect(() => {
     getAllDocuments();
   }, [getAllDocuments]);

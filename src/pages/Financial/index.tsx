@@ -242,7 +242,7 @@ export const Financial = () => {
           <h2>Disponível para transferência</h2>
           <span>
             {Filters.convertMoneyTextMask(
-              commissions?.balance?.money?.$numberDecimal
+              commissions?.balance?.money
             )}
           </span>
         </div>

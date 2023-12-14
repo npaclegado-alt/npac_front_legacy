@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
         apiData.levelInfo.nextLevel.start -
         apiData.levelInfo.currentLevel.start;
       const currentPointsString =
-        apiData?.userBalance?.virtualCurrency?.$numberDecimal;
+        apiData?.userBalance?.virtualCurrency?.toString();
       const currentPoints = currentPointsString
         ? parseFloat(currentPointsString)
         : 0;
@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
 
             <div className={styles.deshBoardPageAuffProgress}>
               <span>
-                {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}
+                {apiData?.userBalance?.virtualCurrency?.toString()}
               </span>
               <Progress
                 percent={calculateProgress()}
@@ -140,8 +140,8 @@ const Dashboard: React.FC = () => {
                 <h3>Nível Atual</h3>
                 <div className={styles.deshBoardPageAuffPointsContainer}>
                   <span>
-                    {apiData?.userBalance?.virtualCurrency?.$numberDecimal?.toString()}{" "}
-                    Pontos Atuais
+                    {apiData?.userBalance?.virtualCurrency?.toString()}{" "}
+                    AUFFS Atuais
                   </span>
                   <span>{apiData?.levelInfo.currentLevel.position}</span>
                 </div>
@@ -151,7 +151,7 @@ const Dashboard: React.FC = () => {
                 <h3>Próximo Nível</h3>
                 <div className={styles.deshBoardPageAuffPointsContainer}>
                   <span>
-                    {apiData?.levelInfo.nextLevel.amountToNextLevel} Pontos
+                    {apiData?.levelInfo.nextLevel.amountToNextLevel} AUFFS
                     Restantes
                   </span>
                   <span>{apiData?.levelInfo.nextLevel.position}</span>
@@ -164,7 +164,7 @@ const Dashboard: React.FC = () => {
               <div className={styles.deshBoardPageTotalsItem}>
                 <h4>Lucro Disponível</h4>
                 <span>
-                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money?.$numberDecimal)}
+                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money)}
                 </span>
               </div>
               <div className={styles.deshBoardPageTotalsItem}>
