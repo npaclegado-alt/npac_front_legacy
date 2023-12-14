@@ -7,16 +7,13 @@ import Filters from "../../libs/Filters";
 import { mainScreemDetails } from "../../services/requests/main";
 import { useExtractChildren } from "../../hooks/useExtractChildren";
 import moment from "moment";
-type DecimalNumber = {
-  $numberDecimal: string;
-};
 
 type MainScreemData = {
   userBalance: {
     _id: string;
     userId: string;
-    money: DecimalNumber;
-    virtualCurrency: DecimalNumber;
+    money: number;
+    virtualCurrency: number;
     __v: number;
   };
   levelInfo: {
@@ -37,12 +34,8 @@ type MainScreemData = {
 };
 
 const Dashboard: React.FC = () => {
-  const { 
-    user, 
-    spheresResp, 
-    getAllCommissionsByUserId, 
-    getSpheresByUser 
-  } = useContext(ContextApi);
+  const { user, spheresResp, getAllCommissionsByUserId, getSpheresByUser } =
+    useContext(ContextApi);
   const children = useExtractChildren(spheresResp?.rootNode);
   const [apiData, setApiData] = useState<MainScreemData | null>(null);
   const [loading, setLoading] = useState(true);
