@@ -54,7 +54,14 @@ import { listBanks, profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
 import { mainScreemDetails } from "../services/requests/main";
 import { calculateShipping } from "../services/requests/shippingServices";
-import { IBankAccount, IDocsResponse, IFilesResponse, IListBankResponse, ISpheresResponse, shippingCostResponseProps } from "./interfaces";
+import {
+  IBankAccount,
+  IDocsResponse,
+  IFilesResponse,
+  IListBankResponse,
+  ISpheresResponse,
+  shippingCostResponseProps,
+} from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -334,7 +341,13 @@ interface IContextApi {
   getFiles: (fieldName: string, id: string) => void;
   files: IFilesResponse[];
   removeFile: (originalName: string) => void;
-  sendDocumentsRequest: (type:string, name: string, description: string, file: File, uploadedBy: string) => void;
+  sendDocumentsRequest: (
+    type: string,
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => void;
   banks: IListBankResponse[];
 }
 
@@ -496,7 +509,7 @@ export const ContextApi = createContext<IContextApi>({
         number: "",
         state: "",
         street: "",
-        postalCode: ""
+        postalCode: "",
       },
       avatar: "",
       children: [],
@@ -505,20 +518,26 @@ export const ContextApi = createContext<IContextApi>({
       phone: "",
       role: "",
       salesByProduct: {},
-      userId: ""
+      userId: "",
     },
-    totalSellsByProduct: {}
+    totalSellsByProduct: {},
   },
   startTransaction: async (
     formData: FormDataTransaction,
     startTransaction: ProductDetailsContentProps["saleIdentification"]
   ) => {},
   shippingCostResponse: [],
-  editAvatar: (id: string, file: File) => { },
-  getFiles: (fieldName: string, id: string) => { },
+  editAvatar: (id: string, file: File) => {},
+  getFiles: (fieldName: string, id: string) => {},
   files: [],
-  removeFile: (originalName: string) => { },
-  sendDocumentsRequest: (type:string, name: string, description: string, file: File, uploadedBy: string) => {},
+  removeFile: (originalName: string) => {},
+  sendDocumentsRequest: (
+    type: string,
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => {},
   banks: [],
 });
 
@@ -552,7 +571,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   });
   const [allFaq, setAllFaq] = useState<Faq[]>([]);
   const [editAgentProfile, setEditAgentProfile] = useState(false);
-  const [shippingCostResponse, setShippingCostResponse] = useState<shippingCostResponseProps[]>([]);
+  const [shippingCostResponse, setShippingCostResponse] = useState<
+    shippingCostResponseProps[]
+  >([]);
   const [files, setFiles] = useState<IFilesResponse[]>([]);
   const [banks, setBanks] = useState<IListBankResponse[]>([]);
 
@@ -704,7 +725,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       },
       success: {
         render({ data }: any) {
-          //TODO
           setProducts(data?.data.products);
           return "Produtos carregados com sucesso!";
         },
@@ -958,7 +978,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
 
   const sendDocumentsRequest = useCallback(
-    (type:string, name: string, description: string, file: File, uploadedBy: string) => {
+    (
+      type: string,
+      name: string,
+      description: string,
+      file: File,
+      uploadedBy: string
+    ) => {
       const request = sendDocuments(type, name, description, file, uploadedBy);
       toast.promise(request, {
         pending: {
@@ -1304,7 +1330,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
           setBanks(data?.data);
           return "Bancos carregados com sucesso!";
         },
-        
+
         style: {
           display: "none",
         },
@@ -1313,15 +1339,13 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         render({ data }: any) {
           return "Falha ao carregar bancos!";
         },
-        
+
         style: {
           display: "none",
         },
       },
     });
-  }
-  , []);
-
+  }, []);
 
   return (
     <ContextApi.Provider
@@ -1379,7 +1403,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         removeFile,
         sendDocumentsRequest,
         getBanks,
-        banks
+        banks,
       }}
     >
       {children}
