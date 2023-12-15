@@ -13,6 +13,10 @@ import { SelectSearch } from "../../components/inputs/searchSelectInput/selectSe
 import { withdrawal } from "../../services/requests/withdrawal";
 import { toast } from "react-toastify";
 
+type ReverseTypesKey = {
+  [key: string]: number;
+};
+
 export const Financial = () => {
   const typesKey = {
     "1": "CPF",
@@ -20,6 +24,14 @@ export const Financial = () => {
     "3": "CELULAR",
     "4": "ALEATORIA",
     "5": "CNPJ",
+  };
+
+  const reverseTypesKey: ReverseTypesKey = {
+    "CPF": 1,
+    "EMAIL": 2,
+    "CELULAR": 3,
+    "ALEATORIA": 4,
+    "CNPJ": 5,
   };
   moment.locale("pt-br");
   const {
@@ -39,13 +51,6 @@ export const Financial = () => {
     getAllProducts();
     getBanks();
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      getAllTransactionsByUserId(user._id);
-      getAllCommissionsByUserId(user._id);
-    }
-  }, [user, getAllTransactionsByUserId, getAllCommissionsByUserId]);
 
   const [openEditBankDetails, setOpenEditBankDetails] = useState(false);
   const [seeProfits, setSeeProfits] = useState(false);
@@ -202,6 +207,16 @@ export const Financial = () => {
       });
   };
 
+  useEffect(() => {
+    if (user) {
+      getAllTransactionsByUserId(user._id);
+      getAllCommissionsByUserId(user._id);
+    }
+    if (user?.bankAccount) {
+      setBankAccount(user.bankAccount);
+    }
+  }, [user, getAllTransactionsByUserId, getAllCommissionsByUserId]);
+
   return (
     <section className={styles.financialPage}>
       <div className={styles.financialBankData}>
@@ -227,7 +242,7 @@ export const Financial = () => {
 
           <div className={styles.financialBankDataUserItem}>
             <h3>Banco</h3>
-            <span>{user?.bankAccount?.name}</span>
+            <span>{user?.bankAccount?.bank}</span>
           </div>
         </div>
 
@@ -390,7 +405,6 @@ export const Financial = () => {
             display: "none",
           },
         }}
-        closeIcon={false}
       >
         <div className={styles.financialModalEdit}>
           <h3>Alterar Dados Bancários</h3>
@@ -401,6 +415,7 @@ export const Financial = () => {
               placeholder="Nome completo"
               onChange={changeBankAccount}
               required
+              value={bankAccount?.name || ""}
             />
             <InputTextSimple
               name="cpf"
@@ -417,6 +432,7 @@ export const Financial = () => {
                   value: bank.ispb,
                 }))}
               onChangeSelect={changeBanckSelect}
+              value={bankAccount?.ispb}
             />
 
             <div className={styles.financialModalEditAccount}>
@@ -425,6 +441,7 @@ export const Financial = () => {
                 placeholder="Agência"
                 onChange={changeBankAccount}
                 required
+                value={bankAccount?.ag || ""}
                 maxLength={4}
               />
               <InputTextSimple
@@ -432,12 +449,14 @@ export const Financial = () => {
                 placeholder="Conta corrente"
                 onChange={changeBankAccount}
                 required
+                value={bankAccount?.cc || ""}
               />
               <InputTextSimple
                 name="dv"
                 placeholder="Digito verificador"
                 onChange={changeBankAccount}
                 required
+                value={bankAccount?.dv || ""}
                 maxLength={2}
               />
             </div>
@@ -474,6 +493,7 @@ export const Financial = () => {
                       ]}
                       onChange={changeKey}
                       optionZero="Selecionar o tipo da chave"
+                      value={reverseTypesKey[pix?.type]}
                     />
                     <div className={styles.financialModalAddKeys}>
                       <InputTextSimple

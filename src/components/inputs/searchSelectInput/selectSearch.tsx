@@ -6,9 +6,10 @@ import styles from './styleSelectSearch.module.scss';
 interface SelectSearchProps {
     options: Array<{ label: string; value: string }>;
     onChangeSelect: (value: string) => void;
+    value: string;
 }
 
-export function SelectSearch({ options, onChangeSelect }: SelectSearchProps): JSX.Element { 
+export function SelectSearch({ options, onChangeSelect, value }: SelectSearchProps): JSX.Element { 
     const onChange = (value: string) => {
         onChangeSelect(value)
     };
@@ -30,6 +31,7 @@ export function SelectSearch({ options, onChangeSelect }: SelectSearchProps): JS
             onSearch={onSearch}
             filterOption={filterOption}
             options={options}
+            value={value}
         />
     );
 }

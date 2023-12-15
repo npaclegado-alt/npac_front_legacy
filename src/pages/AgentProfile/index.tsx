@@ -283,7 +283,6 @@ export default function AgentProfile() {
             display: "none",
           },
         }}
-        closeIcon={false}
         onCancel={() => {
           setSeePasswordAgent(false);
           setEditAgentProfile(false);

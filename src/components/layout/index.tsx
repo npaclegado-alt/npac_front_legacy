@@ -42,7 +42,7 @@ const Layout = () => {
         </div>
         <main className={styles.content}>
           <Outlet />
-          {displayButtonChat && <Link to={"https://escola.npac.com.br/auth/login?redirect=/office/minha_cademi/aparencia"} target="_blank">
+          {displayButtonChat && <Link to={"https://wa.me/5528999156465?text=Preciso+de+ajuda+para%3A"} target="_blank">
             <button className={styles.buttonChat} />
           </Link>}
         </main>
