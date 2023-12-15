@@ -31,6 +31,9 @@ import {
   getDocuments,
   getProductImages,
   uploadProductImage,
+  uploadAvatarImage,
+  getFilesByFilter,
+  sendDocuments,
 } from "../services/requests/files";
 import { Ship, X } from "lucide-react";
 
@@ -47,11 +50,18 @@ import {
 } from "../services/requests/transactions";
 import { ProductDetailsContentProps } from "../pages/ProductsDetails/domain/ProductDetailsContent";
 
-import { profileAgent } from "../services/requests/profileAgent";
+import { listBanks, profileAgent } from "../services/requests/profileAgent";
 import { getCommissionsByUserId } from "../services/requests/commissions";
 import { mainScreemDetails } from "../services/requests/main";
 import { calculateShipping } from "../services/requests/shippingServices";
-import { shippingCostResponseProps } from "./interfaces";
+import {
+  IBankAccount,
+  IDocsResponse,
+  IFilesResponse,
+  IListBankResponse,
+  ISpheresResponse,
+  shippingCostResponseProps,
+} from "./interfaces";
 
 interface BaseCrudProduct {
   name: string;
@@ -74,6 +84,8 @@ interface BaseCrudProduct {
   digitalProduct: boolean;
   freeShipping: boolean;
   recurrence: string;
+  isCademi?: boolean;
+  cademiKey?: string;
 }
 
 export interface AddCrudProduct extends BaseCrudProduct {
@@ -86,16 +98,18 @@ export interface EditCrudProduct extends BaseCrudProduct {
   removedFiles: IFile[];
 }
 
-interface IFile {
+export interface IFile {
   _id: string;
   name: string;
   originalName: string;
   fieldName: string;
   fieldId: string;
   path: string;
+  fileUrl?: string;
   size: number;
   type: string;
   createdAt: string;
+  description?: string;
 }
 
 interface Career {
@@ -142,7 +156,7 @@ export interface User {
   cpf: string;
   email: string;
   role: string;
-  password: string;
+  password?: string | undefined;
   graduation: string;
   commision: number;
   balance: number;
@@ -162,14 +176,7 @@ export interface User {
     state: string;
     postalCode: string;
   };
-  banckAccount?: {
-    name: string;
-    cpf: string;
-    ag: number;
-    cc: number;
-    dv: string;
-    pix: string;
-  };
+  bankAccount?: IBankAccount;
 }
 
 interface IContextApi {
@@ -188,12 +195,12 @@ interface IContextApi {
   };
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  getAllDocuments: () => void;
+  getAllDocuments: (type?: string) => void;
   documentById: (documentId: string) => void;
   clearDocumentFiltered: () => void;
   documentFiltered: IFile;
   deleteDocument: (originalName: string) => void;
-  documents: IFile[];
+  documents: IDocsResponse[];
   getAllTransactionsByUserId: (userId: string) => void;
   transactions: any[];
   getAllCommissionsByUserId: (userId: string) => void;
@@ -218,6 +225,7 @@ interface IContextApi {
   getAllCareer: () => void;
   getAllFaq: () => void;
   getShippingCost: (payload: any) => void;
+  getBanks: () => void;
   shippingCostResponse: shippingCostResponseProps[];
   career?: Career;
   allFaq: Faq[];
@@ -284,6 +292,8 @@ interface IContextApi {
     digitalProduct: boolean;
     freeShipping: boolean;
     recurrence: string;
+    isCademi?: boolean;
+    cademiKey?: string;
   };
   productImages: IFile[];
   adress: {
@@ -322,18 +332,23 @@ interface IContextApi {
       };
     }
   ];
-  spheresResp: {
-    userId: string;
-    role: string;
-    name: string;
-    email: string;
-    children: any[];
-    avatar: string;
-  };
+  spheresResp: ISpheresResponse;
   startTransaction: (
     formData: FormDataTransaction,
     startTransaction: ProductDetailsContentProps["saleIdentification"]
   ) => Promise<void>;
+  editAvatar: (id: string, file: File) => void;
+  getFiles: (fieldName: string, id: string) => void;
+  files: IFilesResponse[];
+  removeFile: (originalName: string) => void;
+  sendDocumentsRequest: (
+    type: string,
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => void;
+  banks: IListBankResponse[];
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -359,7 +374,7 @@ export const ContextApi = createContext<IContextApi>({
   editAgentProfile: false,
   setEditAgentProfile: (action: boolean | ((action: boolean) => boolean)) => {},
   getAllProducts: () => {},
-  getAllDocuments: () => {},
+  getAllDocuments: (type?: string) => {},
   deleteDocument: (originalName: string) => {},
   documentById: (documentId: string) => {},
   documentFiltered: {
@@ -391,6 +406,7 @@ export const ContextApi = createContext<IContextApi>({
   getAllCareer: () => {},
   getAllFaq: () => {},
   getShippingCost: (payload: any) => {},
+  getBanks: () => {},
   career: undefined,
   allFaq: [] as Faq[],
   ufs: [
@@ -446,6 +462,8 @@ export const ContextApi = createContext<IContextApi>({
     digitalProduct: false,
     freeShipping: false,
     recurrence: "",
+    isCademi: false,
+    cademiKey: "",
   },
   adress: {
     cep: "",
@@ -484,18 +502,43 @@ export const ContextApi = createContext<IContextApi>({
     },
   ],
   spheresResp: {
-    userId: "",
-    role: "",
-    name: "",
-    email: "",
-    children: [],
-    avatar: "",
+    rootNode: {
+      active: false,
+      address: {
+        city: "",
+        number: "",
+        state: "",
+        street: "",
+        postalCode: "",
+      },
+      avatar: "",
+      children: [],
+      email: "",
+      name: "",
+      phone: "",
+      role: "",
+      salesByProduct: {},
+      userId: "",
+    },
+    totalSellsByProduct: {},
   },
   startTransaction: async (
     formData: FormDataTransaction,
     startTransaction: ProductDetailsContentProps["saleIdentification"]
   ) => {},
-  shippingCostResponse: []
+  shippingCostResponse: [],
+  editAvatar: (id: string, file: File) => {},
+  getFiles: (fieldName: string, id: string) => {},
+  files: [],
+  removeFile: (originalName: string) => {},
+  sendDocumentsRequest: (
+    type: string,
+    name: string,
+    description: string,
+    file: File,
+    uploadedBy: string
+  ) => {},
+  banks: [],
 });
 
 interface Props {
@@ -521,14 +564,18 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [spheresResp, setSpheresResp] = useState<any>([]);
   const [career, setCareer] = useState<Career>();
-  const [documents, setDocuments] = useState<IFile[]>([]);
+  const [documents, setDocuments] = useState<IDocsResponse[]>([]);
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
   const [allFaq, setAllFaq] = useState<Faq[]>([]);
   const [editAgentProfile, setEditAgentProfile] = useState(false);
-  const [shippingCostResponse, setShippingCostResponse] = useState<shippingCostResponseProps[]>([]);
+  const [shippingCostResponse, setShippingCostResponse] = useState<
+    shippingCostResponseProps[]
+  >([]);
+  const [files, setFiles] = useState<IFilesResponse[]>([]);
+  const [banks, setBanks] = useState<IListBankResponse[]>([]);
 
   const isAuthenticated = useMemo(() => {
     return !!user;
@@ -652,7 +699,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         );
         window.location.href = checkouts[0].payment_url;
       } catch (error: any) {
-        console.log('errorContext ===>', error);
         toast.error("Erro ao procesar a compra", error);
       }
     },
@@ -679,7 +725,6 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       },
       success: {
         render({ data }: any) {
-          //TODO
           setProducts(data?.data.products);
           return "Produtos carregados com sucesso!";
         },
@@ -693,8 +738,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
-  const getAllDocuments = useCallback(() => {
-    const request = getDocuments();
+  const getAllDocuments = useCallback((type?: string) => {
+    const request = getDocuments(type);
     toast.promise(request, {
       pending: {
         render() {
@@ -919,6 +964,36 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         success: {
           render({ data }: any) {
             navigate("/admin/documents");
+            return "Documento adicionado com sucesso!";
+          },
+        },
+        error: {
+          render({ data }: any) {
+            return "Falha ao adicionar documento!";
+          },
+        },
+      });
+    },
+    [navigate]
+  );
+
+  const sendDocumentsRequest = useCallback(
+    (
+      type: string,
+      name: string,
+      description: string,
+      file: File,
+      uploadedBy: string
+    ) => {
+      const request = sendDocuments(type, name, description, file, uploadedBy);
+      toast.promise(request, {
+        pending: {
+          render() {
+            return "Carregando...";
+          },
+        },
+        success: {
+          render({ data }: any) {
             return "Documento adicionado com sucesso!";
           },
         },
@@ -1172,7 +1247,105 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
+  const editAvatar = useCallback((id: string, file: File) => {
+    const request = uploadAvatarImage(id, file);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render() {
+          return "Avatar atualizado com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao atualizar avatar!";
+        },
+      },
+    });
+  }, []);
 
+  const getFiles = useCallback((fieldName: string, id: string) => {
+    const request = getFilesByFilter(fieldName, id);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setFiles(data?.data?.response);
+          return "Documentos carregados com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao carregar documentos!";
+        },
+        style: {
+          display: "none",
+        },
+      },
+    });
+  }, []);
+
+  const removeFile = useCallback((originalName: string) => {
+    const request = deleteFile(originalName);
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render() {
+          return "Documento removido com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao remover documento!";
+        },
+      },
+    });
+  }, []);
+
+  const getBanks = useCallback(() => {
+    const request = listBanks();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+        style: {
+          display: "none",
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setBanks(data?.data);
+          return "Bancos carregados com sucesso!";
+        },
+
+        style: {
+          display: "none",
+        },
+      },
+      error: {
+        render({ data }: any) {
+          return "Falha ao carregar bancos!";
+        },
+
+        style: {
+          display: "none",
+        },
+      },
+    });
+  }, []);
 
   return (
     <ContextApi.Provider
@@ -1223,7 +1396,14 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         documentFiltered,
         addDocumentRequest,
         mainScreemDetails,
-        shippingCostResponse
+        shippingCostResponse,
+        editAvatar,
+        getFiles,
+        files,
+        removeFile,
+        sendDocumentsRequest,
+        getBanks,
+        banks,
       }}
     >
       {children}

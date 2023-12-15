@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ContextApi } from "../../../../contexts";
 import { ROLES } from "../../../../constants/roles";
@@ -24,7 +24,11 @@ interface Path {
 }
 
 export default function Sidebar() {
-  const { user } = useContext(ContextApi);
+  const { 
+    user,
+    getFiles,
+    files 
+  } = useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -91,16 +95,26 @@ export default function Sidebar() {
     },
     [location, navigate]
   );
+
+  useEffect(() => {
+    if (user) {
+      getFiles('avatar', user?._id ?? '');
+    }
+  }, [user]);
+
+  const avatar = files.find(avatar => avatar.fieldName === 'avatar') ?? null;
+  const avatarDefault = require('../../../../assets/images/user.png');
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.container}>
-        <div className={styles.title}>Graduação</div>
+        <div className={styles.title}>{user?.graduation ?? 'Graduação'}</div>
         <div className={styles.profileContainer}>
           <div className={styles.profileContainerBg}>
             <img
               alt="perfil"
               className={styles.profile}
-              src="https://picsum.photos/200"
+              src={avatar?.path ?? avatarDefault}
             ></img>
           </div>
         </div>

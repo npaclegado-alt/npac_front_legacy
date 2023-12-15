@@ -5,17 +5,20 @@ import { LineUserReport } from "./lineUserReport";
 import { CustomButton } from "../../buttons/customButton";
 
 import styles from './styleModal.module.scss';
+import { filter } from "lodash";
 
 interface ModalReportsProps {
     changeModal: () => void;
     showModal: boolean;
     reports?: any[];
+    depth?: number;
 }
 
 export function ModalReports({
     changeModal,
     showModal,
-    reports
+    reports,
+    depth
 }: ModalReportsProps): JSX.Element {
     
     return (
@@ -69,7 +72,7 @@ export function ModalReports({
                         </p>
                     </div>
                 </div>
-                {reports?.map((report) => {
+                {reports?.filter(filterReport => filterReport?.depth === depth).map((report) => {
                     return (
                         <LineUserReport
                             report={report}
@@ -85,6 +88,7 @@ export function ModalReports({
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}
+                        onClick={() => { changeModal() }}
                     >
                         Voltar Para o Dashboard
                     </CustomButton>

@@ -1,0 +1,22 @@
+.buttonWithPreview {
+        width: 100%;
+        background-color: transparent;
+        height: 40px;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #f04e23;
+        cursor: pointer;
+        outline: none;
+        border: none;
+        
+        span {
+            margin-right: 12px;
+        }
+
+        svg {
+            font-size: 1.25rem;
+            size: 3px;
+        }
+}

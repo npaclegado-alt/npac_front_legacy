@@ -14,8 +14,15 @@ import { ContextApi } from '../../../contexts';
 import { useExtractChildren } from '../../../hooks/useExtractChildren';
 import { CustomButton } from '../../buttons/customButton';
 import { useNavigate } from 'react-router-dom';
+import { ISalesByProduct } from '../../../contexts/interfaces';
 
-export function GridButtom(): JSX.Element {
+interface GridButtomProps {
+    othersReports: ISalesByProduct;
+}
+
+export function GridButtom({
+    othersReports,
+}: GridButtomProps): JSX.Element {
     const navigation = useNavigate();
     const [fullFlow, setFullFlow] = useState(false);
     const {
@@ -24,38 +31,6 @@ export function GridButtom(): JSX.Element {
         user
     } = useContext(ContextApi);
       
-    const othersReports = [
-        {
-            id: 1,
-            name: 'Diários',
-            quantity: 30
-        },
-        {
-            id: 2,
-            name: 'Princípios',
-            quantity: 20
-        },
-        {
-            id: 3,
-            name: 'Jornada',
-            quantity: 20
-        },
-        {
-            id: 4,
-            name: 'Camisetas',
-            quantity: 30
-        },
-        {
-            id: 5,
-            name: 'NPAC Box',
-            quantity: 30
-        },
-        {
-            id: 6,
-            name: 'Escola',
-            quantity: 30
-        }
-    ]
     
     useEffect(() => {
         const userId: string | any = user?._id;
@@ -66,9 +41,7 @@ export function GridButtom(): JSX.Element {
         setFullFlow(!fullFlow);
     }
     
-    const children = useExtractChildren(spheresResp);
-
-    console.log('childrenFirst', children, 'spheresResp', spheresResp);
+    const children = useExtractChildren(spheresResp?.rootNode);
 
   return (
     <div className={styles.container}>
@@ -77,19 +50,16 @@ export function GridButtom(): JSX.Element {
                 Outros Relatórios
             </h1>
             <p className={styles.description}>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam.
+                Acompanhe o volume de produtos ofertados em toda a sua estrutura e bata seus recordes, o mundo precisa de nós!
             </p>
             <div className={styles.boxOthersReports}>
-                {othersReports.map((report) => (
-                    <div key={report.id} className={styles.report}>
+                {othersReports && Object.entries(othersReports).map(([key, value]) => (
+                    <div key={key} className={styles.report}>
                         <span>
-                            {report.name}
+                            {key}
                         </span>
                         <p>
-                            {report.quantity}
-                            <FileText 
-                                size={20}
-                            />
+                            {value}
                         </p>
                     </div>
                 ))}

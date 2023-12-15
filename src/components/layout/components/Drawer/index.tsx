@@ -1,8 +1,9 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Drawer as AntdDrawer } from "antd";
 import { ContextApi } from "../../../../contexts";
 import styles from "./styleDrawer.module.scss";
 import { Divider } from "../../../divider";
+import AvatarDefaut from "../../../../assets/images/avatar.jpg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Briefcase,
@@ -29,8 +30,14 @@ interface Path {
 }
 
 export default function Drawer() {
-  const { drawerOpen, setDrawerOpen, user, logoutRequest } =
-    useContext(ContextApi);
+  const { 
+    drawerOpen, 
+    setDrawerOpen, 
+    user, 
+    logoutRequest,
+    getFiles,
+    files 
+  } = useContext(ContextApi);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -105,6 +112,14 @@ export default function Drawer() {
     [drawerOpen, location, navigate, setDrawerOpen]
   );
 
+  useEffect(() => {
+    if (user) {
+      getFiles('avatar', user?._id ?? '');
+    }
+  }, [user]);
+
+  const avatar = files.find(avatar => avatar.fieldName === 'avatar') ?? null;
+
   return (
     <aside>
       <AntdDrawer
@@ -120,7 +135,7 @@ export default function Drawer() {
               <img
                 alt="perfil"
                 className={styles.profile}
-                src="https://picsum.photos/200"
+                src={avatar?.path ?? AvatarDefaut}
               ></img>
             </div>
           </div>

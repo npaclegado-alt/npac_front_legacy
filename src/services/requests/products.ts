@@ -58,6 +58,8 @@ export async function addProduct(product: AddCrudProduct) {
       digitalProduct,
       freeShipping,
       recurrence,
+      isCademi,
+      cademiKey
     } = product;
     api
       .post("products", {
@@ -76,6 +78,8 @@ export async function addProduct(product: AddCrudProduct) {
         digitalProduct,
         freeShipping,
         recurrence,
+        isCademi,
+        cademiKey
       })
       .then((response) => {
         resolve(response);
@@ -105,6 +109,8 @@ export async function editProduct(product: EditCrudProduct) {
       digitalProduct,
       freeShipping,
       recurrence,
+      isCademi,
+      cademiKey
     } = product;
     api
       .put(`products/${id}`, {
@@ -123,6 +129,8 @@ export async function editProduct(product: EditCrudProduct) {
         digitalProduct,
         freeShipping,
         recurrence,
+        isCademi,
+        cademiKey
       })
       .then((response) => {
         resolve(response);

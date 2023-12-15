@@ -1,3 +1,4 @@
+import { type } from '@testing-library/user-event/dist/type';
 import api from "../api";
 
 export async function uploadProductImage(id: string, productImages: File[]) {
@@ -9,6 +10,35 @@ export async function uploadProductImage(id: string, productImages: File[]) {
 
     api
       .post(`files/upload/product?productId=${id}`, form)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+export async function uploadAvatarImage(id: string, avatarImage: File) {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("avatar", avatarImage);
+
+    api
+      .post(`files/upload/avatar?id=${id}`, form)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+export async function getFilesByFilter(fieldName: string, id: string) {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`files/search/filters?fieldName=${fieldName}&fieldId=${id}`)
       .then((response) => {
         resolve(response);
       })
@@ -44,10 +74,10 @@ export async function deleteFile(name: string) {
   });
 }
 
-export async function getDocuments() {
+export async function getDocuments(type: string = "general") {
   return new Promise((resolve, reject) => {
     api
-      .get(`files/search/documents/general`)
+      .get(`files/search/documents/${type}`)
       .then((response) => {
         resolve(response);
       })
@@ -83,6 +113,31 @@ export async function addDocument(
     api
       .post(
         `files/upload/document?documentType=GENERAL&name=${name}&description=${description}&uploadedBy=${uploadedBy}`,
+        form
+      )
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+export async function sendDocuments(
+  type: string, //GENERAL or PERSONAL
+  name: string,
+  description: string,
+  file: File,
+  uploadedBy: string
+) {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("document", file);
+
+    api
+      .post(
+        `files/upload/document?documentType=${type}&name=${name}&description=${description}&uploadedBy=${uploadedBy}`,
         form
       )
       .then((response) => {

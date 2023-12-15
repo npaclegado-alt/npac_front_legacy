@@ -8,13 +8,18 @@ interface InputSelectSimple
   optionZero?: string;
   disableOptionZero?: boolean;
   optionStyle?: any;
+  required?: boolean;
 }
 
 export function InputSimpleSelect(props: InputSelectSimple): JSX.Element {
-  const { data, optionZero, disableOptionZero = false, optionStyle, ...rest } = props;
+  const { data, optionZero, disableOptionZero = false, optionStyle, required, ...rest } = props;
   return (
     <>
-      <select className={styles.inputSelect} {...rest}>
+      <select 
+        className={styles.inputSelect} 
+        required={required}
+        {...rest}
+      >
         {!disableOptionZero && <option value="0">{optionZero}</option>}
         {data?.map((item: any) => (
           <option 

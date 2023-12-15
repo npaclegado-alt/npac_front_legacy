@@ -9,6 +9,9 @@ import { ContextApi } from "../../contexts";
 import { toast } from "react-toastify";
 import { is } from "@babel/types";
 import { metadataShipping } from "../ProductsDetails/domain/Formatters";
+import TermosPdf from "../../assets/docs/Termos e Condicoes NPAC.pdf";
+
+
 export const Invitation = () => {
   const {
     getAdressByPostalCode,
@@ -401,7 +404,7 @@ export const Invitation = () => {
                   setTermsService(e.target.checked)
                 }
               />
-              <span>Li e Concordo com os Termos de Serviço.</span>
+              <a href={TermosPdf} target="_blank"><span>Li e Concordo com os Termos de Serviço.</span></a>
             </div>
 
             <button disabled={!termsServices} type="submit">Ir Para o Checkout</button>

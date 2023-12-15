@@ -17,8 +17,10 @@ export function StructurePage(): JSX.Element {
         user
     } = useContext(ContextApi);
     const [showModal, setShowModal] = useState(false);
+    const [depth, setDepth] = useState(0);
 
-    const onChangeModal = () => {
+    const onChangeModal = (depth?: number) => {
+        setDepth(depth || 0);
         setShowModal(!showModal);
     }
 
@@ -55,13 +57,13 @@ export function StructurePage(): JSX.Element {
         },
     ]
 
-    
     useEffect(() => {
         const userId: string | any = user?._id;
         getSpheresByUser(userId);
     }, []);
-    
-    const children = useExtractChildren(spheresResp);
+
+    const spheres = useExtractChildren(spheresResp?.rootNode);
+
     return (
         <div style={{
             width: '100%',
@@ -69,13 +71,17 @@ export function StructurePage(): JSX.Element {
         }}>
             <HeaderReports 
                 onChangeModal={onChangeModal}
+                reports={spheres}
             />
             <ModalReports 
                 changeModal={onChangeModal}
                 showModal={showModal}
-                reports={reportsMock}
+                reports={spheres}
+                depth={depth}
             />
-            <GridButtom />
+            <GridButtom 
+                othersReports={spheresResp?.totalSellsByProduct}
+            />
         </div>
     )
 }
