@@ -108,74 +108,31 @@ const Dashboard: React.FC = () => {
       {!loading ? (
         <section className={styles.deshBoardPage}>
           <div className={styles.deshBoardPageAuff}>
-            <h2>AUFFS Gerados</h2>
-
-            <div className={styles.deshBoardPageAuffProgress}>
-              <span>
-                {apiData?.userBalance?.virtualCurrency?.toString()}
-              </span>
-              <Progress
-                percent={calculateProgress()}
-                showInfo={false}
-                trailColor="#F2F2F2"
-                strokeColor="#F04E23"
-                size={["100%", 12]}
-                className={styles.progress}
-              />
-              <div className={styles.deshBoardPageAuffGift}>
-                <span>{apiData?.levelInfo.nextLevel.start}</span>
-                <Gift size={"2rem"} color="#F04E23" />
-              </div>
-            </div>
-
-            <div className={styles.deshBoardPageAuffLevel}>
-              <div className={styles.deshBoardPageAuffLevelContainer}>
-                <h3>Nível Atual</h3>
-                <div className={styles.deshBoardPageAuffPointsContainer}>
+            <div className={styles.deshBoardPageTotals}>
+              <div className={styles.deshBoardPageTotalsInfomation}>
+                <div className={styles.deshBoardPageTotalsItem}>
+                  <h4>Lucro Disponível</h4>
                   <span>
-                    {apiData?.userBalance?.virtualCurrency?.toString()}{" "}
-                    AUFFS Atuais
+                    {Filters.convertMoneyTextMask(apiData?.userBalance?.money)}
                   </span>
-                  <span>{apiData?.levelInfo.currentLevel.position}</span>
+                </div>
+                <div className={styles.deshBoardPageTotalsItem}>
+                  <h4>Lucro Total</h4>
+                  <span>{Filters.convertMoneyTextMask(apiData?.total)}</span>
                 </div>
               </div>
 
-              <div className={styles.deshBoardPageAuffLevelContainer}>
-                <h3>Próximo Nível</h3>
-                <div className={styles.deshBoardPageAuffPointsContainer}>
-                  <span>
-                    {apiData?.levelInfo.nextLevel.amountToNextLevel} AUFFS
-                    Restantes
-                  </span>
-                  <span>{apiData?.levelInfo.nextLevel.position}</span>
+              <div className={styles.borderCenterTotals} />
+
+              <div className={styles.deshBoardPageTotalsInfomation}>
+                <div className={styles.deshBoardPageTotalsItem}>
+                  <h4>Grupo</h4>
+                  <span>{children?.length} Pessoas</span>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.deshBoardPageTotals}>
-            <div className={styles.deshBoardPageTotalsInfomation}>
-              <div className={styles.deshBoardPageTotalsItem}>
-                <h4>Lucro Disponível</h4>
-                <span>
-                  {Filters.convertMoneyTextMask(apiData?.userBalance?.money)}
-                </span>
-              </div>
-              <div className={styles.deshBoardPageTotalsItem}>
-                <h4>Lucro Total</h4>
-                <span>{Filters.convertMoneyTextMask(apiData?.total)}</span>
-              </div>
-            </div>
-
-            <div className={styles.borderCenterTotals} />
-
-            <div className={styles.deshBoardPageTotalsInfomation}>
-              <div className={styles.deshBoardPageTotalsItem}>
-                <h4>Grupo</h4>
-                <span>{children?.length} Pessoas</span>
-              </div>
-              <div className={styles.deshBoardPageTotalsItem}>
-                <h4>Fim do Mês</h4>
-                <span>{formattedCountdown}</span>
+                <div className={styles.deshBoardPageTotalsItem}>
+                  <h4>Fim do Mês</h4>
+                  <span>{formattedCountdown}</span>
+                </div>
               </div>
             </div>
           </div>
