@@ -12,7 +12,7 @@ import { IBankAccount } from "../../contexts/interfaces";
 import { SelectSearch } from "../../components/inputs/searchSelectInput/selectSearch";
 import { withdrawal } from "../../services/requests/withdrawal";
 import { toast } from "react-toastify";
-
+import { getWithdrawal } from "../../services/requests/withdrawal";
 type ReverseTypesKey = {
   [key: string]: number;
 };
@@ -27,11 +27,11 @@ export const Financial = () => {
   };
 
   const reverseTypesKey: ReverseTypesKey = {
-    "CPF": 1,
-    "EMAIL": 2,
-    "CELULAR": 3,
-    "ALEATORIA": 4,
-    "CNPJ": 5,
+    CPF: 1,
+    EMAIL: 2,
+    CELULAR: 3,
+    ALEATORIA: 4,
+    CNPJ: 5,
   };
   moment.locale("pt-br");
   const {
@@ -75,6 +75,10 @@ export const Financial = () => {
   });
   const [showTooltipBank, setShowTooltipBank] = useState(false);
   const [numberKeys, setNumberKeys] = useState(1);
+  const [withdrawals, setWithdrawals] = useState({
+    msg: "Transferir",
+    disabled: true,
+  });
 
   const changeBankAccount = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -91,6 +95,44 @@ export const Financial = () => {
       [e.target.id]: e.target.value,
     });
   };
+
+  const _fetch = () => {
+    if (user) {
+      getAllTransactionsByUserId(user._id);
+      getAllCommissionsByUserId(user._id);
+    }
+    if (user?.bankAccount) {
+      setBankAccount(user.bankAccount);
+    }
+
+    getWithdrawal()
+      .then((response: any) => {
+        if (!response.data) {
+          setWithdrawals({
+            msg: "Transferir",
+            disabled: false,
+          });
+          return;
+        }
+        console.log(response.data.length > 0);
+        setWithdrawals(
+          response.data.length > 0
+            ? {
+                msg: "Voce possui solicitacoes em andamento",
+                disabled: true,
+              }
+            : {
+                msg: "Transferir",
+                disabled: false,
+              }
+        );
+      })
+      .catch(() => toast.error("Nao foi possivel obter as retiradas"));
+  };
+
+  useEffect(() => {
+    _fetch();
+  }, []);
 
   const changeBanckSelect = (value: string) => {
     const bank = banks?.find((bank) => bank.ispb === value);
@@ -200,22 +242,13 @@ export const Financial = () => {
     await withdrawal(payload)
       .then(() => {
         toast.success("Retirada solicidata com sucesso");
+        _fetch();
       })
       .catch(({ data }) => {
         console.log(data);
         toast.error("Nao foi possivel solicitar sua retirada");
       });
   };
-
-  useEffect(() => {
-    if (user) {
-      getAllTransactionsByUserId(user._id);
-      getAllCommissionsByUserId(user._id);
-    }
-    if (user?.bankAccount) {
-      setBankAccount(user.bankAccount);
-    }
-  }, [user, getAllTransactionsByUserId, getAllCommissionsByUserId]);
 
   return (
     <section className={styles.financialPage}>
@@ -281,7 +314,6 @@ export const Financial = () => {
 
         <p>Insira o valor que deseja transferir:</p>
         <div className={styles.withdrawal}>
-          <small>R$: </small>
           <InputNumber
             placeholder="R$: 20"
             onChange={(e) => {
@@ -289,10 +321,13 @@ export const Financial = () => {
             }}
             required
             min={0}
+            disabled={withdrawals.disabled}
           />
         </div>
         <div className={styles.textDateTransfer}>
-          <button onClick={requestWithdrawal}>Transferir</button>
+          <button disabled={withdrawals.disabled} onClick={requestWithdrawal}>
+            {withdrawals.msg}
+          </button>
           <p>
             Você pode solicitar a transferência a qualquer momento, porém o
             pagamento sempre é efetivado entre os dias 17 e 22 de cada mês.
