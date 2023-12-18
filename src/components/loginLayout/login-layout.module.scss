@@ -1,48 +1,45 @@
 .pageLogin {
-    background: var(--gray-300);
-    height: 100vh;
+  background: var(--gray-300);
+  height: 100vh;
+  width: 100%;
+  background-image: url("../../assets/imgs/PLANO-DE-FUNDO-LOGIN---PLANO-NPAC-com-login.png");
+  background-size: cover;
+  padding: 30px;
+
+  .pageLoginNavegation {
     width: 100%;
-    background-image: url("../../assets/imgs/bg-login.png");
-    background-size: cover;
-    background-position: center;
-    padding: 30px;
-  
-    .pageLoginNavegation {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 50px; 
-      flex-wrap: wrap; 
-  
-      @media (max-width: 500px) {
-        justify-content: center;
-      }
-  
-      .pageLoginNavegationLogo {
-        h4 {
-          color: var(--white);
-          font-weight: 400; 
-          font-size: 1.5rem;
-  
-          span {
-            font-weight: bold;
-          }
-        }
-      }
-  
-      .pageLoginNavegationListMenu {
-        list-style: none;
-        display: flex;
-  
-        li {
-          margin: 0px 15px;
-          color: var(--white);
-          font-size: 1rem;
-          font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    flex-wrap: wrap;
+
+    @media (max-width: 500px) {
+      justify-content: center;
+    }
+
+    .pageLoginNavegationLogo {
+      h4 {
+        color: var(--white);
+        font-weight: 400;
+        font-size: 1.5rem;
+
+        span {
+          font-weight: bold;
         }
       }
     }
+
+    .pageLoginNavegationListMenu {
+      list-style: none;
+      display: flex;
+
+      li {
+        margin: 0px 15px;
+        color: var(--white);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
   }
-  
-  
+}

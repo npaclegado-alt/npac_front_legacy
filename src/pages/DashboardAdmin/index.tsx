@@ -50,7 +50,7 @@ const DashboardAdmin: React.FC = () => {
 
   return (
     <section className={styles.dashBoardPage}>
-      <Table striped bordered hover>
+      <table>
         <thead>
           <tr>
             <th>Ordem</th>
@@ -85,7 +85,7 @@ const DashboardAdmin: React.FC = () => {
               </tr>
             ))}
         </tbody>
-      </Table>
+      </table>
     </section>
   );
 };

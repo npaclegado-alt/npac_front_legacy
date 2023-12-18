@@ -1,3 +1,4 @@
+@import "~bootstrap/scss/bootstrap";
 .dashBoardPage {
   display: grid;
   grid-gap: 1.25rem;
@@ -16,6 +17,30 @@
     span {
       padding-left: 1rem;
     }
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  thead th {
+    background-color: #4caf50;
+    color: white;
+    border-color: #4caf50;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
   }
 }
 

@@ -9,9 +9,6 @@ interface DocumentProps {
   document: any;
 }
 export function Documents({ document }: DocumentProps): JSX.Element {
-  const navigateToLink = useCallback((url: string) => {
-    window.open(url);
-  }, []);
   return (
     <div className={styles.contentDocument}>
       <div className={styles.boxHeaderDocument}>
@@ -30,7 +27,11 @@ export function Documents({ document }: DocumentProps): JSX.Element {
           <p>Visualizar Documento</p>
         </div> */}
         <div
-          onClick={() => navigateToLink(document.fileUrl)}
+          onClick={() => {
+            const baseUrl = "https://nyc3.digitaloceanspaces.com/npac-stage/";
+            const fullPath = new URL(document.key, baseUrl).href;
+            window.open(fullPath, "_blank", "noopener,noreferrer");
+          }}
           className={styles.boxValueAction}
         >
           <Download />
