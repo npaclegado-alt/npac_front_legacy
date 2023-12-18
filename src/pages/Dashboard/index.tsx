@@ -47,18 +47,10 @@ const Dashboard: React.FC = () => {
   }, [user, getAllCommissionsByUserId]);
 
   useEffect(() => {
-    const details = localStorage.getItem("mainScreemDetails");
-    if (details) {
-      setApiData(JSON.parse(details));
-    }
     if (user) {
       mainScreemDetails(user._id)
         .then((response: any) => {
-          localStorage.setItem(
-            "mainScreemDetails",
-            JSON.stringify(response.data)
-          );
-          return setApiData(response.data as any);
+          setApiData(response.data as any);
         })
         .catch((error) => {
           console.error("Erro ao buscar dados", error);

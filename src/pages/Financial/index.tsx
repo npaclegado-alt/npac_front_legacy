@@ -202,7 +202,6 @@ export const Financial = () => {
         toast.success("Retirada solicidata com sucesso");
       })
       .catch(({ data }) => {
-        console.log(data);
         toast.error("Nao foi possivel solicitar sua retirada");
       });
   };
@@ -281,7 +280,7 @@ export const Financial = () => {
 
         <p>Insira o valor que deseja transferir:</p>
         <div className={styles.withdrawal}>
-          <small>R$: </small>
+          {/*<small>R$: </small>*/}
           <InputNumber
             placeholder="R$: 20"
             onChange={(e) => {
