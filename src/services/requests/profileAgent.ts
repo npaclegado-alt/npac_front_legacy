@@ -12,6 +12,7 @@ const profileAgent = async (id: string, data: User) => {
         phone: Filters.clearStringOnlyNumbers(data.phone),
         email: data.email,
         role: data.role,
+        birthday: data.birthday ? data.birthday : undefined,
         address: data.address
           ? {
               street: data.address.street,

@@ -121,7 +121,12 @@ export default function Sidebar() {
         <div className={styles.userData}>
           <div className={styles.userName}>{user?.name}</div>
           <div className={styles.userId}>#102030AZ</div>
-          <div className={styles.userStatus}>Ativo</div>
+          <div 
+            className={styles.userStatus}
+            datatype={user?.active ? 'active' : 'inactive'}
+          >
+              {user?.active ? 'Ativo' : 'Inativo'}
+            </div>
         </div>
         <Divider />
         <div className={styles.navList}>

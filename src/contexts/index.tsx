@@ -152,6 +152,7 @@ interface Faq {
 export interface User {
   expiresIn?: string;
   _id: string;
+  active: boolean;
   name: string;
   cpf: string;
   email: string;
@@ -166,7 +167,7 @@ export interface User {
   avatar?: string;
   referencia?: string;
   bairro?: string;
-  dataNascimento?: string;
+  birthday?: string;
   token?: string;
   address?: {
     street: string;

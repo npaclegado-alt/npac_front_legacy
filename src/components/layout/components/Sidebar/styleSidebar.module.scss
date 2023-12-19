@@ -78,6 +78,9 @@
 
 .userStatus {
   color: var(--greem-400);
+  &[dataType='inactive'] {
+    color: var(--red-400);
+  }
 }
 
 .navList {

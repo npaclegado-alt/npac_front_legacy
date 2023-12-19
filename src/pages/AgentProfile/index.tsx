@@ -9,6 +9,7 @@ import { ContextApi } from "../../contexts";
 import Filters from "../../libs/Filters";
 import DragUploader from "../../components/uploaders/dragCircle";
 import UploadButtonWithPreview from "../../components/uploaders/buttonWithPrevew";
+import moment from "moment";
 
 type UserType = {
   name: string;
@@ -25,7 +26,7 @@ type UserType = {
   state: string;
   postalCode: string;
   bairro: string;
-  dataNascimento: string;
+  birthday: string;
 };
 
 export default function AgentProfile() {
@@ -60,7 +61,7 @@ export default function AgentProfile() {
     state: "",
     postalCode: "",
     bairro: "",
-    dataNascimento: "",
+    birthday: "",
   });
 
   const [seePasswordAgent, setSeePasswordAgent] = useState(false);
@@ -141,6 +142,7 @@ export default function AgentProfile() {
       phone: Filters.clearStringOnlyNumbers(userData.phone),
       email: userData.email,
       role: userData.role,
+      birthday: userData.birthday,
     };
 
     if (user) {
@@ -195,7 +197,7 @@ export default function AgentProfile() {
 
           <div className={styles.PersonalDataNameDataItem}>
             <h3>Data de Nascimento</h3>
-            <span>DD/MM/AAAA</span>
+            <span>{moment.utc(user?.birthday).format('DD/MM/YYYY')}</span>
           </div>
         </div>
 
@@ -301,11 +303,10 @@ export default function AgentProfile() {
                 onChange={handleChange}
               />
               <InputTextSimple
-                name="dataNascimento"
+                name="birthday"
                 placeholder="Data de Nascimento"
                 type="date"
-                disabled={!userData.dataNascimento}
-                value={userData.dataNascimento}
+                value={moment.utc(userData?.birthday).format('YYYY-MM-DD')}
                 onChange={handleChange}
               />
               <InputTextSimple
