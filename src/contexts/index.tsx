@@ -1207,10 +1207,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       },
       success: {
         render({ data }: any) {
-          const token = user?.token;
-          const dataUser = { ...data.data, token: token };
-          setUser(dataUser);
-          localStorage.setItem("user", JSON.stringify(dataUser));
+          const updatedUser = { ...user, ...data.data };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
           setEditAgentProfile(false);
           return "Perfil atualizado com  com sucesso!";
         },

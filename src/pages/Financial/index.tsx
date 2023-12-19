@@ -33,6 +33,7 @@ export const Financial = () => {
     ALEATORIA: 4,
     CNPJ: 5,
   };
+
   moment.locale("pt-br");
   const {
     user,
@@ -114,7 +115,6 @@ export const Financial = () => {
           });
           return;
         }
-        console.log(response.data.length > 0);
         setWithdrawals(
           response.data.length > 0
             ? {
