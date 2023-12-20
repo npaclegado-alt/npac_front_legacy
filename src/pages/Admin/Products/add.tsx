@@ -199,10 +199,10 @@ const AddProducts: React.FC = () => {
       messages.push(<li>Tipo de recorrencia</li>);
     }
 
-    if (entregaCademi.length === 0) {
-      hasError = true;
-      messages.push(<li>Entrega CADEMI</li>);
-    }
+    //if (entregaCademi.length === 0) {
+    //  hasError = true;
+    //  messages.push(<li>Entrega CADEMI</li>);
+    //}
     if (commissionType.length === 0 || commissionType === "0") {
       hasError = true;
       messages.push(<li>Tipo de comissão</li>);
