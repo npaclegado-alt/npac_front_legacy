@@ -31,3 +31,16 @@ export async function getTransactionsByUserId(userId: string) {
       });
   });
 }
+
+export async function getAllTransactions() {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`transactions/`)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}

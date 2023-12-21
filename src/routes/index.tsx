@@ -21,6 +21,7 @@ import { Help } from "../pages/Help";
 import AgentProfile from "../pages/AgentProfile";
 import { PageDocuments } from "../pages/Documents/pageDocuments";
 import DashboardAdmin from "../pages/DashboardAdmin";
+import SalesReports from "../pages/Admin/sales";
 
 const RootRoutes: React.FC = () => {
   return (
@@ -49,6 +50,7 @@ const RootRoutes: React.FC = () => {
               <Route path="add" element={<AddDocuments />} />
               <Route path="add/:documentId" element={<AddProducts />} />
             </Route>
+            <Route path="sales" element={<SalesReports />} />
           </Route>
         </Route>
       </Route>

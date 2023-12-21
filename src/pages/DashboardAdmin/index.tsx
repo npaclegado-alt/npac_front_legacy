@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./dashboard.module.scss";
-import { Table } from "react-bootstrap";
 import {
   IWithdrawal,
   getWithdrawal,

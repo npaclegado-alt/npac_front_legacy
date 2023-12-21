@@ -45,6 +45,7 @@ import {
   formatDataForApi,
 } from "../pages/ProductsDetails/domain/Formatters";
 import {
+  getAllTransactions,
   getTransactionsByUserId,
   submitTransaction,
 } from "../services/requests/transactions";
@@ -62,6 +63,7 @@ import {
   ISpheresResponse,
   shippingCostResponseProps,
 } from "./interfaces";
+import { IApiResponseTransactions } from "./interfaceTransactions";
 
 interface BaseCrudProduct {
   name: string;
@@ -350,6 +352,8 @@ interface IContextApi {
     uploadedBy: string
   ) => void;
   banks: IListBankResponse[];
+  listAllTransactions: () => void;
+  allTransactions: IApiResponseTransactions[];
 }
 
 export const ContextApi = createContext<IContextApi>({
@@ -540,6 +544,8 @@ export const ContextApi = createContext<IContextApi>({
     uploadedBy: string
   ) => {},
   banks: [],
+  listAllTransactions: () => {},
+  allTransactions: [],
 });
 
 interface Props {
@@ -555,6 +561,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   );
   const [products, setProducts] = useState<any>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [allTransactions, setAllTransactions] = useState<any[]>([]);
   const [commissions, setCommissions] = useState<any[]>();
   const [productImages, setProductImages] = useState<IFile[]>([]);
   const [productFiltered, setProductFiltered] = useState<any>();
@@ -654,6 +661,30 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
       },
     });
   }, []);
+
+  const listAllTransactions = useCallback(() => {
+    const request = getAllTransactions();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          //TODO
+          setAllTransactions(data?.data);
+          return "Transações carregadas com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar transações!";
+        }
+      }
+    })
+  }, [])
 
   const getAllCommissionsByUserId = useCallback((userId: string) => {
     const request = getCommissionsByUserId(userId);
@@ -1404,6 +1435,8 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         sendDocumentsRequest,
         getBanks,
         banks,
+        listAllTransactions,
+        allTransactions
       }}
     >
       {children}

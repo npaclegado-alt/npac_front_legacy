@@ -1,0 +1,39 @@
+.contentHeader {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--gray-100);
+    padding: 1rem;
+    border-radius: 0.35rem;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+
+    div {
+        strong {
+            font-size: 1rem;
+            color: var(--gray-300);
+        }
+
+        &:nth-child(1) {
+            width: 35%;
+        }
+
+        &:nth-child(2) {
+            width: 10%;
+        }
+
+        &:nth-child(3) {
+            width: 20%;
+        }
+
+        &:nth-child(4) {
+            width: 20%;
+        }
+
+        &:nth-last-child(1) {
+            width: 5%;
+        }
+
+    }
+}

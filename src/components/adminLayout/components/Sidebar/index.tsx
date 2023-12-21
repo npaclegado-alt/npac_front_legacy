@@ -1,4 +1,4 @@
-import { File, Lock, LucideIcon, ShoppingCart, Mailbox  } from "lucide-react";
+import { File, Lock, LucideIcon, ShoppingCart, Mailbox, Receipt } from "lucide-react";
 import { Divider } from "../../../divider";
 import styles from "./styleSidebar.module.scss";
 import { useCallback, useContext, useMemo } from "react";
@@ -39,6 +39,11 @@ export default function Sidebar() {
         path: "https://sandbox.melhorenvio.com.br/carrinho",
         //path: "https://melhorenvio.com.br/carrinho",
         icon: Mailbox,
+      },
+      {
+        name: "Gestão de vendas",
+        path: "/admin/sales",
+        icon: Receipt,
       },
     ];
 
