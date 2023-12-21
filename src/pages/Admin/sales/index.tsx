@@ -26,22 +26,22 @@ export default function SalesReports(): JSX.Element {
                 </div>
                 <div>
                     <strong>
-                        Quantidade vendido
+                        Qtda vendido
                     </strong>
                 </div>
                 <div>
                     <strong>
-                        Valor unitario
+                        Valor unitário
                     </strong>
                 </div>
                 <div>
                     <strong>
-                        Valor total em vendas
+                        Total em vendas
                     </strong>
                 </div>
                 <div>
                     <strong>
-                        Periodo em dias
+                        Periodo
                     </strong>
                 </div>
             </div>
