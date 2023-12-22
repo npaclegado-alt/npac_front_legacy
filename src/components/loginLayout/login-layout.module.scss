@@ -2,10 +2,10 @@
   background: var(--gray-300);
   height: 100vh;
   width: 100%;
-  background-image: url("../../assets/imgs/PLANO-DE-FUNDO-LOGIN---PLANO-NPAC-com-login.png");
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.01)), url("../../assets/imgs/PLANO-DE-FUNDO-LOGIN---PLANO-NPAC-com-login.png");
   background-size: cover;
-  padding: 30px;
-
+  background-repeat: no-repeat;
+  
   .pageLoginNavegation {
     width: 100%;
     display: flex;
@@ -13,6 +13,7 @@
     align-items: center;
     height: 50px;
     flex-wrap: wrap;
+    padding: 0px 30px;
 
     @media (max-width: 500px) {
       justify-content: center;
@@ -21,7 +22,7 @@
     .pageLoginNavegationLogo {
       h4 {
         color: var(--white);
-        font-weight: 400;
+        font-weight: 600;
         font-size: 1.5rem;
 
         span {
@@ -37,8 +38,8 @@
       li {
         margin: 0px 15px;
         color: var(--white);
-        font-size: 1rem;
-        font-weight: 500;
+        font-size: 1.35rem;
+        font-weight: 800;
       }
     }
   }
