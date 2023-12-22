@@ -184,12 +184,14 @@ const Users: React.FC = () => {
             )}
           </div>
         </div>
-        <div className={styles.row}>
-          <div className={styles.badge}>
-            Usuários ativos: {users.filter((u) => u.active).length}
+        {dimensions.width > 768 && (
+          <div className={styles.row}>
+            <div className={styles.badge}>
+              Usuários ativos: {users.filter((u) => u.active).length}
+            </div>
+            <div className={styles.badge}>Qtd usuários: {users.length}</div>
           </div>
-          <div className={styles.badge}>Qtd usuários: {users.length}</div>
-        </div>
+        )}
       </div>
       <Table
         pagination={{ pageSize: 5 }}
