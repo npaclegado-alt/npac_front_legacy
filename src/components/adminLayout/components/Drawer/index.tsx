@@ -9,9 +9,12 @@ import {
   Lock,
   LogOut,
   LucideIcon,
+  Mailbox,
+  Receipt,
   Settings,
   ShoppingCart,
   UserPlus,
+  Users,
 } from "lucide-react";
 
 interface Path {
@@ -43,6 +46,22 @@ export default function Drawer() {
         name: "Documentos",
         path: "/admin/documents",
         icon: File,
+      },
+      {
+        name: "Gestão de envios",
+        path: "https://sandbox.melhorenvio.com.br/carrinho",
+        //path: "https://melhorenvio.com.br/carrinho",
+        icon: Mailbox,
+      },
+      {
+        name: "Gestão de vendas",
+        path: "/admin/sales",
+        icon: Receipt,
+      },
+      {
+        name: "Gestão de usuários",
+        path: "/admin/users",
+        icon: Users,
       },
     ];
 

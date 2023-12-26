@@ -64,6 +64,7 @@ import {
   shippingCostResponseProps,
 } from "./interfaces";
 import { IApiResponseTransactions } from "./interfaceTransactions";
+import { getUsers } from "../services/requests/users";
 
 interface BaseCrudProduct {
   name: string;
@@ -182,6 +183,44 @@ export interface User {
   bankAccount?: IBankAccount;
 }
 
+export interface IUserReport {
+  address: {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
+  bankAccount: {
+    pix: {
+      type: string;
+      key: string;
+    }[];
+    name: string;
+    bank: string;
+    number: number;
+    ispb: string;
+    cpf: string;
+    ag: number;
+    cc: number;
+    dv: string;
+  };
+  _id: string;
+  name: string;
+  cpf: string;
+  email: string;
+  role: string;
+  active: boolean;
+  activeStatus: string;
+  graduation: string;
+  phone: string;
+  balance: number;
+  commission: number;
+  createdAt: string;
+  __v: number;
+  birthday: string;
+}
+
 interface IContextApi {
   isAuthenticated: boolean;
   loginRequest: (email: string, password: string) => void;
@@ -199,6 +238,7 @@ interface IContextApi {
   drawerOpen: boolean;
   setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
   getAllDocuments: (type?: string) => void;
+  getAllUsers: () => void;
   documentById: (documentId: string) => void;
   clearDocumentFiltered: () => void;
   documentFiltered: IFile;
@@ -231,6 +271,7 @@ interface IContextApi {
   getBanks: () => void;
   shippingCostResponse: shippingCostResponseProps[];
   career?: Career;
+  users: IUserReport[];
   allFaq: Faq[];
   ufs: [
     {
@@ -365,6 +406,8 @@ export const ContextApi = createContext<IContextApi>({
     height: 0,
   },
   user: undefined,
+  users: [],
+  getAllUsers: () => {},
   getAllTransactionsByUserId: (userId: string) => {},
   transactions: [],
   getAllCommissionsByUserId: (userId: string) => {},
@@ -569,6 +612,7 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
   const [adress, setAdress] = useState<any>();
   const [ufs, setUfs] = useState<any>([]);
   const [cities, setCities] = useState<any>([]);
+  const [users, setUsers] = useState<any>([]);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [spheresResp, setSpheresResp] = useState<any>([]);
   const [career, setCareer] = useState<Career>();
@@ -681,10 +725,33 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         render({ data }: any) {
           //TODO
           return "Falha ao carregar transações!";
-        }
-      }
-    })
-  }, [])
+        },
+      },
+    });
+  }, []);
+
+  const getAllUsers = useCallback(() => {
+    const request = getUsers();
+    toast.promise(request, {
+      pending: {
+        render() {
+          return "Carregando...";
+        },
+      },
+      success: {
+        render({ data }: any) {
+          setUsers(data?.data);
+          return "Usuários carregados com sucesso!";
+        },
+      },
+      error: {
+        render({ data }: any) {
+          //TODO
+          return "Falha ao carregar usuários!";
+        },
+      },
+    });
+  }, []);
 
   const getAllCommissionsByUserId = useCallback((userId: string) => {
     const request = getCommissionsByUserId(userId);
@@ -1436,7 +1503,9 @@ const ContextProvider: React.FC<Props> = ({ children }) => {
         getBanks,
         banks,
         listAllTransactions,
-        allTransactions
+        allTransactions,
+        getAllUsers,
+        users,
       }}
     >
       {children}

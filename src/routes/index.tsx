@@ -13,6 +13,7 @@ import { StructurePage } from "../pages/Structures/structurePage";
 import AdminWrapper from "./AdminWrapper";
 import AdminProducts from "../pages/Admin/Products";
 import AddProducts from "../pages/Admin/Products/add";
+import AdminUsers from "../pages/Admin/Users";
 import { Invitation } from "../pages/Invitation";
 import AdminDocuments from "../pages/Admin/Documents";
 import AddDocuments from "../pages/Admin/Documents/add";
@@ -51,6 +52,7 @@ const RootRoutes: React.FC = () => {
               <Route path="add/:documentId" element={<AddProducts />} />
             </Route>
             <Route path="sales" element={<SalesReports />} />
+            <Route path="users" element={<AdminUsers />} />
           </Route>
         </Route>
       </Route>
