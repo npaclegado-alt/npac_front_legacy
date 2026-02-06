@@ -9,7 +9,6 @@ import { InputSimpleSelect } from '../../../components/inputs/simpleSelect/simpl
 import { InputTextSimple } from '../../../components/inputs/simpleText/inputSimpleText';
 import Filters from '../../../libs/Filters';
 import { FormDataTransaction } from './Formatters';
-import { JsTyping } from 'typescript';
 import { shippingCostResponseProps } from '../../../contexts/interfaces';
 import { Color } from '@rc-component/color-picker';
 
